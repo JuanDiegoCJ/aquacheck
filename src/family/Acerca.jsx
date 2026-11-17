@@ -17,16 +17,6 @@ export default function Acerca() {
             </ul>
           </section>
 
-          <section className="tarjeta limites">
-            <h2>Lo que no hace</h2>
-            <ul className="vinetas">
-              <li>No mide la calidad del agua.</li>
-              <li>No certifica que el agua sea potable.</li>
-              <li>No reemplaza los análisis de un laboratorio.</li>
-            </ul>
-            <p className="suave">La calidad del agua la evalúa un laboratorio competente durante el piloto.</p>
-          </section>
-
           <section className="tarjeta">
             <h2>Sobre este piloto</h2>
             <p className="suave">

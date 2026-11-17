@@ -11,7 +11,7 @@ import { irA, rutaFiltro } from '../app/ruta.js'
 const PASOS_INICIO = [
   { selector: '[data-guia="escanear"]', titulo: 'Escanear el QR', texto: 'Toca aquí y apunta la cámara al QR pegado en tu filtro. Se abre tu filtro al instante. También puedes usar la cámara normal del celular.' },
   { selector: '[data-guia="codigo"]', titulo: 'Si no puedes escanear', texto: 'Escribe tu código (por ejemplo AQ-007) si ya abriste tu QR antes en este celular, o pega el enlace de tu ficha.' },
-  { selector: '[data-guia="nav-acerca"]', titulo: '¿Qué hace AquaCheck?', texto: 'Explica qué hace la app y qué no: no mide la calidad del agua ni certifica que sea potable. Aquí también están tus datos y tu privacidad.' },
+  { selector: '[data-guia="nav-acerca"]', titulo: '¿Qué hace AquaCheck?', texto: 'Explica qué hace la app, cómo se usan tus datos y cómo se protege tu privacidad.' },
   { selector: '[data-guia="soy-equipo"]', titulo: 'Equipo del proyecto', texto: 'Solo para el equipo: entra con su correo y contraseña para ver cómo va cada hogar.' },
   { selector: '[data-guia="nav-inicio"]', titulo: 'Inicio', texto: 'Desde cualquier pantalla, este botón te trae de vuelta aquí.' },
 ]
