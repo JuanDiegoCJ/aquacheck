@@ -68,10 +68,20 @@ export function iniciar() {
   // Actualización automática: el panel del equipo cada 2 s y los filtros conectados cada 10 s, solo con la pantalla visible.
   if (typeof document !== 'undefined') {
     const visible = () => document.visibilityState === 'visible'
-    setInterval(() => visible() && cargarEquipo(true), 2000)
+    // Panel del equipo: cada 2 s mientras hay cambios; tras 30 s sin cambios espacia a 5 s (menos datos y menos energía).
+    // Cualquier cambio, una acción propia o volver a la pantalla restablece los 2 s.
+    const turnoEquipo = async () => {
+      if (visible() && sesionEquipo) {
+        const cambio = await cargarEquipo(true)
+        sinCambiosEquipo = cambio ? 0 : sinCambiosEquipo + 1
+      }
+      setTimeout(turnoEquipo, sinCambiosEquipo >= 15 ? 5000 : 2000)
+    }
+    setTimeout(turnoEquipo, 2000)
     setInterval(() => visible() && sincronizar(), 10_000)
     const alVolver = () => {
       if (!visible()) return
+      sinCambiosEquipo = 0
       cargarEquipo(true)
       sincronizar()
     }
@@ -343,6 +353,7 @@ async function tokenVigente() {
 }
 
 let cargandoEquipo = false
+let sinCambiosEquipo = 0 // consultas seguidas sin cambios (para espaciar la actualización automática)
 const urlsFoto = {} // ruta -> { url, en }: los enlaces firmados duran 1 h; se renuevan a los 50 min
 /**
  * Trae del servidor todo lo que el equipo puede ver (si la cuenta no es del equipo, las tablas llegan vacías).
@@ -353,6 +364,7 @@ export async function cargarEquipo(silencioso = false) {
   if (!sesionEquipo || cargandoEquipo) return
   cargandoEquipo = true
   if (!silencioso) {
+    sinCambiosEquipo = 0
     estadoPanel = { cargando: true, error: null }
     avisar()
   }
@@ -385,6 +397,7 @@ export async function cargarEquipo(silencioso = false) {
     datosRemotos = nuevo
     estadoPanel = { cargando: false, error: null }
     if (!silencioso || cambio || habiaEstado) avisar()
+    return cambio
   } catch (e) {
     if (e instanceof ErrorRemoto && (e.estado === 401 || e.estado === 403)) {
       guardarSesion(null)
