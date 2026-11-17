@@ -28,6 +28,12 @@ Aleatoria de 128 bits o más, en la parte `#` de la dirección (no viaja al serv
 ## Fichas definitivas
 `npm run build` y luego `node tools/generar_fichas.mjs <claves.csv> <salida.html>` crea las 20 fichas con el QR de cada hogar (código + clave). El CSV y la salida contienen claves: guardarlos FUERA del repositorio. Se imprimen desde el navegador (o a PDF).
 
+## Fin del piloto y borrado de datos
+- Fin del piloto: **31/01/2027**. Plazo de conservación: 30 días → el borrado corresponde a partir del **02/03/2027**.
+- Ese día, en el editor SQL de Supabase: `select privado.borrar_vencidos(date '2027-01-31');` (borra celulares y consentimientos, invalida las claves de los QR y quita las rutas de fotos). Antes de la fecha solo devuelve un aviso y no borra nada.
+- Después, vaciar el bucket: Storage > fotos-fallas > seleccionar todo > Delete (el SQL no borra los archivos).
+- El borrado es MANUAL: no se programó pg_cron porque no está confirmado que funcione en el plan gratis (ver abajo).
+
 ## Pendientes y supuestos (no verificados)
 - Que `pg_cron` esté disponible en el plan gratis: probar con `create extension pg_cron;`. El borrado manual es el respaldo.
 - Que SUPABASE_SERVICE_ROLE_KEY esté disponible por defecto en las Edge Functions (según la documentación, sí; confirmar al desplegar).
