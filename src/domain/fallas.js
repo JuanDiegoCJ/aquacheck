@@ -2,10 +2,10 @@
 // Lo que reporta la familia es una OBSERVACIÓN suya, no una medición: la app no mide la calidad del agua.
 
 export const TIPOS_FALLA = {
-  gotea: { id: 'gotea', etiqueta: 'El filtro gotea', icono: '💧' },
-  turbia: { id: 'turbia', etiqueta: 'El agua sale turbia', icono: '🌫️' },
-  poca: { id: 'poca', etiqueta: 'Sale poca agua', icono: '🚰' },
-  otra: { id: 'otra', etiqueta: 'Otro problema', icono: '❓' },
+  gotea: { id: 'gotea', etiqueta: 'El filtro gotea', icono: 'gotea' },
+  turbia: { id: 'turbia', etiqueta: 'El agua sale turbia', icono: 'turbia' },
+  poca: { id: 'poca', etiqueta: 'Sale poca agua', icono: 'poca' },
+  otra: { id: 'otra', etiqueta: 'Otro problema', icono: 'otra' },
 }
 export const ORDEN_FALLAS = ['gotea', 'turbia', 'poca', 'otra']
 

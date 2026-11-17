@@ -1,3 +1,4 @@
+import { Icono } from './Iconos.jsx'
 import { useEffect, useLayoutEffect, useState } from 'react'
 
 /** Botón flotante "?" que abre la guía de la pantalla. */
@@ -73,11 +74,11 @@ export default function Guia({ pasos, alCerrar }) {
           <span className="guia-espacio" />
           {i > 0 && (
             <button type="button" className="btn-mini" onClick={() => setI(i - 1)}>
-              ← Anterior
+              <Icono nombre="izquierda" tam={16} /> Anterior
             </button>
           )}
           <button type="button" className="btn-mini btn-mini-principal" onClick={() => (ultimo ? alCerrar() : setI(i + 1))}>
-            {ultimo ? 'Listo' : 'Siguiente →'}
+            {ultimo ? 'Listo' : <>Siguiente <Icono nombre="derecha" tam={16} /></>}
           </button>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import { Icono } from '../components/Iconos.jsx'
 import Pantalla from '../components/Pantalla.jsx'
 import Qr from '../components/Qr.jsx'
 import { ORDEN_TAREAS, TAREAS } from '../domain/reglas.js'
@@ -9,7 +10,9 @@ export function FichaHoja({ codigo, url }) {
     <article className="ficha">
       <header className="ficha-cab">
         <div>
-          <p className="ficha-marca">💧 AquaCheck</p>
+          <p className="ficha-marca">
+            <Icono nombre="marca" /> AquaCheck
+          </p>
           <h2>Filtro {codigo}</h2>
           <p>Escanea el QR con tu celular para registrar el mantenimiento.</p>
         </div>
@@ -55,7 +58,7 @@ export default function Ficha({ hogar }) {
       <p className="suave sin-imprimir">Imprímela y pégala junto al filtro. Sirve también si no hay celular o internet.</p>
       <FichaHoja codigo={hogar.codigo} />
       <button type="button" className="btn btn-principal btn-grande sin-imprimir" onClick={() => window.print()}>
-        🖨️ Imprimir
+        <Icono nombre="imprimir" /> Imprimir
       </button>
     </Pantalla>
   )

@@ -1,3 +1,4 @@
+import { Icono } from '../components/Iconos.jsx'
 import Pantalla from '../components/Pantalla.jsx'
 import { Donut, BarrasPorTarea, BarrasSemanales, BarrasFallas } from '../components/Graficos.jsx'
 import { TAREAS, textoDias, formatoFecha } from '../domain/reglas.js'
@@ -21,14 +22,16 @@ export default function Informe() {
           className="btn btn-principal sin-imprimir"
           onClick={() => descargarBinario(nombreArchivo('aquacheck_informe', 'pdf', r.hoy), construirPDF(r), MIME_PDF)}
         >
-          📄 Descargar el informe en PDF
+          <Icono nombre="pdf" /> Descargar el informe en PDF
         </button>
         <button type="button" className="btn btn-secundario sin-imprimir" onClick={() => window.print()}>
-          🖨️ Imprimir esta vista
+          <Icono nombre="imprimir" /> Imprimir esta vista
         </button>
 
         <header className="informe-cab">
-          <p className="ficha-marca">💧 AquaCheck</p>
+          <p className="ficha-marca">
+            <Icono nombre="marca" /> AquaCheck
+          </p>
           <h2>Informe del piloto · Moche, Trujillo</h2>
           <p>Generado el {formatoFecha(r.hoy)} · Desafío UPAO 2026</p>
         </header>

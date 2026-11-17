@@ -1,3 +1,4 @@
+import { Icono } from './Iconos.jsx'
 // Marco común de todas las pantallas: barra superior (con navegación en pantallas anchas),
 // contenido centrado y pie con los límites de la app.
 //   - por defecto: una columna estrecha (formularios, historial…)
@@ -11,7 +12,7 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
         <div className="barra-in">
           {volver && (
             <a className="volver" href={volver} aria-label="Volver">
-              <span aria-hidden="true">←</span> Volver
+              <Icono nombre="izquierda" tam={18} /> Volver
             </a>
           )}
           <a className={`marca ${volver ? 'marca-escritorio' : ''}`} href="#/">

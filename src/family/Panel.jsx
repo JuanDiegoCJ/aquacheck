@@ -1,3 +1,4 @@
+import { Icono } from '../components/Iconos.jsx'
 import Pantalla from '../components/Pantalla.jsx'
 import Semaforo from '../components/Semaforo.jsx'
 import Guia, { BotonAyuda } from '../components/Guia.jsx'
@@ -40,7 +41,7 @@ export default function Panel({ hogar }) {
         {tareas.map((t) => (
           <li key={t.tipo} className={`tarea tarea-${t.estado}`}>
             <span className="tarea-icono" aria-hidden="true">
-              {TAREAS[t.tipo].icono}
+              <Icono nombre={TAREAS[t.tipo].icono} />
             </span>
             <div className="tarea-texto">
               <p className="tarea-nombre">{TAREAS[t.tipo].etiqueta}</p>
@@ -56,17 +57,17 @@ export default function Panel({ hogar }) {
         </div>
         <div className="col">
       <a className="btn btn-principal btn-grande" data-guia="registrar" href={rutaFiltro(hogar.codigo, 'mantenimiento')}>
-        ✅ Registrar mantenimiento
+        <Icono nombre="registrar" /> Registrar mantenimiento
       </a>
       <a className="btn btn-secundario" data-guia="historial" href={rutaFiltro(hogar.codigo, 'historial')}>
-        📋 Ver historial
+        <Icono nombre="historial" /> Ver historial
       </a>
       <div className="par-botones" data-guia="problemas">
         <a className="btn btn-secundario" href={rutaFiltro(hogar.codigo, 'falla')}>
-          ⚠️ Reportar un problema
+          <Icono nombre="alerta" /> Reportar un problema
         </a>
         <a className="btn btn-secundario" href={rutaFiltro(hogar.codigo, 'corte')}>
-          🚰 Si hay corte de agua
+          <Icono nombre="corte" /> Si hay corte de agua
         </a>
       </div>
 
@@ -81,7 +82,7 @@ export default function Panel({ hogar }) {
       )}
 
       <a className="enlace-discreto" href={rutaFiltro(hogar.codigo, 'ficha')}>
-        🖨️ Ficha para imprimir
+        <Icono nombre="imprimir" /> Ficha para imprimir
       </a>
       <a className="enlace-discreto" data-guia="datos" href={rutaFiltro(hogar.codigo, 'registro')}>
         Actualizar mis datos

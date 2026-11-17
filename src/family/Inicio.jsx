@@ -1,3 +1,4 @@
+import { Icono } from '../components/Iconos.jsx'
 import { useCallback, useState } from 'react'
 import Pantalla from '../components/Pantalla.jsx'
 import Escaner from '../components/Escaner.jsx'
@@ -55,7 +56,7 @@ export default function Inicio() {
       )}
 
       <button type="button" data-guia="escanear" className={`btn btn-grande ${guardado ? 'btn-secundario' : 'btn-principal'}`} onClick={() => setEscaneando(true)}>
-        📷 Escanear el QR de mi filtro
+        <Icono nombre="camara" /> Escanear el QR de mi filtro
       </button>
 
       <form className="tarjeta" onSubmit={enviar} data-guia="codigo">

@@ -1,3 +1,4 @@
+import { Icono } from '../components/Iconos.jsx'
 import { useRef, useState } from 'react'
 import Pantalla from '../components/Pantalla.jsx'
 import Guia, { BotonAyuda } from '../components/Guia.jsx'
@@ -65,7 +66,7 @@ const PASOS_EQUIPO = [
   { selector: '[data-guia="actualizar"]', titulo: 'Actualizar', texto: 'El panel se actualiza solo cada 2 segundos. Este botón fuerza una actualización inmediata.' },
   { selector: '[data-guia="pestanas"]', titulo: 'Secciones', texto: 'Resumen (gráficos), Hogares (tabla con búsqueda y páginas), Fallas (reportes con foto) e Informes (Excel, Word, PDF y fichas).' },
   { selector: '[data-guia="graficos"]', titulo: 'Gráficos', texto: 'Toca un estado o un tramo de un gráfico para ver en Hogares solo esas familias.' },
-  { titulo: 'En Hogares', texto: '👁 Ver abre la vista de solo lectura de una familia (tareas, historial, fallas y contacto). “Ficha” muestra su QR definitivo para imprimir. “WhatsApp” abre el aviso ya escrito.' },
+  { titulo: 'En Hogares', texto: 'El botón Ver abre la vista de solo lectura de una familia (tareas, historial, fallas y contacto). “Ficha” muestra su QR definitivo para imprimir. “WhatsApp” abre el aviso ya escrito.' },
 ]
 
 const enmascarar = (cel) => (cel ? `9•• ••• ${cel.slice(-3)}` : '—')
@@ -170,7 +171,7 @@ function Panel() {
       ancho
       acciones={
         <button type="button" className="btn-mini" data-guia="actualizar" onClick={() => cargarEquipo()} title="Se actualiza solo cada 2 segundos">
-          {estado.cargando ? 'Actualizando…' : '↻ Actualizar'}
+          {estado.cargando ? 'Actualizando…' : <><Icono nombre="actualizar" /> Actualizar</>}
         </button>
       }
     >
@@ -315,7 +316,7 @@ function Panel() {
                             </a>
                           )}
                           <a className="btn-mini" href={'#/equipo/hogar/' + f.h.codigo} aria-label={'Ver el filtro ' + f.h.codigo} title="Ver cómo va este hogar">
-                            👁 Ver
+                            <Icono nombre="ver" /> Ver
                           </a>
                           <a className="btn-mini" href={'#/equipo/ficha/' + f.h.codigo}>
                             Ficha
@@ -329,13 +330,13 @@ function Panel() {
             </div>
             <div className="paginacion" role="navigation" aria-label="Páginas de hogares">
               <button type="button" className="btn-mini" disabled={pg === 0} onClick={() => setPagina(pg - 1)}>
-                ← Anterior
+                <Icono nombre="izquierda" /> Anterior
               </button>
               <span>
                 Página {pg + 1} de {paginas}
               </span>
               <button type="button" className="btn-mini" disabled={pg >= paginas - 1} onClick={() => setPagina(pg + 1)}>
-                Siguiente →
+                Siguiente <Icono nombre="derecha" />
               </button>
             </div>
             <p className="suave">El botón de WhatsApp abre el mensaje ya escrito para que el equipo lo envíe.</p>
@@ -354,7 +355,7 @@ function Panel() {
                   return (
                     <li key={x.id} className={x.estado === 'abierta' ? 'falla-abierta' : 'falla-resuelta'}>
                       <span className="tarea-icono" aria-hidden="true">
-                        {TIPOS_FALLA[x.tipo].icono}
+                        <Icono nombre={TIPOS_FALLA[x.tipo].icono} />
                       </span>
                       <div className="falla-texto">
                         <p className="tarea-nombre">
@@ -383,13 +384,13 @@ function Panel() {
             <h2>Informes y descargas</h2>
             <p className="suave">Se generan en este dispositivo y no incluyen celulares ni fotos.</p>
             <button type="button" className="btn btn-principal" onClick={exportarExcel}>
-              📊 Excel (.xlsx) · 7 hojas
+              <Icono nombre="excel" /> Excel (.xlsx) · 7 hojas
             </button>
             <button type="button" className="btn btn-principal" onClick={exportarWord}>
-              📝 Informe en Word (.docx)
+              <Icono nombre="word" /> Informe en Word (.docx)
             </button>
             <button type="button" className="btn btn-principal" onClick={exportarPDF}>
-              📄 Informe en PDF (con gráficos)
+              <Icono nombre="pdf" /> Informe en PDF (con gráficos)
             </button>
             <a className="enlace-discreto" href="#/equipo/informe">
               Ver el informe en pantalla
@@ -407,7 +408,7 @@ function Panel() {
               </button>
             </div>
             <a className="btn btn-secundario" href="#/equipo/fichas">
-              🖨️ Fichas de todos los filtros
+              <Icono nombre="imprimir" /> Fichas de todos los filtros
             </a>
             <button type="button" className="btn btn-secundario" onClick={salirEquipo}>
               Salir del panel del equipo

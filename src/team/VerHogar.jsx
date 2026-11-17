@@ -1,3 +1,4 @@
+import { Icono } from '../components/Iconos.jsx'
 import Pantalla from '../components/Pantalla.jsx'
 import Semaforo from '../components/Semaforo.jsx'
 import { useDatos, hogaresPanel, mantenimientosPanel, reportesPanel, obtenerContacto, fotoPanel } from '../data/repo.js'
@@ -33,7 +34,7 @@ export default function VerHogar({ codigo }) {
                 {tareas.map((t) => (
                   <li key={t.tipo} className={`tarea tarea-${t.estado}`}>
                     <span className="tarea-icono" aria-hidden="true">
-                      {TAREAS[t.tipo].icono}
+                      <Icono nombre={TAREAS[t.tipo].icono} />
                     </span>
                     <div className="tarea-texto">
                       <p className="tarea-nombre">{TAREAS[t.tipo].etiqueta}</p>
@@ -71,7 +72,7 @@ export default function VerHogar({ codigo }) {
               <ul className="historial">
                 {mantenimientos.map((m) => (
                   <li key={m.id}>
-                    {TAREAS[m.tipo].icono} {TAREAS[m.tipo].etiqueta} · {formatoFecha(m.fecha)}
+                    <Icono nombre={TAREAS[m.tipo].icono} /> {TAREAS[m.tipo].etiqueta} · {formatoFecha(m.fecha)}
                   </li>
                 ))}
               </ul>
@@ -88,7 +89,7 @@ export default function VerHogar({ codigo }) {
                   return (
                     <li key={x.id} className={x.estado === 'abierta' ? 'falla-abierta' : 'falla-resuelta'}>
                       <span className="tarea-icono" aria-hidden="true">
-                        {TIPOS_FALLA[x.tipo].icono}
+                        <Icono nombre={TIPOS_FALLA[x.tipo].icono} />
                       </span>
                       <div className="falla-texto">
                         <p className="tarea-nombre">{TIPOS_FALLA[x.tipo].etiqueta}</p>

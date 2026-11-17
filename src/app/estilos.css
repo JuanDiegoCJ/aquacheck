@@ -1374,3 +1374,13 @@ button.seg:hover {
   .pie { padding: 20px 32px 24px; }
   .pie-copy { padding: 0; }
 }
+
+/* Iconos SVG */
+.icono { vertical-align: -0.2em; flex: none; }
+.btn .icono, .btn-mini .icono, .enlace-discreto .icono { margin-right: 0.35em; }
+.btn-mini .icono:last-child, .guia-botones .icono:last-child { margin-right: 0; margin-left: 0.25em; }
+.tarea-icono .icono, .confirmar-icono .icono, .exito-icono .icono { width: 1.45em; height: 1.45em; margin: 0; vertical-align: middle; }
+.tarea-icono, .confirmar-icono { color: #0b5fa5; }
+.exito-icono .icono { width: 40px; height: 40px; }
+.semaforo-luz svg { display: block; }
+.ficha-marca .icono { margin-right: 6px; }

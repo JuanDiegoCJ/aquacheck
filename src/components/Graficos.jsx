@@ -1,3 +1,4 @@
+import { Icono } from './Iconos.jsx'
 // Gráficos hechos a mano (SVG y CSS): no necesitan librerías, pesan casi nada y funcionan sin internet.
 // Son interactivos cuando reciben `onSeleccionar`: un clic filtra la tabla de hogares.
 import { ESTADOS } from '../team/resumen.js'
@@ -168,7 +169,7 @@ export function BarrasFallas({ tipos }) {
           <div key={t.id} className="barra-fila" title={`${t.etiqueta}: ${t.abiertas} abiertas, ${t.resueltas} resueltas`}>
             <div className="barra-etiqueta">
               <span>
-                <span aria-hidden="true">{t.icono}</span> {t.etiqueta}
+                <span aria-hidden="true"><Icono nombre={t.icono} /></span> {t.etiqueta}
               </span>
               <small>{total}</small>
             </div>

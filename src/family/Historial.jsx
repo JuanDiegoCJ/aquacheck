@@ -1,3 +1,4 @@
+import { Icono } from '../components/Iconos.jsx'
 import Pantalla from '../components/Pantalla.jsx'
 import { useDatos, listarMantenimientos, listarReportes } from '../data/repo.js'
 import { TAREAS, formatoFecha } from '../domain/reglas.js'
@@ -25,7 +26,7 @@ export default function Historial({ hogar }) {
           {lista.map((m) => (
             <li key={m.id}>
               <span className="tarea-icono" aria-hidden="true">
-                {TAREAS[m.tipo].icono}
+                <Icono nombre={TAREAS[m.tipo].icono} />
               </span>
               <div>
                 <p className="tarea-nombre">{TAREAS[m.tipo].etiqueta}</p>
@@ -43,7 +44,7 @@ export default function Historial({ hogar }) {
             {reportes.map((r) => (
               <li key={r.id}>
                 <span className="tarea-icono" aria-hidden="true">
-                  {TIPOS_FALLA[r.tipo].icono}
+                  <Icono nombre={TIPOS_FALLA[r.tipo].icono} />
                 </span>
                 <div>
                   <p className="tarea-nombre">{TIPOS_FALLA[r.tipo].etiqueta}</p>

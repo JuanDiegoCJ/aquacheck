@@ -1,3 +1,4 @@
+import { Icono } from './Iconos.jsx'
 import { useState } from 'react'
 
 // Reduce la foto (máx. 640 px, JPEG) para que ocupe poco en el celular y funcione sin internet.
@@ -48,7 +49,7 @@ export default function FotoInput({ foto, alCambiar }) {
         </>
       ) : (
         <label className="btn btn-secundario foto-boton">
-          📷 Tomar o elegir una foto
+          <Icono nombre="camara" /> Tomar o elegir una foto
           <input type="file" accept="image/*" capture="environment" onChange={elegir} hidden />
         </label>
       )}

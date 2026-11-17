@@ -1,3 +1,4 @@
+import { Icono } from '../components/Iconos.jsx'
 import { useState } from 'react'
 import Pantalla from '../components/Pantalla.jsx'
 import FotoInput from '../components/FotoInput.jsx'
@@ -16,7 +17,7 @@ export default function Falla({ hogar }) {
       <Pantalla titulo="Reporte enviado" volver={volver}>
         <div className="tarjeta exito" role="status">
           <p className="exito-icono" aria-hidden="true">
-            ✓
+            <Icono nombre="ok" tam={40} />
           </p>
           <p>Guardamos tu reporte. El equipo del proyecto lo revisará y te contactará si hace falta.</p>
         </div>
@@ -41,7 +42,7 @@ export default function Falla({ hogar }) {
             className={`btn btn-grande opcion ${tipo === id ? 'opcion-activa' : ''}`}
             onClick={() => setTipo(id)}
           >
-            <span aria-hidden="true">{TIPOS_FALLA[id].icono}</span> {TIPOS_FALLA[id].etiqueta}
+            <span aria-hidden="true"><Icono nombre={TIPOS_FALLA[id].icono} /></span> {TIPOS_FALLA[id].etiqueta}
           </button>
         ))}
       </div>

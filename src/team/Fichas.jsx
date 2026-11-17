@@ -1,3 +1,4 @@
+import { Icono } from '../components/Iconos.jsx'
 import Pantalla from '../components/Pantalla.jsx'
 import { FichaHoja } from '../family/Ficha.jsx'
 import { hogaresPanel, claveQrPanel } from '../data/repo.js'
@@ -10,7 +11,7 @@ export default function Fichas() {
     <Pantalla titulo="Fichas de los 20 filtros" volver="#/equipo" sinPie ancho>
       <p className="suave sin-imprimir">Cada ficha lleva el QR definitivo de su hogar (con su clave). Trata las hojas impresas como material del proyecto: no las publiques.</p>
       <button type="button" className="btn btn-principal sin-imprimir" onClick={() => window.print()}>
-        🖨️ Imprimir todas
+        <Icono nombre="imprimir" /> Imprimir todas
       </button>
       <div className="fichas">
         {hogares.map((h) => (

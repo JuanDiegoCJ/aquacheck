@@ -1,6 +1,7 @@
+import { TriangleAlert, Check } from 'lucide-react'
 import { TEXTO_ESTADO } from '../domain/reglas.js'
 
-const ICONO = { aldia: '✓', pronto: '!', vencido: '!' }
+const ICONO = { aldia: Check, pronto: TriangleAlert, vencido: TriangleAlert }
 
 /** Semáforo grande. No depende solo del color: lleva texto e ícono distintos. */
 export default function Semaforo({ estado }) {
@@ -8,7 +9,10 @@ export default function Semaforo({ estado }) {
   return (
     <div className={`semaforo semaforo-${estado}`} role="status">
       <div className="semaforo-luz" aria-hidden="true">
-        {ICONO[estado]}
+        {(() => {
+          const I = ICONO[estado] ?? Check
+          return <I size={34} strokeWidth={2.6} />
+        })()}
       </div>
       <div>
         <p className="semaforo-etiqueta">{t.etiqueta}</p>

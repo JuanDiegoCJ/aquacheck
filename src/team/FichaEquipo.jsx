@@ -1,3 +1,4 @@
+import { Icono } from '../components/Iconos.jsx'
 import Pantalla from '../components/Pantalla.jsx'
 import { FichaHoja } from '../family/Ficha.jsx'
 import { urlConClave } from '../components/Qr.jsx'
@@ -14,7 +15,7 @@ export default function FichaEquipo({ codigo }) {
           <p className="suave sin-imprimir">Este es el QR definitivo de este hogar. Imprímela y pégala junto al filtro.</p>
           <FichaHoja codigo={codigo} url={urlConClave(codigo, clave)} />
           <button type="button" className="btn btn-principal btn-grande sin-imprimir" onClick={() => window.print()}>
-            🖨️ Imprimir
+            <Icono nombre="imprimir" /> Imprimir
           </button>
         </>
       ) : (

@@ -1,3 +1,4 @@
+import { Icono } from '../components/Iconos.jsx'
 import { useState } from 'react'
 import Pantalla from '../components/Pantalla.jsx'
 import { agregarMantenimiento, quitarMantenimiento } from '../data/repo.js'
@@ -33,7 +34,7 @@ export default function Mantenimiento({ hogar }) {
       <Pantalla titulo="¡Listo, quedó guardado!" volver={volver}>
         <div className="tarjeta exito" role="status">
           <p className="exito-icono" aria-hidden="true">
-            ✓
+            <Icono nombre="ok" tam={40} />
           </p>
           <p>
             Registramos: <strong>{TAREAS[guardado.tipo].etiqueta}</strong>
@@ -56,7 +57,7 @@ export default function Mantenimiento({ hogar }) {
       <Pantalla titulo="¿Registrar esta tarea?" volver={volver}>
         <div className="tarjeta confirmar">
           <p className="confirmar-icono" aria-hidden="true">
-            {TAREAS[tipo].icono}
+            <Icono nombre={TAREAS[tipo].icono} />
           </p>
           <p>
             <strong>{TAREAS[tipo].boton}</strong>
@@ -88,7 +89,7 @@ export default function Mantenimiento({ hogar }) {
       <p className="suave">Toca el botón de lo que acabas de hacer.</p>
       {ORDEN_TAREAS.map((t) => (
         <button key={t} type="button" className="btn btn-accion btn-grande" onClick={() => elegir(t)}>
-          <span aria-hidden="true">{TAREAS[t].icono}</span> {TAREAS[t].boton}
+          <span aria-hidden="true"><Icono nombre={TAREAS[t].icono} /></span> {TAREAS[t].boton}
         </button>
       ))}
     </Pantalla>
