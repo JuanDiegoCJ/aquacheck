@@ -8,7 +8,7 @@ export default function Fichas() {
   return (
     <Pantalla titulo="Fichas de los 20 filtros" volver="#/equipo" sinPie ancho>
       <p className="suave sin-imprimir">
-        Antes de imprimir, abre esta página desde la dirección FINAL de la app: el QR guarda la dirección que ves en el navegador.
+        Vista de ejemplo: estos QR NO llevan la clave de cada hogar. Las fichas definitivas se generan aparte con tools/generar_fichas.mjs (ver supabase/README.md) y no se publican.
       </p>
       <button type="button" className="btn btn-principal sin-imprimir" onClick={() => window.print()}>
         🖨️ Imprimir todas

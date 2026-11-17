@@ -24,6 +24,9 @@ Equipo (correo + clave) →  Supabase Auth          →  tablas, solo si app_met
 Aleatoria de 128 bits o más, en la parte `#` de la dirección (no viaja al servidor ni en el encabezado Referer):
 `https://aquacheck-moche.vercel.app/#/f/AQ-007?k=<clave>`. Si se pierde un QR, se rota la clave del hogar.
 
+## Fichas definitivas
+`npm run build` y luego `node tools/generar_fichas.mjs <claves.csv> <salida.html>` crea las 20 fichas con el QR de cada hogar (código + clave). El CSV y la salida contienen claves: guardarlos FUERA del repositorio. Se imprimen desde el navegador (o a PDF).
+
 ## Pendientes y supuestos (no verificados)
 - Que `pg_cron` esté disponible en el plan gratis: probar con `create extension pg_cron;`. El borrado manual es el respaldo.
 - Que SUPABASE_SERVICE_ROLE_KEY esté disponible por defecto en las Edge Functions (según la documentación, sí; confirmar al desplegar).
@@ -31,4 +34,4 @@ Aleatoria de 128 bits o más, en la parte `#` de la dirección (no viaja al serv
 - Este diseño es propio, apoyado en la guía oficial de RLS y Edge Functions; conviene una revisión de seguridad antes del piloto real.
 
 ## Estado (17/11/2026)
-Proyecto `aquacheck` creado en São Paulo, esquemas 0001 y 0002 aplicados, 20 hogares creados (claves fuera del repo) y función `hogar` desplegada con la verificación de JWT desactivada. Probado desde fuera: clave real 200; clave falsa, ajena o filtro inexistente 401 con el mismo mensaje; el celular nunca se devuelve; límite de intentos (429). Pendiente: conectar la app, QR definitivos, desactivar el registro público de Auth.
+Proyecto `aquacheck` creado en São Paulo, esquemas 0001 y 0002 aplicados, 20 hogares creados (claves fuera del repo) y función `hogar` desplegada con la verificación de JWT desactivada. Probado desde fuera: clave real 200; clave falsa, ajena o filtro inexistente 401 con el mismo mensaje; el celular nunca se devuelve; límite de intentos (429). App conectada (cola sin internet) y fichas definitivas generadas. Pendiente: panel del equipo con Auth, fotos, desactivar el registro público de Auth.
