@@ -5,7 +5,7 @@
 // Privacidad: el celular y el consentimiento viven en 'contactos', separados del historial.
 import { useSyncExternalStore } from 'react'
 import { crearDatosDemo } from './datos_demo.js'
-import { llamarHogar, ErrorRemoto } from './remoto.js'
+import { llamarHogar, ErrorRemoto, iniciarSesionEquipo, renovarSesionEquipo, cerrarSesionEquipo, consultarTabla, actualizarTabla } from './remoto.js'
 
 const PREFIJO = 'aquacheck:v1:'
 const cache = {}
@@ -62,6 +62,7 @@ export function iniciar() {
   // Modo real: al volver la conexión (o al abrir la app) se envía lo pendiente y se trae lo del servidor.
   if (typeof window !== 'undefined') window.addEventListener('online', () => sincronizar())
   sincronizar()
+  cargarEquipo()
 }
 
 export function reiniciarDemo() {
@@ -139,7 +140,17 @@ export function agregarReporte({ codigo, tipo, foto }) {
   return id
 }
 
-export function marcarReporteResuelto(id) {
+export async function marcarReporteResuelto(id) {
+  if (sesionEquipo) {
+    try {
+      await actualizarTabla('reportes', 'id=eq.' + encodeURIComponent(id), { estado: 'resuelta' }, await tokenVigente())
+      await cargarEquipo()
+    } catch {
+      estadoPanel = { cargando: false, error: 'No se pudo marcar como resuelta. Revisa tu internet.' }
+      avisar()
+    }
+    return
+  }
   escribir('reportes', leer('reportes', []).map((r) => (r.id === id ? { ...r, estado: 'resuelta' } : r)))
 }
 
@@ -255,10 +266,94 @@ export async function sincronizar() {
 }
 
 // ---- Equipo del proyecto ----
-export const obtenerContacto = (codigo) => leer('contactos', {})[codigo] ?? null
+// Dos modos. REAL: inicio de sesión con Supabase Auth; los datos se leen del servidor y viven solo en memoria
+// (los celulares no se guardan en el dispositivo). DEMO: PIN y datos de ejemplo locales, sin ningún dato real.
+let sesionEquipo = null
+let datosRemotos = null // { hogares, mantenimientos, reportes, contactos }
+let estadoPanel = { cargando: false, error: null }
+try {
+  sesionEquipo = JSON.parse(sessionStorage.getItem('aquacheck:sesion-equipo'))
+} catch {
+  /* sin sessionStorage */
+}
+const usaRemoto = () => !!sesionEquipo && !!datosRemotos
+const avisar = () => {
+  version++
+  oyentes.forEach((f) => f())
+}
+function guardarSesion(s) {
+  sesionEquipo = s
+  try {
+    if (s) sessionStorage.setItem('aquacheck:sesion-equipo', JSON.stringify(s))
+    else sessionStorage.removeItem('aquacheck:sesion-equipo')
+  } catch {
+    /* ignorado */
+  }
+}
 
-// PIN de DEMOSTRACIÓN. No es seguridad real: en el piloto el panel del equipo
-// debe ir detrás de un inicio de sesión en el servidor.
+export const hogaresPanel = () => (usaRemoto() ? datosRemotos.hogares : listarHogares())
+export const mantenimientosPanel = () => (usaRemoto() ? datosRemotos.mantenimientos : listarMantenimientosTodos())
+export const reportesPanel = () => (usaRemoto() ? datosRemotos.reportes : listarReportes())
+export const obtenerContacto = (codigo) => (usaRemoto() ? datosRemotos.contactos[codigo] ?? null : leer('contactos', {})[codigo] ?? null)
+export const fotoPanel = (id) => (usaRemoto() ? null : obtenerFoto(id))
+export const panelEsReal = () => !!sesionEquipo
+export const estadoDelPanel = () => estadoPanel
+
+async function tokenVigente() {
+  if (!sesionEquipo) throw new ErrorRemoto(401, 'sin_sesion')
+  if (Date.now() > sesionEquipo.vence - 60_000) {
+    guardarSesion({ ...(await renovarSesionEquipo(sesionEquipo.renovacion)), correo: sesionEquipo.correo })
+  }
+  return sesionEquipo.token
+}
+
+/** Trae del servidor todo lo que el equipo puede ver (si la cuenta no es del equipo, las tablas llegan vacías). */
+export async function cargarEquipo() {
+  if (!sesionEquipo) return
+  estadoPanel = { cargando: true, error: null }
+  avisar()
+  try {
+    const t = await tokenVigente()
+    const [h, m, r, c] = await Promise.all([
+      consultarTabla('hogares', 'select=codigo,modelo,fecha_instalacion,registrado&order=codigo', t),
+      consultarTabla('mantenimientos', 'select=id,codigo,tipo,fecha', t),
+      consultarTabla('reportes', 'select=id,codigo,tipo,estado,creado_en,foto_path&order=creado_en.desc', t),
+      consultarTabla('contactos', 'select=codigo,celular,consentimiento_version', t),
+    ])
+    if (!h.length) throw new ErrorRemoto(403, 'sin_permiso')
+    datosRemotos = {
+      hogares: h.map((x) => ({ codigo: x.codigo, registrado: x.registrado, modelo: x.modelo, fechaInstalacion: x.fecha_instalacion })),
+      mantenimientos: m,
+      reportes: r.map((x) => ({ id: x.id, codigo: x.codigo, tipo: x.tipo, estado: x.estado, fecha: x.creado_en, conFoto: !!x.foto_path })),
+      contactos: Object.fromEntries(c.map((x) => [x.codigo, { celular: x.celular, consentimiento: { version: x.consentimiento_version } }])),
+    }
+    estadoPanel = { cargando: false, error: null }
+  } catch (e) {
+    if (e instanceof ErrorRemoto && (e.estado === 401 || e.estado === 403)) {
+      guardarSesion(null)
+      datosRemotos = null
+      estadoPanel = { cargando: false, error: 'Esta cuenta no tiene permiso para ver el panel del equipo.' }
+    } else {
+      estadoPanel = { cargando: false, error: 'No se pudo cargar. Revisa tu internet e inténtalo de nuevo.' }
+    }
+  }
+  avisar()
+}
+
+/** Devuelve null si todo salió bien, o el mensaje de error para mostrar. */
+export async function entrarEquipoReal(correo, clave) {
+  try {
+    guardarSesion({ ...(await iniciarSesionEquipo(correo.trim(), clave)), correo: correo.trim() })
+  } catch (e) {
+    if (e instanceof ErrorRemoto && (e.estado === 400 || e.estado === 401)) return 'Correo o contraseña incorrectos.'
+    if (e instanceof ErrorRemoto && e.estado === 429) return 'Demasiados intentos. Espera unos minutos.'
+    return 'No se pudo conectar. Revisa tu internet.'
+  }
+  await cargarEquipo()
+  return sesionEquipo ? null : estadoPanel.error
+}
+
+// DEMO: PIN y datos de ejemplo locales. No es seguridad real ni toca datos reales.
 export const PIN_EQUIPO = '2026'
 let equipoActivo = false
 try {
@@ -266,7 +361,7 @@ try {
 } catch {
   /* sin sessionStorage */
 }
-export const equipoAutorizado = () => equipoActivo
+export const equipoAutorizado = () => equipoActivo || !!sesionEquipo
 export function entrarEquipo(pin) {
   if (pin !== PIN_EQUIPO) return false
   equipoActivo = true
@@ -275,17 +370,18 @@ export function entrarEquipo(pin) {
   } catch {
     /* ignorado */
   }
-  version++
-  oyentes.forEach((f) => f())
+  avisar()
   return true
 }
 export function salirEquipo() {
+  if (sesionEquipo) cerrarSesionEquipo(sesionEquipo.token)
+  guardarSesion(null)
+  datosRemotos = null
   equipoActivo = false
   try {
     sessionStorage.removeItem('aquacheck:equipo')
   } catch {
     /* ignorado */
   }
-  version++
-  oyentes.forEach((f) => f())
+  avisar()
 }

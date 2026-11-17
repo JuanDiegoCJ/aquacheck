@@ -1,5 +1,5 @@
 // Cálculos del dashboard del equipo. Todo sale de los datos guardados; no hay estadística inventada.
-import { listarHogares, listarMantenimientosTodos, listarReportes } from '../data/repo.js'
+import { hogaresPanel, mantenimientosPanel, reportesPanel } from '../data/repo.js'
 import { ORDEN_TAREAS, TAREAS, TEXTO_ESTADO, resumenHogar, sumarDias, hoyISO } from '../domain/reglas.js'
 import { ORDEN_FALLAS, TIPOS_FALLA } from '../domain/fallas.js'
 
@@ -13,9 +13,9 @@ export const ESTADOS = [
 export const etiquetaEstado = (id) => ESTADOS.find((e) => e.id === id)?.etiqueta ?? id
 
 export function calcularResumen(hoy = hoyISO()) {
-  const hogares = listarHogares()
-  const mantenimientos = listarMantenimientosTodos()
-  const reportes = listarReportes()
+  const hogares = hogaresPanel()
+  const mantenimientos = mantenimientosPanel()
+  const reportes = reportesPanel()
   const abiertas = reportes.filter((r) => r.estado === 'abierta')
 
   const filas = hogares.map((h) => {

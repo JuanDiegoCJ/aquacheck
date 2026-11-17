@@ -3,7 +3,11 @@ import Pantalla from '../components/Pantalla.jsx'
 import { Donut, BarrasPorTarea, BarrasSemanales, BarrasFallas } from '../components/Graficos.jsx'
 import {
   useDatos,
-  obtenerFoto,
+  fotoPanel,
+  entrarEquipoReal,
+  panelEsReal,
+  estadoDelPanel,
+  cargarEquipo,
   obtenerContacto,
   marcarReporteResuelto,
   equipoAutorizado,
@@ -20,32 +24,66 @@ import { calcularResumen, ESTADOS, etiquetaEstado } from './resumen.js'
 import { rutaFiltro } from '../app/ruta.js'
 
 function Acceso() {
+  const [correo, setCorreo] = useState('')
+  const [clave, setClave] = useState('')
+  const [error, setError] = useState(null)
+  const [enviando, setEnviando] = useState(false)
   const [pin, setPin] = useState('')
-  const [error, setError] = useState(false)
+  const [errorPin, setErrorPin] = useState(false)
   return (
     <Pantalla titulo="Equipo del proyecto" volver="#/" sinPie>
       <form
         className="tarjeta formulario"
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault()
-          setError(!entrarEquipo(pin))
+          setEnviando(true)
+          setError(await entrarEquipoReal(correo, clave))
+          setEnviando(false)
         }}
       >
-        <p className="suave">Esta parte es solo para el equipo. Ingresa el PIN.</p>
+        <p className="suave">Esta parte es solo para el equipo. Entra con tu cuenta.</p>
         <div className="campo">
-          <label htmlFor="pin">PIN</label>
-          <input id="pin" type="password" inputMode="numeric" autoComplete="off" value={pin} onChange={(e) => setPin(e.target.value)} aria-invalid={error} />
+          <label htmlFor="correo">Correo</label>
+          <input id="correo" type="email" autoComplete="username" required value={correo} onChange={(e) => setCorreo(e.target.value)} />
+        </div>
+        <div className="campo">
+          <label htmlFor="clave">Contraseña</label>
+          <input id="clave" type="password" autoComplete="current-password" required value={clave} onChange={(e) => setClave(e.target.value)} aria-invalid={!!error} />
           {error && (
             <p className="error" role="alert">
-              PIN incorrecto.
+              {error}
             </p>
           )}
         </div>
-        <button type="submit" className="btn btn-principal">
-          Entrar
+        <button type="submit" className="btn btn-principal" disabled={enviando}>
+          {enviando ? 'Entrando…' : 'Entrar'}
         </button>
-        <p className="suave">PIN de demostración: {PIN_EQUIPO}. En el piloto real se reemplaza por un inicio de sesión seguro.</p>
       </form>
+
+      <details className="tarjeta">
+        <summary>Ver una demostración con datos de ejemplo</summary>
+        <form
+          className="formulario"
+          onSubmit={(e) => {
+            e.preventDefault()
+            setErrorPin(!entrarEquipo(pin))
+          }}
+        >
+          <p className="suave">Datos ficticios guardados en este dispositivo; no muestra datos reales. PIN de demostración: {PIN_EQUIPO}.</p>
+          <div className="campo">
+            <label htmlFor="pin">PIN</label>
+            <input id="pin" type="password" inputMode="numeric" autoComplete="off" value={pin} onChange={(e) => setPin(e.target.value)} aria-invalid={errorPin} />
+            {errorPin && (
+              <p className="error" role="alert">
+                PIN incorrecto.
+              </p>
+            )}
+          </div>
+          <button type="submit" className="btn btn-secundario">
+            Ver demostración
+          </button>
+        </form>
+      </details>
     </Pantalla>
   )
 }
@@ -59,6 +97,7 @@ export default function Equipo() {
 
 function Panel() {
   const r = calcularResumen()
+  const estado = estadoDelPanel()
   // filtro = { estado, tarea|null }: lo fijan los gráficos y los botones de estado
   const [filtro, setFiltro] = useState(null)
   const [busqueda, setBusqueda] = useState('')
@@ -134,6 +173,21 @@ function Panel() {
 
   return (
     <Pantalla titulo="Panel del equipo" volver="#/" sinPie ancho>
+      {panelEsReal() ? (
+        <p className="suave" role="status">
+          Datos reales del piloto (Supabase). {estado.cargando ? 'Actualizando…' : ''}{' '}
+          <button type="button" className="enlace-boton" onClick={cargarEquipo}>
+            Actualizar
+          </button>
+        </p>
+      ) : (
+        <p className="suave" role="status">Demostración con datos de ejemplo.</p>
+      )}
+      {estado.error && (
+        <p className="error" role="alert">
+          {estado.error}
+        </p>
+      )}
       <section className="indicadores" aria-label="Indicadores del piloto">
         <div className="indicador">
           <strong>
@@ -279,7 +333,7 @@ function Panel() {
             ) : (
               <ul className="fallas">
                 {r.reportes.map((x) => {
-                  const foto = x.conFoto ? obtenerFoto(x.id) : null
+                  const foto = x.conFoto ? fotoPanel(x.id) : null
                   return (
                     <li key={x.id} className={x.estado === 'abierta' ? 'falla-abierta' : 'falla-resuelta'}>
                       <span className="tarea-icono" aria-hidden="true">

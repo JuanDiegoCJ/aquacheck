@@ -1,10 +1,10 @@
 import Pantalla from '../components/Pantalla.jsx'
 import { FichaHoja } from '../family/Ficha.jsx'
-import { listarHogares } from '../data/repo.js'
+import { hogaresPanel } from '../data/repo.js'
 
 /** Todas las fichas del piloto, listas para imprimir (una por hoja). */
 export default function Fichas() {
-  const hogares = listarHogares()
+  const hogares = hogaresPanel()
   return (
     <Pantalla titulo="Fichas de los 20 filtros" volver="#/equipo" sinPie ancho>
       <p className="suave sin-imprimir">
