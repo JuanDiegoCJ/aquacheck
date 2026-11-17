@@ -57,7 +57,7 @@ a {
   display: flex;
   flex-direction: column;
   /* espacio al final para que la insignia fija de Netlify no tape el último botón */
-  padding-bottom: calc(env(safe-area-inset-bottom) + 72px);
+  padding-bottom: env(safe-area-inset-bottom);
   min-width: 0;
 }
 .app-doble {
@@ -1349,4 +1349,19 @@ button.seg:hover {
   .barra-in .marca { order: 0; }
   .barra-in .volver { order: 1; padding-left: 8px; border-left: 1px solid rgba(255, 255, 255, 0.35); margin-left: 4px; }
   .barra-in .nav { order: 2; margin-left: auto; }
+}
+
+/* Pie de página común a todas las pantallas */
+.pie { max-width: none; width: 100%; margin: 24px 0 0; padding: 0; text-align: left; display: block; background: #e6eff8; border-top: 1px solid #cfdeec; color: #3d556b; font-size: 0.9rem; }
+.pie-in { max-width: 1760px; margin: 0 auto; padding: 20px 16px 8px; display: grid; gap: 14px; }
+.pie-logo { display: inline-flex; align-items: center; gap: 8px; color: #0b5fa5; font-weight: 700; font-size: 1.05rem; text-decoration: none; }
+.pie-marca p, .pie-aviso { margin: 4px 0 0; line-height: 1.45; }
+.pie-aviso strong { color: #14263a; }
+.pie-enlaces { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.pie-enlaces a { color: #0b5fa5; font-weight: 600; }
+.pie-copy { max-width: 1760px; margin: 0 auto; padding: 8px 16px 64px; font-size: 0.8rem; color: #5b7289; }
+@media (min-width: 900px) {
+  .pie-in { grid-template-columns: 1.1fr 1.6fr auto; align-items: start; gap: 40px; padding: 24px 32px 8px; }
+  .pie-enlaces { flex-direction: column; align-items: flex-end; }
+  .pie-copy { padding: 8px 32px 20px; }
 }
