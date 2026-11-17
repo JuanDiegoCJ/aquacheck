@@ -31,4 +31,4 @@ Aleatoria de 128 bits o más, en la parte `#` de la dirección (no viaja al serv
 - Este diseño es propio, apoyado en la guía oficial de RLS y Edge Functions; conviene una revisión de seguridad antes del piloto real.
 
 ## Estado (17/11/2026)
-Proyecto quacheck creado en São Paulo, esquema 0001 y 0002 aplicados, 20 hogares creados (claves fuera del repo) y función hogar desplegada con JWT desactivado. Probado desde fuera: clave real 200; clave falsa, ajena o filtro inexistente 401 con el mismo mensaje; el celular nunca se devuelve; límite de intentos (429). Pendiente: conectar la app, QR definitivos, desactivar el registro público de Auth.
+Proyecto `aquacheck` creado en São Paulo, esquemas 0001 y 0002 aplicados, 20 hogares creados (claves fuera del repo) y función `hogar` desplegada con la verificación de JWT desactivada. Probado desde fuera: clave real 200; clave falsa, ajena o filtro inexistente 401 con el mismo mensaje; el celular nunca se devuelve; límite de intentos (429). Pendiente: conectar la app, QR definitivos, desactivar el registro público de Auth.
