@@ -1582,3 +1582,6 @@ input, select, textarea { font-size: 1rem; }
 .btn-flecha { width: 44px; min-width: 44px; padding: 0 !important; display: inline-flex; align-items: center; justify-content: center; }
 .btn-flecha .icono { margin: 0 !important; }
 .buscador { text-overflow: ellipsis; }
+
+/* Contraste del pie de página (WCAG AA: al menos 4,5:1) */
+.pie, .pie-aviso, .pie-copy { color: #36495c; }
