@@ -1536,3 +1536,27 @@ input, select, textarea { font-size: 1rem; }
 @media (max-width: 767px) {
   .tabla td a:not(.btn-mini) { display: inline-flex; align-items: center; min-height: 44px; }
 }
+
+/* ---- Ajustes tras revisión en celular ---- */
+/* Enlaces discretos centrados (p. ej. "Soy del equipo del proyecto") */
+.enlace-discreto { display: flex; justify-content: center; align-items: center; text-align: center; width: 100%; }
+
+/* Pie de página más simple: dos líneas centradas y sin chocar con el botón "?" */
+.pie { padding: 16px 16px calc(84px + env(safe-area-inset-bottom)); }
+.pie-aviso { font-size: 0.9rem; margin: 0 auto; }
+.pie-copy { font-size: 0.8rem; margin: 4px 0 0; }
+@media (min-width: 900px) { .pie { padding: 18px 32px 22px; } }
+
+/* Botones de acciones en la tabla de hogares: texto centrado y alturas iguales */
+.acciones .btn-mini { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 16px; min-height: 40px; line-height: 1; font-weight: 600; }
+@media (max-width: 767px) {
+  .acciones { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 6px; }
+  .acciones .btn-mini { min-height: 44px; flex: 1 1 auto; max-width: 160px; }
+  .buscador { width: 100%; }
+}
+
+/* Pie simplificado en celular: solo lo esencial */
+.pie-largo { display: none; }
+@media (min-width: 768px) { .pie-largo { display: inline; } }
+.pie { padding-top: 14px; }
+@media (max-width: 767px) { .ayuda-flotante { width: 44px; height: 44px; font-size: 1.3rem; } }

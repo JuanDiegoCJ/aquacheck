@@ -316,7 +316,7 @@ function Panel() {
                             </a>
                           )}
                           <a className="btn-mini" href={'#/equipo/hogar/' + f.h.codigo} aria-label={'Ver el filtro ' + f.h.codigo} title="Ver cómo va este hogar">
-                            <Icono nombre="ver" /> Ver
+                            Ver
                           </a>
                           <a className="btn-mini" href={'#/equipo/ficha/' + f.h.codigo}>
                             Ficha

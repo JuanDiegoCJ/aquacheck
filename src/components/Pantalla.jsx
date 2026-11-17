@@ -45,9 +45,9 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
       </main>
       <footer className="pie">
         <p className="pie-aviso">
-          AquaCheck te ayuda a recordar el mantenimiento de tu filtro. <strong>No mide la calidad del agua ni certifica que sea potable.</strong>
+          <span className="pie-largo">AquaCheck te ayuda a recordar el mantenimiento de tu filtro. </span><strong>No mide la calidad del agua ni certifica que sea potable.</strong>
         </p>
-        <p className="pie-copy">© 2026 AquaCheck · Equipo estudiantil del Desafío UPAO</p>
+        <p className="pie-copy">© 2026 AquaCheck · <span className="pie-largo">Equipo estudiantil del </span>Desafío UPAO</p>
       </footer>
     </div>
   )
