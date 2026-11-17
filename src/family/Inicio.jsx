@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 import Pantalla from '../components/Pantalla.jsx'
 import Escaner from '../components/Escaner.jsx'
 import { Punto } from '../components/Semaforo.jsx'
-import { useDatos, listarHogares, listarMantenimientos, miFiltro } from '../data/repo.js'
+import { useDatos, miFiltro, esReal } from '../data/repo.js'
 import { extraerCodigo, resumenHogar } from '../domain/reglas.js'
 import { irA, rutaFiltro } from '../app/ruta.js'
 
@@ -11,7 +11,7 @@ export default function Inicio() {
   const [escaneando, setEscaneando] = useState(false)
   const [texto, setTexto] = useState('')
   const [error, setError] = useState('')
-  const guardado = miFiltro()
+  const guardado = miFiltro() && esReal(miFiltro()) ? miFiltro() : null
 
   // Si el QR (o lo pegado) trae la clave del hogar (?k=…), se conserva para que el filtro se conecte a Supabase.
   const abrir = useCallback((codigo, bruto) => {
@@ -73,29 +73,6 @@ export default function Inicio() {
           </p>
         )}
       </form>
-
-        </div>
-        <div className="col">
-      <section className="tarjeta demo">
-        <h2>Modo demostración</h2>
-        <p className="suave">
-          Filtros de ejemplo del piloto (datos ficticios). Toca uno para ver cómo lo vería esa familia. Los grises aún no se
-          registran.
-        </p>
-        <ul className="lista-demo">
-          {listarHogares().map((h) => {
-            const { general } = resumenHogar(h, listarMantenimientos(h.codigo))
-            return (
-              <li key={h.codigo}>
-                <a href={rutaFiltro(h.codigo)} className="chip">
-                  {h.registrado ? <Punto estado={general} /> : <span className="punto punto-nuevo" aria-label="Sin registrar" />}
-                  {h.codigo}
-                </a>
-              </li>
-            )
-          })}
-        </ul>
-      </section>
 
         </div>
       </div>

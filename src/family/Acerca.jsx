@@ -1,5 +1,4 @@
 import Pantalla from '../components/Pantalla.jsx'
-import { reiniciarDemo } from '../data/repo.js'
 import Aviso from '../components/Aviso.jsx'
 
 // En computadora: izquierda = qué hace / qué no hace / sobre el prototipo; derecha = tus datos (el bloque más largo).
@@ -29,23 +28,11 @@ export default function Acerca() {
           </section>
 
           <section className="tarjeta">
-            <h2>Sobre este prototipo</h2>
+            <h2>Sobre este piloto</h2>
             <p className="suave">
-              Es una versión de demostración del Desafío UPAO 2026. Los 20 filtros y sus datos son de ejemplo, y los avisos de
-              WhatsApp los envía el equipo a mano desde su panel. Los datos se guardan solo en este dispositivo.
+              Es el prototipo del Desafío UPAO 2026. Tus registros se guardan en tu celular y se envían al equipo del proyecto cuando
+              hay internet. Los avisos de WhatsApp los envía el equipo a mano desde su panel.
             </p>
-            <button
-              type="button"
-              className="btn btn-secundario"
-              onClick={() => {
-                if (window.confirm('¿Borrar lo registrado en este dispositivo y volver a los datos de ejemplo?')) {
-                  reiniciarDemo()
-                  window.location.hash = '#/'
-                }
-              }}
-            >
-              Reiniciar la demostración
-            </button>
           </section>
         </div>
 

@@ -4,7 +4,6 @@
 //
 // Privacidad: el celular y el consentimiento viven en 'contactos', separados del historial.
 import { useSyncExternalStore } from 'react'
-import { crearDatosDemo } from './datos_demo.js'
 import { llamarHogar, ErrorRemoto, iniciarSesionEquipo, renovarSesionEquipo, cerrarSesionEquipo, consultarTabla, actualizarTabla, subirFotoFirmada, firmarFotos } from './remoto.js'
 
 const PREFIJO = 'aquacheck:v1:'
@@ -44,21 +43,24 @@ export const obtenerVersion = () => version
 /** Hace que el componente se vuelva a dibujar cuando cambian los datos. */
 export const useDatos = () => useSyncExternalStore(suscribir, obtenerVersion)
 
-const VERSION_SEMILLA = 2 // subir si cambia la forma de los datos de ejemplo
-
-function sembrar() {
-  const d = crearDatosDemo()
-  escribir('hogares', d.hogares)
-  escribir('contactos', d.contactos)
-  escribir('mantenimientos', d.mantenimientos)
-  escribir('reportes', d.reportes)
+// Antes la app traía 20 filtros de ejemplo en cada celular. Ya no: un filtro existe solo si se abrió su QR con clave.
+// Una sola vez, se borra lo que haya quedado de aquellos datos de ejemplo (y de cualquier filtro sin clave).
+function limpiarDemo() {
+  if (leer('demo-limpiada', false)) return
+  const conClave = new Set(Object.keys(claves()))
+  const soloReales = (obj) => Object.fromEntries(Object.entries(obj ?? {}).filter(([c]) => conClave.has(c)))
+  escribir('hogares', soloReales(leer('hogares', {})))
+  escribir('contactos', {})
+  escribir('mantenimientos', leer('mantenimientos', []).filter((m) => conClave.has(m.codigo)))
+  escribir('reportes', leer('reportes', []).filter((r) => conClave.has(r.codigo)))
   escribir('fotos', {})
-  escribir('cortes', {})
-  escribir('semilla', VERSION_SEMILLA)
+  escribir('cortes', soloReales(leer('cortes', {})))
+  if (!conClave.has(leer('mi-filtro', null))) escribir('mi-filtro', null)
+  escribir('demo-limpiada', true)
 }
 
 export function iniciar() {
-  if (leer('semilla', 0) < VERSION_SEMILLA) sembrar()
+  limpiarDemo()
   // Modo real: al volver la conexión (o al abrir la app) se envía lo pendiente y se trae lo del servidor.
   if (typeof window !== 'undefined') window.addEventListener('online', () => sincronizar())
   sincronizar()
@@ -76,14 +78,6 @@ export function iniciar() {
     document.addEventListener('visibilitychange', alVolver)
     window.addEventListener('focus', alVolver)
   }
-}
-
-export function reiniciarDemo() {
-  escribir('mi-filtro', null)
-  escribir('claves', {})
-  escribir('cola', [])
-  escribir('idmap', {})
-  sembrar()
 }
 
 // ---- Lectura ----
@@ -211,7 +205,7 @@ export function adoptarClave(codigo, secreto) {
   escribir('claves', { ...claves(), [codigo]: secreto })
   // Los datos de ejemplo de ese código se descartan: desde ahora vale lo que diga el servidor.
   const hogares = { ...leer('hogares', {}) }
-  hogares[codigo] = { codigo, registrado: false, modelo: hogares[codigo]?.modelo, fechaInstalacion: null, real: true }
+  hogares[codigo] = { codigo, registrado: false, modelo: hogares[codigo]?.modelo, fechaInstalacion: null, real: true, cargando: true } // cargando: hasta traer su estado real
   escribir('hogares', hogares)
   escribir('mantenimientos', leer('mantenimientos', []).filter((m) => m.codigo !== codigo))
   escribir('reportes', leer('reportes', []).filter((r) => r.codigo !== codigo))
@@ -331,9 +325,9 @@ function guardarSesion(s) {
   }
 }
 
-export const hogaresPanel = () => (usaRemoto() ? datosRemotos.hogares : listarHogares())
-export const mantenimientosPanel = () => (usaRemoto() ? datosRemotos.mantenimientos : listarMantenimientosTodos())
-export const reportesPanel = () => (usaRemoto() ? datosRemotos.reportes : listarReportes())
+export const hogaresPanel = () => (usaRemoto() ? datosRemotos.hogares : [])
+export const mantenimientosPanel = () => (usaRemoto() ? datosRemotos.mantenimientos : [])
+export const reportesPanel = () => (usaRemoto() ? datosRemotos.reportes : [])
 export const obtenerContacto = (codigo) => (usaRemoto() ? datosRemotos.contactos[codigo] ?? null : leer('contactos', {})[codigo] ?? null)
 export const fotoPanel = (id) => (usaRemoto() ? datosRemotos.fotos[id] ?? null : obtenerFoto(id))
 export const estadoDelPanel = () => estadoPanel

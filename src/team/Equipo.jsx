@@ -260,7 +260,7 @@ function Panel() {
                     return (
                       <tr key={f.h.codigo}>
                         <td>
-                          <a href={rutaFiltro(f.h.codigo)}>{f.h.codigo}</a>
+                          <a href={'#/equipo/hogar/' + f.h.codigo}>{f.h.codigo}</a>
                         </td>
                         <td data-label="Estado">
                           <span className="punto" style={{ background: f.general === 'sinregistrar' ? '#fff' : color, border: f.general === 'sinregistrar' ? '2px solid #8aa0b3' : 'none' }} aria-hidden="true" /> {etiquetaEstado(f.general)}
@@ -274,6 +274,9 @@ function Panel() {
                               WhatsApp
                             </a>
                           )}
+                          <a className="btn-mini" href={'#/equipo/hogar/' + f.h.codigo} aria-label={'Ver el filtro ' + f.h.codigo} title="Ver cómo va este hogar">
+                            👁 Ver
+                          </a>
                           <a className="btn-mini" href={rutaFiltro(f.h.codigo, 'ficha')}>
                             Ficha
                           </a>

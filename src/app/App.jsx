@@ -7,6 +7,7 @@ import Ficha from '../family/Ficha.jsx'
 import Equipo from '../team/Equipo.jsx'
 import Fichas from '../team/Fichas.jsx'
 import Informe from '../team/Informe.jsx'
+import VerHogar from '../team/VerHogar.jsx'
 import Inicio from '../family/Inicio.jsx'
 import Registro from '../family/Registro.jsx'
 import Panel from '../family/Panel.jsx'
@@ -17,11 +18,10 @@ import Pantalla from '../components/Pantalla.jsx'
 
 function NoEncontrado({ codigo }) {
   return (
-    <Pantalla titulo="No encontramos ese código" volver="#/">
+    <Pantalla titulo="Escanea el QR de tu filtro" volver="#/">
       <div className="tarjeta">
         <p>
-          El código <strong>{codigo}</strong> no está en la lista de este piloto. Revisa que esté bien escrito o escanea
-          de nuevo el QR pegado en tu filtro.
+          Para entrar al filtro <strong>{codigo}</strong> en este celular, escanea el QR pegado en tu filtro con la cámara del celular. Sin ese QR no se puede abrir un filtro.
         </p>
         <a className="btn btn-principal" href="#/">
           Volver al inicio
@@ -55,8 +55,18 @@ export default function App() {
   if (pantalla === 'acerca') return <Acerca />
   if (pantalla === 'equipo') return <Equipo />
   if (pantalla === 'fichas') return equipoAutorizado() ? <Fichas /> : <Equipo />
+  if (pantalla === 'hogarequipo') return equipoAutorizado() ? <VerHogar codigo={codigo} /> : <Equipo />
   if (pantalla === 'informe') return equipoAutorizado() ? <Informe /> : <Equipo />
   if (!hogar) return <NoEncontrado codigo={codigo} />
+  if (hogar.cargando) {
+    return (
+      <Pantalla titulo={'Filtro ' + hogar.codigo} volver="#/">
+        <div className="tarjeta" role="status">
+          <p>Conectando con tu filtro… Si no avanza, revisa tu internet.</p>
+        </div>
+      </Pantalla>
+    )
+  }
 
   // Un filtro sin registrar siempre pasa primero por el registro.
   if (!hogar.registrado || pantalla === 'registro') return <Registro hogar={hogar} />
