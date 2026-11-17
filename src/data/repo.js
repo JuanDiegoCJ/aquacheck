@@ -256,7 +256,7 @@ export async function sincronizar() {
             }
           } catch (e) {
             if (e instanceof ErrorRemoto && op.accion === 'foto_subir' && e.estado >= 400 && e.estado < 500) errores[codigo] = 'No se pudo enviar una foto y se descartó.'
-            else if (e instanceof ErrorRemoto && e.estado === 400) errores[codigo] = 'Un envío fue rechazado y se descartó.'
+            else if (e instanceof ErrorRemoto && e.estado >= 400 && e.estado < 500 && e.estado !== 401 && e.estado !== 429) errores[codigo] = 'Un envío fue rechazado y se descartó.'
             else throw e // 401, sin internet o error del servidor: se maneja abajo
           }
           escribir('cola', cola().filter((o) => o.id !== op.id))

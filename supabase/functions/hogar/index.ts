@@ -7,13 +7,17 @@
 //   accion: 'ver' | 'registrar' | 'mantenimiento_agregar' | 'mantenimiento_quitar' | 'reporte_agregar'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
-const CORS = {
-  'Access-Control-Allow-Origin': '*', // ajustar al dominio final (p. ej. https://aquacheck-moche.vercel.app)
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+// Solo estos orígenes pueden llamar a la función desde un navegador (defensa adicional: igual hace falta la clave del QR).
+const ORIGENES = ['https://aquacheck-moche.vercel.app', 'http://localhost:4173', 'http://localhost:5173']
+const corsPara = (req: Request) => {
+  const origen = req.headers.get('Origin') ?? ''
+  return {
+    'Access-Control-Allow-Origin': ORIGENES.includes(origen) ? origen : ORIGENES[0],
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    Vary: 'Origin',
+  }
 }
-const json = (cuerpo: unknown, status = 200) =>
-  new Response(JSON.stringify(cuerpo), { status, headers: { ...CORS, 'Content-Type': 'application/json' } })
 
 const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, {
   auth: { persistSession: false },
@@ -32,15 +36,35 @@ function igualesEnTiempoConstante(a: string, b: string) {
 
 const TIPOS_MANT = ['limpieza_filtro', 'cambio_cartucho', 'limpieza_tanque']
 const TIPOS_FALLA = ['gotea', 'turbia', 'poca', 'otra']
-const FECHA = /^\d{4}-\d{2}-\d{2}$/
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const MAX_CUERPO = 16_384 // bytes; el cuerpo más grande legítimo es el registro (≈ 3 KB)
+const MAX_MANTENIMIENTOS = 500 // por hogar (evita llenar la base con una clave válida)
+const MAX_REPORTES = 200
+
+// Fecha real (no solo con forma de fecha), entre 2020 y mañana (por la zona horaria).
+function fechaValida(v: unknown) {
+  if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return false
+  const d = new Date(v + 'T00:00:00Z')
+  if (Number.isNaN(d.getTime()) || d.toISOString().slice(0, 10) !== v) return false
+  return v >= '2020-01-01' && d.getTime() <= Date.now() + 36 * 3600_000
+}
 
 Deno.serve(async (req) => {
+  const CORS = corsPara(req)
+  const json = (cuerpo: unknown, status = 200) =>
+    new Response(JSON.stringify(cuerpo), { status, headers: { ...CORS, 'Content-Type': 'application/json' } })
+
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS })
   if (req.method !== 'POST') return json({ error: 'metodo' }, 405)
 
+  // Se rechaza el cuerpo grande ANTES de procesarlo (sin importar quién lo envía).
+  if (Number(req.headers.get('content-length') ?? 0) > MAX_CUERPO) return json({ error: 'tamano' }, 413)
   let b: Record<string, any>
   try {
-    b = await req.json()
+    const texto = await req.text()
+    if (texto.length > MAX_CUERPO) return json({ error: 'tamano' }, 413)
+    b = JSON.parse(texto)
+    if (b === null || typeof b !== 'object' || Array.isArray(b)) throw new Error('forma')
   } catch {
     return json({ error: 'json' }, 400)
   }
@@ -48,18 +72,20 @@ Deno.serve(async (req) => {
   const secreto = String(b.secreto ?? '')
   if (!/^AQ-\d{3}$/.test(codigo) || secreto.length < 16 || secreto.length > 128) return json({ error: 'acceso' }, 401)
 
-  // Límite de intentos fallidos: 10 cada 10 minutos por filtro.
-  const desde = new Date(Date.now() - 10 * 60_000).toISOString()
-  const { count } = await db.from('intentos_acceso').select('id', { count: 'exact', head: true }).eq('codigo', codigo).gte('creado_en', desde)
-  if ((count ?? 0) >= 10) return json({ error: 'demasiados_intentos' }, 429)
-
   const { data: hogar } = await db.from('hogares').select('codigo, modelo, fecha_instalacion, registrado, secreto_hash').eq('codigo', codigo).maybeSingle()
-  const valido = hogar && igualesEnTiempoConstante(await sha256Hex(secreto), hogar.secreto_hash)
-  if (!hogar || !valido) {
+  const valido = !!hogar && igualesEnTiempoConstante(await sha256Hex(secreto), hogar.secreto_hash)
+  if (!valido) {
+    // Solo los intentos FALLIDOS cuentan (10 cada 10 minutos por filtro). Una clave correcta nunca queda bloqueada:
+    // así nadie puede dejar sin acceso a una familia mandando claves falsas. Las claves tienen 192 bits: adivinarlas no es viable.
+    const desde = new Date(Date.now() - 10 * 60_000).toISOString()
+    await db.from('intentos_acceso').delete().lt('creado_en', desde) // la tabla no crece sin límite
+    const { count } = await db.from('intentos_acceso').select('id', { count: 'exact', head: true }).eq('codigo', codigo)
+    if ((count ?? 0) >= 10) return json({ error: 'demasiados_intentos' }, 429)
     await db.from('intentos_acceso').insert({ codigo })
     return json({ error: 'acceso' }, 401) // misma respuesta si el filtro no existe o la clave es incorrecta
   }
-  const { secreto_hash: _oculto, ...hogarPublico } = hogar
+  const { secreto_hash: _oculto, ...hogarPublico } = hogar!
+  const falla = () => json({ error: 'servidor' }, 500)
 
   switch (b.accion) {
     case 'ver': {
@@ -67,33 +93,47 @@ Deno.serve(async (req) => {
         db.from('mantenimientos').select('id, tipo, fecha').eq('codigo', codigo).order('fecha', { ascending: false }),
         db.from('reportes').select('id, tipo, estado, creado_en').eq('codigo', codigo).order('creado_en', { ascending: false }),
       ])
+      if (m.error || r.error) return falla()
       return json({ hogar: hogarPublico, mantenimientos: m.data ?? [], reportes: r.data ?? [] }) // nunca devuelve el celular
     }
     case 'registrar': {
       const c = b.consentimiento ?? {}
-      if (!FECHA.test(String(b.fecha_instalacion)) || !/^9\d{8}$/.test(String(b.celular)) || !c.version || !c.texto) return json({ error: 'datos' }, 400)
-      await db.from('hogares').update({ fecha_instalacion: b.fecha_instalacion, registrado: true }).eq('codigo', codigo)
-      await db.from('contactos').upsert({ codigo, celular: b.celular, consentimiento_version: String(c.version), consentimiento_texto: String(c.texto) })
+      const version = String(c.version ?? '')
+      const texto = String(c.texto ?? '')
+      if (!fechaValida(b.fecha_instalacion) || !/^9\d{8}$/.test(String(b.celular)) || !version || version.length > 40 || !texto || texto.length > 6000) {
+        return json({ error: 'datos' }, 400)
+      }
+      const a = await db.from('hogares').update({ fecha_instalacion: b.fecha_instalacion, registrado: true }).eq('codigo', codigo)
+      const k = await db.from('contactos').upsert({ codigo, celular: b.celular, consentimiento_version: version, consentimiento_texto: texto })
+      if (a.error || k.error) return falla()
       return json({ ok: true })
     }
     case 'mantenimiento_agregar': {
-      if (!TIPOS_MANT.includes(b.tipo) || !FECHA.test(String(b.fecha))) return json({ error: 'datos' }, 400)
-      const { data } = await db.from('mantenimientos').insert({ codigo, tipo: b.tipo, fecha: b.fecha }).select('id').single()
-      return json({ id: data?.id })
+      if (!TIPOS_MANT.includes(b.tipo) || !fechaValida(b.fecha)) return json({ error: 'datos' }, 400)
+      const { count } = await db.from('mantenimientos').select('id', { count: 'exact', head: true }).eq('codigo', codigo)
+      if ((count ?? 0) >= MAX_MANTENIMIENTOS) return json({ error: 'limite' }, 400)
+      const { data, error } = await db.from('mantenimientos').insert({ codigo, tipo: b.tipo, fecha: b.fecha }).select('id').single()
+      if (error) return falla()
+      return json({ id: data.id })
     }
     case 'mantenimiento_quitar': {
-      await db.from('mantenimientos').delete().eq('id', String(b.id)).eq('codigo', codigo) // solo de este hogar
+      if (!UUID.test(String(b.id))) return json({ error: 'datos' }, 400)
+      const { error } = await db.from('mantenimientos').delete().eq('id', String(b.id)).eq('codigo', codigo) // solo de este hogar
+      if (error) return falla()
       return json({ ok: true })
     }
     case 'reporte_agregar': {
       if (!TIPOS_FALLA.includes(b.tipo)) return json({ error: 'datos' }, 400)
+      const { count } = await db.from('reportes').select('id', { count: 'exact', head: true }).eq('codigo', codigo)
+      if ((count ?? 0) >= MAX_REPORTES) return json({ error: 'limite' }, 400)
       const id = crypto.randomUUID()
       const ruta = b.foto === true ? `${codigo}/${id}.jpg` : null
-      await db.from('reportes').insert({ id, codigo, tipo: b.tipo, foto_path: ruta })
+      const { error } = await db.from('reportes').insert({ id, codigo, tipo: b.tipo, foto_path: ruta })
+      if (error) return falla()
       if (!ruta) return json({ id })
       // Enlace de subida firmado: permite subir SOLO ese archivo, una vez (la familia no tiene acceso directo a Storage).
-      const { data: firma, error } = await db.storage.from('fotos-fallas').createSignedUploadUrl(ruta)
-      if (error || !firma) {
+      const { data: firma, error: e2 } = await db.storage.from('fotos-fallas').createSignedUploadUrl(ruta)
+      if (e2 || !firma) {
         await db.from('reportes').update({ foto_path: null }).eq('id', id) // el reporte queda, sin foto
         return json({ id })
       }
