@@ -13,7 +13,11 @@ export default function Inicio() {
   const [error, setError] = useState('')
   const guardado = miFiltro()
 
-  const abrir = useCallback((codigo) => irA(rutaFiltro(codigo).slice(1)), [])
+  // Si el QR (o lo pegado) trae la clave del hogar (?k=…), se conserva para que el filtro se conecte a Supabase.
+  const abrir = useCallback((codigo, bruto) => {
+    const k = String(bruto ?? '').match(/[?&]k=([A-Za-z0-9_-]{16,128})/)?.[1]
+    irA(rutaFiltro(codigo).slice(1) + (k ? `?k=${k}` : ''))
+  }, [])
 
   function enviar(e) {
     e.preventDefault()
@@ -23,7 +27,7 @@ export default function Inicio() {
       return
     }
     setError('')
-    abrir(codigo)
+    abrir(codigo, texto)
   }
 
   return (
@@ -103,9 +107,9 @@ export default function Inicio() {
       {escaneando && (
         <Escaner
           alCerrar={() => setEscaneando(false)}
-          alLeer={(codigo) => {
+          alLeer={(codigo, bruto) => {
             setEscaneando(false)
-            abrir(codigo)
+            abrir(codigo, bruto)
           }}
         />
       )}

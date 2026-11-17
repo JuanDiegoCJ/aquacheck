@@ -22,7 +22,7 @@ export default function Escaner({ alLeer, alCerrar }) {
             if (codigo && activo) {
               activo = false
               scanner.stop()
-              alLeerRef.current(codigo)
+              alLeerRef.current(codigo, resultado.data)
             }
           },
           { returnDetailedScanResult: true, highlightScanRegion: true, preferredCamera: 'environment' },
