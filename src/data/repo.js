@@ -4,7 +4,7 @@
 //
 // Privacidad: el celular y el consentimiento viven en 'contactos', separados del historial.
 import { useSyncExternalStore } from 'react'
-import { llamarHogar, ErrorRemoto, iniciarSesionEquipo, renovarSesionEquipo, cerrarSesionEquipo, consultarTabla, actualizarTabla, subirFotoFirmada, firmarFotos } from './remoto.js'
+import { llamarHogar, ErrorRemoto, iniciarSesionEquipo, renovarSesionEquipo, cerrarSesionEquipo, consultarTabla, actualizarTabla, insertarTabla, subirFotoFirmada, firmarFotos } from './remoto.js'
 
 const PREFIJO = 'aquacheck:v1:'
 const cache = {}
@@ -398,6 +398,50 @@ export async function cargarEquipo(silencioso = false) {
   } finally {
     cargandoEquipo = false
   }
+}
+
+// ---- Crear hogares nuevos (solo equipo) ----
+const sha256Hex = async (t) =>
+  [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)))].map((b) => b.toString(16).padStart(2, '0')).join('')
+/** Clave aleatoria de 192 bits (32 caracteres), generada en el navegador del equipo. */
+const claveAleatoria = () =>
+  btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(24))))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '')
+/** Siguiente código libre (AQ-021…), o null si se llegó a AQ-999. */
+export function siguienteCodigo() {
+  const n = Math.max(0, ...hogaresPanel().map((h) => Number(h.codigo.slice(3)))) + 1
+  return n > 999 ? null : `AQ-${String(n).padStart(3, '0')}`
+}
+/** Crea un hogar con su clave y devuelve su código. Lanza un Error con un mensaje listo para mostrar. */
+export async function crearHogar() {
+  if (!sesionEquipo) throw new Error('Inicia sesión como equipo.')
+  const t = await tokenVigente().catch(() => {
+    throw new Error('Tu sesión venció. Entra de nuevo.')
+  })
+  for (let intento = 0; intento < 3; intento++) {
+    const codigo = siguienteCodigo()
+    if (!codigo) throw new Error('Se llegó al máximo de 999 hogares.')
+    const clave = claveAleatoria()
+    try {
+      await insertarTabla('hogares', { codigo, secreto_hash: await sha256Hex(clave) }, t)
+    } catch (e) {
+      if (e instanceof ErrorRemoto && e.estado === 409) {
+        await cargarEquipo(true) // otro miembro del equipo creó ese código a la vez: se prueba el siguiente
+        continue
+      }
+      throw new Error('No se pudo crear el hogar. Revisa tu internet e inténtalo de nuevo.')
+    }
+    try {
+      await insertarTabla('claves_qr', { codigo, clave }, t)
+    } catch {
+      throw new Error(`Se creó ${codigo}, pero no se pudo guardar su clave. Avisa a quien administra Supabase.`)
+    }
+    await cargarEquipo()
+    return codigo
+  }
+  throw new Error('No se pudo crear el hogar. Inténtalo de nuevo.')
 }
 
 /** Devuelve null si todo salió bien, o el mensaje de error para mostrar. */

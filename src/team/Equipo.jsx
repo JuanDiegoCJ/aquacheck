@@ -9,6 +9,8 @@ import {
   entrarEquipoReal,
   estadoDelPanel,
   cargarEquipo,
+  crearHogar,
+  siguienteCodigo,
   obtenerContacto,
   marcarReporteResuelto,
   equipoAutorizado,
@@ -66,7 +68,7 @@ const PASOS_EQUIPO = [
   { selector: '[data-guia="actualizar"]', titulo: 'Actualizar', texto: 'El panel se actualiza solo cada 2 segundos. Este botón fuerza una actualización inmediata.' },
   { selector: '[data-guia="pestanas"]', titulo: 'Secciones', texto: 'Resumen (gráficos), Hogares (tabla con búsqueda y páginas), Fallas (reportes con foto) e Informes (Excel, Word, PDF y fichas).' },
   { selector: '[data-guia="graficos"]', titulo: 'Gráficos', texto: 'Toca un estado o un tramo de un gráfico para ver en Hogares solo esas familias.' },
-  { titulo: 'En Hogares', texto: 'El botón Ver abre la vista de solo lectura de una familia (tareas, historial, fallas y contacto). “Ficha” muestra su QR definitivo para imprimir. “WhatsApp” abre el aviso ya escrito.' },
+  { titulo: 'En Hogares', texto: 'El botón Agregar hogar crea un código nuevo con su clave y abre su ficha con el QR. El botón Ver abre la vista de solo lectura de una familia (tareas, historial, fallas y contacto). “Ficha” muestra su QR definitivo para imprimir. “WhatsApp” abre el aviso ya escrito.' },
 ]
 
 const enmascarar = (cel) => (cel ? `9•• ••• ${cel.slice(-3)}` : '—')
@@ -84,6 +86,21 @@ function Panel() {
   const [busqueda, setBusqueda] = useState('')
   const tablaRef = useRef(null)
   const [guia, setGuia] = useState(false)
+  const [confirmandoNuevo, setConfirmandoNuevo] = useState(false)
+  const [creando, setCreando] = useState(false)
+  const [errorNuevo, setErrorNuevo] = useState(null)
+  async function crear() {
+    setCreando(true)
+    setErrorNuevo(null)
+    try {
+      const codigo = await crearHogar()
+      setConfirmandoNuevo(false)
+      window.location.hash = '#/equipo/ficha/' + codigo // se abre su ficha con el QR, lista para imprimir o enviar
+    } catch (err) {
+      setErrorNuevo(err.message)
+    }
+    setCreando(false)
+  }
   const [vista, setVista] = useState('resumen') // resumen | hogares | fallas | informes
   const [pagina, setPagina] = useState(0)
   const cambiarFiltro = (f) => {
@@ -243,7 +260,31 @@ function Panel() {
       <div className="equipo-una" ref={tablaRef}>
           {vista === 'hogares' && (
           <section className="tarjeta">
-            <h2>Hogares ({visibles.length}{visibles.length !== r.total ? ` de ${r.total}` : ''})</h2>
+            <div className="hogares-cab">
+              <h2>Hogares ({visibles.length}{visibles.length !== r.total ? ` de ${r.total}` : ''})</h2>
+              {!confirmandoNuevo ? (
+                <button type="button" className="btn-mini btn-mini-principal" data-guia="agregar-hogar" disabled={!siguienteCodigo()} onClick={() => { setErrorNuevo(null); setConfirmandoNuevo(true) }}>
+                  <Icono nombre="agregar" /> Agregar hogar
+                </button>
+              ) : (
+                <div className="confirmar-nuevo" role="group" aria-label="Confirmar nuevo hogar">
+                  <span>
+                    ¿Crear <strong>{siguienteCodigo()}</strong>?
+                  </span>
+                  <button type="button" className="btn-mini btn-mini-principal" disabled={creando} onClick={crear}>
+                    {creando ? 'Creando…' : 'Sí, crear'}
+                  </button>
+                  <button type="button" className="btn-mini" disabled={creando} onClick={() => setConfirmandoNuevo(false)}>
+                    Cancelar
+                  </button>
+                </div>
+              )}
+            </div>
+            {errorNuevo && (
+              <p className="error" role="alert">
+                {errorNuevo}
+              </p>
+            )}
 
             <div className="filtros-barra">
               <div className="filtros" role="group" aria-label="Filtrar por estado">

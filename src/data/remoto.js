@@ -26,6 +26,7 @@ export const renovarSesionEquipo = async (renovacion) =>
   comoSesion(await pedir('/auth/v1/token?grant_type=refresh_token', { metodo: 'POST', cuerpo: { refresh_token: renovacion } }))
 export const cerrarSesionEquipo = (token) => pedir('/auth/v1/logout', { metodo: 'POST', token }).catch(() => {})
 export const consultarTabla = (tabla, consulta, token) => pedir(`/rest/v1/${tabla}?${consulta}`, { token })
+export const insertarTabla = (tabla, cuerpo, token) => pedir(`/rest/v1/${tabla}`, { metodo: 'POST', token, cuerpo, extra: { Prefer: 'return=minimal' } })
 export const actualizarTabla = (tabla, filtro, cuerpo, token) => pedir(`/rest/v1/${tabla}?${filtro}`, { metodo: 'PATCH', token, cuerpo, extra: { Prefer: 'return=minimal' } })
 
 /** Sube la foto con el enlace firmado que entregó la función (un solo archivo, un solo uso). */

@@ -28,6 +28,9 @@ Aleatoria de 128 bits o más, en la parte `#` de la dirección (no viaja al serv
 ## Fichas definitivas
 `npm run build` y luego `node tools/generar_fichas.mjs <claves.csv> <salida.html>` crea las 20 fichas con el QR de cada hogar (código + clave). El CSV y la salida contienen claves: guardarlos FUERA del repositorio. Se imprimen desde el navegador (o a PDF).
 
+## Hogares nuevos
+El equipo puede crear hogares desde el panel (Hogares > Agregar hogar): el navegador genera la clave (192 bits), guarda su hash en `hogares` y la clave en `claves_qr` (migraciones 0004 y 0005) y abre la ficha con el QR, con botones Imprimir, Copiar enlace y Enviar por WhatsApp. No hay botón para borrar hogares: si se crea uno por error, se elimina con SQL (`delete from hogares where codigo = 'AQ-0XX'`, que borra en cascada su clave y sus datos).
+
 ## Datos de prueba (solo ensayos)
 - `seed/datos_de_prueba.sql` carga datos FICTICIOS (celulares 900 000 0NN) para ver el panel con información. `seed/borrar_datos_de_prueba.sql` los quita y deja los 20 hogares sin registrar.
 - **Antes del piloto real hay que ejecutar el de borrado** y comprobar que contactos, mantenimientos y reportes tienen 0 filas. No repartir los QR mientras haya datos de prueba cargados.

@@ -1,6 +1,6 @@
 import {
   ArrowLeft, ArrowRight, Brush, Camera, Check, CircleCheck, CircleHelp, ClipboardList, CloudFog, Container, Droplet, DropletOff,
-  Eye, FileDown, FileSpreadsheet, FileText, Printer, RefreshCw, ShowerHead, TriangleAlert,
+  Copy, Eye, FileDown, FileSpreadsheet, FileText, MessageCircle, Plus, Printer, RefreshCw, ShowerHead, TriangleAlert,
 } from 'lucide-react'
 
 // Nombre -> icono SVG (lucide-react). Los datos del dominio usan estos nombres en lugar de emojis.
@@ -27,6 +27,9 @@ const ICONOS = {
   izquierda: ArrowLeft,
   derecha: ArrowRight,
   actualizar: RefreshCw,
+  agregar: Plus,
+  copiar: Copy,
+  whatsapp: MessageCircle,
 }
 
 /** Icono SVG decorativo (el texto del botón ya dice lo que hace). */

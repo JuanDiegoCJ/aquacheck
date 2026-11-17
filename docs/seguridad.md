@@ -30,6 +30,9 @@ Revisión hecha por el propio autor del diseño (Claude) con pruebas reales cont
 ## Cambio posterior: claves de los QR visibles para el equipo
 Para reimprimir fichas desde el panel, las claves se guardan en claro en la tabla `claves_qr` (migración 0004), legible solo con rol `equipo` (RLS). La función `hogar` sigue validando contra el hash. Riesgo nuevo: quien comprometa una cuenta del equipo o la base de datos obtiene las claves de los 20 hogares. Mitigación: contraseñas fuertes, y si ocurre, rotar claves y reimprimir. El borrado de fin de piloto también elimina esta tabla.
 
+## Cambio posterior: el equipo crea hogares
+Las cuentas con rol `equipo` pueden insertar en `hogares` y en `claves_qr` (migración 0005). La clave se genera en el navegador con `crypto.getRandomValues` (192 bits). Quien comprometa una cuenta del equipo podría crear hogares falsos o leer las claves; la mitigación es la misma: contraseñas fuertes y rotación.
+
 ## Riesgos aceptados o pendientes (decisión del equipo)
 - **Quien tenga el QR (o una foto de él) tiene acceso a ese hogar**: puede ver su historial, agregar registros y cambiar el celular registrado. Es inherente al diseño "sin contraseña". Mitigación: pegar el QR en el filtro dentro del hogar; si se pierde o se fotografía indebidamente, rotar la clave de ese hogar (nuevo hash en `hogares.secreto_hash` y nueva ficha).
 - **La clave queda guardada en el celular de la familia** (localStorage) para funcionar sin internet; el celular y el consentimiento NO.

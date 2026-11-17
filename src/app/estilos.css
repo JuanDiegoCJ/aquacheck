@@ -1560,3 +1560,11 @@ input, select, textarea { font-size: 1rem; }
 @media (min-width: 768px) { .pie-largo { display: inline; } }
 .pie { padding-top: 14px; }
 @media (max-width: 767px) { .ayuda-flotante { width: 44px; height: 44px; font-size: 1.3rem; } }
+
+/* Agregar hogar y acciones de la ficha */
+.hogares-cab { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.hogares-cab h2 { margin: 0; }
+.confirmar-nuevo { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 8px; background: #eaf3fb; border-radius: 12px; }
+.acciones-ficha { display: flex; flex-wrap: wrap; gap: 10px; }
+@media (max-width: 480px) { .acciones-ficha .btn { width: 100%; } }
+.btn-mini[disabled] { opacity: 0.5; cursor: default; }
