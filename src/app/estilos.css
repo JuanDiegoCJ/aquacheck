@@ -1384,3 +1384,90 @@ button.seg:hover {
 .exito-icono .icono { width: 40px; height: 40px; }
 .semaforo-luz svg { display: block; }
 .ficha-marca .icono { margin-right: 6px; }
+
+/* =====================================================================
+   Mejora general de diseño (se aplica sobre todo lo anterior)
+   ===================================================================== */
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+
+/* Foco visible para teclado */
+:focus-visible { outline: 3px solid #f2b705; outline-offset: 2px; border-radius: 6px; }
+
+/* Tarjetas con sombra suave */
+.tarjeta { border-color: #dde7f0; box-shadow: 0 1px 2px rgba(16, 42, 67, 0.05), 0 6px 18px rgba(16, 42, 67, 0.05); }
+
+/* Botones: transición y sensación de pulsado */
+.btn { transition: background-color 0.15s, box-shadow 0.15s, transform 0.08s, border-color 0.15s; }
+.btn:hover { box-shadow: 0 4px 12px rgba(11, 95, 165, 0.18); }
+.btn:active { transform: translateY(1px); box-shadow: none; }
+.btn-chico { width: auto; min-height: 40px; padding: 0 16px; font-size: 0.95rem; }
+.btn-mini { transition: background-color 0.15s, border-color 0.15s; min-height: 32px; }
+.btn-mini:hover { background: #eaf3fb; }
+.btn-mini-principal:hover { background: #094f8a; }
+
+/* Indicadores: tarjeta con acento de color */
+.indicadores { gap: 12px; }
+.indicador { padding: 14px 16px; border-left: 4px solid #0b5fa5; background: #fff; border-radius: 14px; }
+.indicador:nth-child(2) { border-left-color: #1d7a3f; }
+.indicador:nth-child(3) { border-left-color: #d98e04; }
+.indicador:nth-child(4) { border-left-color: #b3261e; }
+.indicador strong { font-size: 1.75rem; line-height: 1.1; }
+
+/* Pestañas más claras */
+.pestanas { margin: 6px 0 14px; }
+.pestana { transition: color 0.15s, background-color 0.15s; border-radius: 10px 10px 0 0; }
+.pestana:hover { background: #eaf3fb; color: #0b5fa5; }
+
+/* Gráficos: 1 columna en celular, 2 en tablet, 3 en computadora; el semanal ocupa toda la fila */
+.graficos { gap: 16px; grid-template-columns: minmax(0, 1fr); }
+.grafico h2 { font-size: 1.05rem; margin: 0; }
+.grafico-ancho { order: 9; }
+@media (min-width: 720px) { .graficos { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grafico-ancho { grid-column: 1 / -1; } }
+@media (min-width: 1100px) { .graficos { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.barras-semanales { max-height: 260px; }
+.barras-semanales-grande { max-height: 340px; }
+.grafico-ancho .barras-semanales-grande { display: block; margin: 0 auto; }
+.sem-n { font-size: 11px; }
+.barras-semanales-grande .sem-n { font-size: 15px; }
+.barras-semanales-grande .sem-f { font-size: 12px; }
+
+/* Fallas por tipo: icono y texto dentro de cada barra */
+.barras-fallas { display: grid; gap: 10px; }
+.barra-falla { position: relative; height: 46px; border-radius: 12px; overflow: hidden; background: #eef3f8; }
+.barra-falla-fondo { position: absolute; inset: 0; display: flex; gap: 2px; }
+.barra-falla-fondo span { min-width: 8px; }
+.barra-falla-texto { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 100%; padding: 0 14px; color: #fff; font-weight: 600; }
+.barra-falla-nombre { display: inline-flex; align-items: center; gap: 8px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); }
+.barra-falla-nombre .icono { margin: 0; }
+.barra-falla-texto strong { font-size: 1.05rem; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); }
+.barra-falla-vacia .barra-falla-texto { color: #4a6075; font-weight: 500; }
+.barra-falla-vacia .barra-falla-nombre, .barra-falla-vacia strong { text-shadow: none; }
+
+/* Informes: tarjetas de descarga compactas */
+.informes { max-width: 780px; }
+.descargas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 8px 0 4px; }
+.descarga { display: grid; justify-items: center; gap: 2px; padding: 16px 8px; border: 1px solid #cfdeec; border-radius: 14px; background: #fff; color: #0b5fa5; font: inherit; cursor: pointer; transition: box-shadow 0.15s, border-color 0.15s, transform 0.08s; }
+.descarga strong { font-size: 1.05rem; color: #14263a; margin-top: 4px; }
+.descarga span { font-size: 0.8rem; color: #4a6075; }
+.descarga:hover { border-color: #0b5fa5; box-shadow: 0 4px 14px rgba(11, 95, 165, 0.18); }
+.descarga:active { transform: translateY(1px); }
+.acciones-chicas { display: flex; flex-wrap: wrap; gap: 10px; }
+.separador { border: 0; border-top: 1px solid #e2ebf3; margin: 14px 0; width: 100%; }
+@media (max-width: 480px) { .descargas { grid-template-columns: 1fr; } .descarga { grid-template-columns: auto 1fr; justify-items: start; align-items: center; column-gap: 12px; } .descarga span { grid-column: 2; } .descarga .icono { grid-row: span 2; } }
+
+/* Tabla de hogares: filas más cómodas */
+.tabla tbody tr { transition: background-color 0.12s; }
+.tabla tbody tr:hover { background: #f3f8fd; }
+.tabla th { text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.04em; color: #4a6075; }
+.tabla td a:not(.btn-mini) { font-weight: 600; }
+.acciones { white-space: nowrap; }
+
+/* Lista de fallas y historial con mejor separación */
+.fallas li, .historial li { transition: background-color 0.12s; }
+
+/* Pantallas de la familia: botones principales más cómodos */
+.btn-grande { min-height: 56px; }
+.semaforo { box-shadow: 0 1px 2px rgba(16, 42, 67, 0.05), 0 6px 18px rgba(16, 42, 67, 0.05); }
+.tarea { box-shadow: 0 1px 2px rgba(16, 42, 67, 0.04); }

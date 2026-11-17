@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Icono } from './Iconos.jsx'
 // Gráficos hechos a mano (SVG y CSS): no necesitan librerías, pesan casi nada y funcionan sin internet.
 // Son interactivos cuando reciben `onSeleccionar`: un clic filtra la tabla de hogares.
@@ -121,29 +122,47 @@ export function BarrasPorTarea({ filas, seleccion, onSeleccionar }) {
 }
 
 /** Barras verticales: mantenimientos registrados por semana. */
+/** true en pantallas anchas (≥ 1100 px): ahí el gráfico semanal ocupa toda la fila y se dibuja más grande. */
+function useAnchoGrande() {
+  const consulta = '(min-width: 1100px)'
+  const [grande, setGrande] = useState(() => typeof window !== 'undefined' && window.matchMedia(consulta).matches)
+  useEffect(() => {
+    const m = window.matchMedia(consulta)
+    const f = () => setGrande(m.matches)
+    m.addEventListener('change', f)
+    return () => m.removeEventListener('change', f)
+  }, [])
+  return grande
+}
+
 export function BarrasSemanales({ semanas }) {
+  const grande = useAnchoGrande()
   const max = Math.max(1, ...semanas.map((s) => s.n))
-  const W = 320
-  const H = 170
-  const base = 138
+  const W = grande ? 960 : 320
+  const H = grande ? 250 : 170
+  const base = grande ? 208 : 138
+  const alto = grande ? 150 : 100
   const ancho = W / semanas.length
   const total = semanas.reduce((s, x) => s + x.n, 0)
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="barras-semanales" role="img" aria-label={`Mantenimientos registrados por semana, últimas ${semanas.length} semanas. Total ${total}.`}>
+    <svg viewBox={`0 0 ${W} ${H}`} className={`barras-semanales ${grande ? 'barras-semanales-grande' : ''}`} role="img" aria-label={`Mantenimientos registrados por semana, últimas ${semanas.length} semanas. Total ${total}.`}>
+      {[0.5, 1].map((f) => (
+        <line key={f} x1="0" x2={W} y1={base - alto * f} y2={base - alto * f} stroke="var(--borde)" strokeDasharray="4 4" />
+      ))}
       <line x1="0" x2={W} y1={base} y2={base} stroke="var(--borde)" />
       {semanas.map((s, i) => {
-        const h = (s.n / max) * 100
-        const x = i * ancho + ancho * 0.18
-        const w = ancho * 0.64
+        const h = (s.n / max) * alto
+        const x = i * ancho + ancho * 0.2
+        const w = ancho * 0.6
         return (
           <g key={s.ini} className="sem">
-            <rect x={x} y={base - h} width={w} height={Math.max(h, s.n ? 2 : 0)} rx="3" fill="var(--azul)">
+            <rect x={x} y={base - h} width={w} height={Math.max(h, s.n ? 2 : 0)} rx={grande ? 6 : 3} fill="var(--azul)">
               <title>{`Semana del ${formatoFechaCorta(s.ini)} al ${formatoFechaCorta(s.fin)}: ${s.n} mantenimientos`}</title>
             </rect>
-            <text x={x + w / 2} y={base - h - 5} textAnchor="middle" className="sem-n">
+            <text x={x + w / 2} y={base - h - 6} textAnchor="middle" className="sem-n">
               {s.n}
             </text>
-            <text x={x + w / 2} y={base + 14} textAnchor="middle" className="sem-f">
+            <text x={x + w / 2} y={base + (grande ? 20 : 14)} textAnchor="middle" className="sem-f">
               {formatoFechaCorta(s.ini)}
             </text>
           </g>
@@ -156,9 +175,7 @@ export function BarrasSemanales({ semanas }) {
   )
 }
 
-/** Barras horizontales: fallas por tipo (abiertas / resueltas). */
 export function BarrasFallas({ tipos }) {
-  const max = Math.max(1, ...tipos.map((t) => t.abiertas + t.resueltas))
   const hay = tipos.some((t) => t.abiertas + t.resueltas > 0)
   if (!hay) return <p className="suave">Aún no hay reportes de falla.</p>
   return (
@@ -166,34 +183,26 @@ export function BarrasFallas({ tipos }) {
       {tipos.map((t) => {
         const total = t.abiertas + t.resueltas
         return (
-          <div key={t.id} className="barra-fila" title={`${t.etiqueta}: ${t.abiertas} abiertas, ${t.resueltas} resueltas`}>
-            <div className="barra-etiqueta">
-              <span>
-                <span aria-hidden="true"><Icono nombre={t.icono} /></span> {t.etiqueta}
-              </span>
-              <small>{total}</small>
+          <div key={t.id} className={`barra-falla ${total ? '' : 'barra-falla-vacia'}`} title={`${t.etiqueta}: ${t.abiertas} abiertas, ${t.resueltas} resueltas`}>
+            <div className="barra-falla-fondo" aria-hidden="true">
+              {t.abiertas > 0 && <span className="seg-pronto" style={{ flexGrow: t.abiertas }} />}
+              {t.resueltas > 0 && <span className="seg-resuelta" style={{ flexGrow: t.resueltas }} />}
             </div>
-            <div className="barra-simple" style={{ width: `${Math.max((total / max) * 100, total ? 8 : 0)}%` }}>
-              {t.abiertas > 0 && (
-                <span className="seg seg-pronto" style={{ flexGrow: t.abiertas }}>
-                  {t.abiertas}
-                </span>
-              )}
-              {t.resueltas > 0 && (
-                <span className="seg seg-resuelta" style={{ flexGrow: t.resueltas }}>
-                  {t.resueltas}
-                </span>
-              )}
+            <div className="barra-falla-texto">
+              <span className="barra-falla-nombre">
+                <Icono nombre={t.icono} tam={18} /> {t.etiqueta}
+              </span>
+              <strong>{total}</strong>
             </div>
           </div>
         )
       })}
       <ul className="leyenda-mini">
         <li>
-          <span className="punto" style={{ background: '#d98e04' }} aria-hidden="true" /> Abiertas
+          <span className="punto" style={{ background: '#9a5b00' }} aria-hidden="true" /> Abiertas
         </li>
         <li>
-          <span className="punto" style={{ background: '#8aa0b3' }} aria-hidden="true" /> Resueltas
+          <span className="punto" style={{ background: '#5f7587' }} aria-hidden="true" /> Resueltas
         </li>
       </ul>
     </div>

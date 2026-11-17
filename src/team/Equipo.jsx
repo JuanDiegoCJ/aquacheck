@@ -226,7 +226,7 @@ function Panel() {
           <BarrasPorTarea filas={r.porTarea} seleccion={filtro?.tarea ? filtro : null} onSeleccionar={aplicarFiltro} />
         </article>
 
-        <article className="tarjeta grafico">
+        <article className="tarjeta grafico grafico-ancho">
           <h2>Mantenimientos por semana</h2>
           <p className="suave">Últimas 8 semanas.</p>
           <BarrasSemanales semanas={r.semanas} />
@@ -380,39 +380,50 @@ function Panel() {
           )}
 
           {vista === 'informes' && (
-          <section className="tarjeta">
+          <section className="tarjeta informes">
             <h2>Informes y descargas</h2>
             <p className="suave">Se generan en este dispositivo y no incluyen celulares ni fotos.</p>
-            <button type="button" className="btn btn-principal" onClick={exportarExcel}>
-              <Icono nombre="excel" /> Excel (.xlsx) · 7 hojas
-            </button>
-            <button type="button" className="btn btn-principal" onClick={exportarWord}>
-              <Icono nombre="word" /> Informe en Word (.docx)
-            </button>
-            <button type="button" className="btn btn-principal" onClick={exportarPDF}>
-              <Icono nombre="pdf" /> Informe en PDF (con gráficos)
-            </button>
+            <div className="descargas">
+              <button type="button" className="descarga" onClick={exportarExcel}>
+                <Icono nombre="excel" tam={30} />
+                <strong>Excel</strong>
+                <span>.xlsx · 7 hojas</span>
+              </button>
+              <button type="button" className="descarga" onClick={exportarWord}>
+                <Icono nombre="word" tam={30} />
+                <strong>Word</strong>
+                <span>Informe .docx</span>
+              </button>
+              <button type="button" className="descarga" onClick={exportarPDF}>
+                <Icono nombre="pdf" tam={30} />
+                <strong>PDF</strong>
+                <span>Con gráficos</span>
+              </button>
+            </div>
             <a className="enlace-discreto" href="#/equipo/informe">
               Ver el informe en pantalla
             </a>
             <p className="suave grupo-titulo">Archivos CSV (se abren en Excel)</p>
-            <div className="par-botones tres">
-              <button type="button" className="btn btn-secundario" onClick={exportarHogares}>
+            <div className="acciones-chicas">
+              <button type="button" className="btn btn-secundario btn-chico" onClick={exportarHogares}>
                 Hogares
               </button>
-              <button type="button" className="btn btn-secundario" onClick={exportarMantenimientos}>
+              <button type="button" className="btn btn-secundario btn-chico" onClick={exportarMantenimientos}>
                 Mantenimientos
               </button>
-              <button type="button" className="btn btn-secundario" onClick={exportarFallas}>
+              <button type="button" className="btn btn-secundario btn-chico" onClick={exportarFallas}>
                 Fallas
               </button>
             </div>
-            <a className="btn btn-secundario" href="#/equipo/fichas">
-              <Icono nombre="imprimir" /> Fichas de todos los filtros
-            </a>
-            <button type="button" className="btn btn-secundario" onClick={salirEquipo}>
-              Salir del panel del equipo
-            </button>
+            <hr className="separador" />
+            <div className="acciones-chicas">
+              <a className="btn btn-secundario btn-chico" href="#/equipo/fichas">
+                <Icono nombre="imprimir" /> Fichas de todos los filtros
+              </a>
+              <button type="button" className="btn btn-secundario btn-chico" onClick={salirEquipo}>
+                Salir del panel
+              </button>
+            </div>
           </section>
           )}
       </div>
