@@ -1365,3 +1365,12 @@ button.seg:hover {
   .pie-enlaces { flex-direction: column; align-items: flex-end; }
   .pie-copy { padding: 8px 32px 20px; }
 }
+
+/* Pie de página simplificado: solo el aviso y el copyright, centrados */
+.pie { text-align: center; padding: 18px 16px 72px; }
+.pie-aviso { max-width: 900px; margin: 0 auto; }
+.pie-copy { max-width: none; margin: 6px 0 0; padding: 0; }
+@media (min-width: 900px) {
+  .pie { padding: 20px 32px 24px; }
+  .pie-copy { padding: 0; }
+}

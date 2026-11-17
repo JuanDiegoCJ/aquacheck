@@ -37,21 +37,9 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
         {children}
       </main>
       <footer className="pie">
-        <div className="pie-in">
-          <div className="pie-marca">
-            <a className="pie-logo" href="#/">
-              <img src="./icon.svg" alt="" width="24" height="24" /> AquaCheck
-            </a>
-            <p>Seguimiento del mantenimiento de filtros de agua · Moche</p>
-          </div>
-          <p className="pie-aviso">
-            AquaCheck te ayuda a recordar el mantenimiento de tu filtro. <strong>No mide la calidad del agua ni certifica que sea potable.</strong>
-          </p>
-          <nav className="pie-enlaces" aria-label="Pie de página">
-            <a href="#/acerca">¿Qué hace AquaCheck?</a>
-            <a href="#/equipo">Equipo del proyecto</a>
-          </nav>
-        </div>
+        <p className="pie-aviso">
+          AquaCheck te ayuda a recordar el mantenimiento de tu filtro. <strong>No mide la calidad del agua ni certifica que sea potable.</strong>
+        </p>
         <p className="pie-copy">© 2026 AquaCheck · Equipo estudiantil del Desafío UPAO</p>
       </footer>
     </div>
