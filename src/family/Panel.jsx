@@ -1,6 +1,6 @@
 import Pantalla from '../components/Pantalla.jsx'
 import Semaforo from '../components/Semaforo.jsx'
-import { useDatos, listarMantenimientos } from '../data/repo.js'
+import { useDatos, listarMantenimientos, estadoSync } from '../data/repo.js'
 import { TAREAS, resumenHogar, textoDias, formatoFecha, mensajeAviso } from '../domain/reglas.js'
 import { rutaFiltro } from '../app/ruta.js'
 
@@ -8,11 +8,18 @@ export default function Panel({ hogar }) {
   useDatos()
   const { tareas, general } = resumenHogar(hogar, listarMantenimientos(hogar.codigo))
   const aviso = mensajeAviso(hogar.codigo, tareas)
+  const sync = estadoSync(hogar.codigo)
 
   return (
     <Pantalla titulo={`Mi filtro ${hogar.codigo}`} volver="#/" doble>
       <div className="cols">
         <div className="col">
+      {sync.error && <p role="alert" className="tarjeta">{sync.error}</p>}
+      {sync.real && !sync.error && sync.pendientes > 0 && (
+        <p role="status" className="tarjeta">
+          Guardado en tu celular. Se enviará cuando tengas internet ({sync.pendientes} pendiente{sync.pendientes > 1 ? 's' : ''}).
+        </p>
+      )}
       <Semaforo estado={general} />
 
       <ul className="tareas">

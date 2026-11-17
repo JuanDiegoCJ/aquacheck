@@ -5,6 +5,7 @@
 // Privacidad: el celular y el consentimiento viven en 'contactos', separados del historial.
 import { useSyncExternalStore } from 'react'
 import { crearDatosDemo } from './datos_demo.js'
+import { llamarHogar, ErrorRemoto } from './remoto.js'
 
 const PREFIJO = 'aquacheck:v1:'
 const cache = {}
@@ -58,10 +59,16 @@ function sembrar() {
 
 export function iniciar() {
   if (leer('semilla', 0) < VERSION_SEMILLA) sembrar()
+  // Modo real: al volver la conexión (o al abrir la app) se envía lo pendiente y se trae lo del servidor.
+  if (typeof window !== 'undefined') window.addEventListener('online', () => sincronizar())
+  sincronizar()
 }
 
 export function reiniciarDemo() {
   escribir('mi-filtro', null)
+  escribir('claves', {})
+  escribir('cola', [])
+  escribir('idmap', {})
   sembrar()
 }
 
@@ -78,23 +85,41 @@ export const recordarFiltro = (codigo) => {
 }
 
 // ---- Escritura ----
-export function guardarRegistro({ codigo, modelo, fechaInstalacion, celular, consentimiento }) {
-  const hogares = { ...leer('hogares', {}) }
-  hogares[codigo] = { codigo, registrado: true, modelo, fechaInstalacion }
-  escribir('hogares', hogares)
-  escribir('contactos', { ...leer('contactos', {}), [codigo]: { celular, consentimiento } })
-}
-
 const nuevoId = () => (globalThis.crypto?.randomUUID ? crypto.randomUUID() : `m-${Date.now()}-${Math.random().toString(16).slice(2)}`)
+
+export function guardarRegistro({ codigo, modelo, fechaInstalacion, celular, consentimiento }) {
+  const real = esReal(codigo)
+  const hogares = { ...leer('hogares', {}) }
+  hogares[codigo] = { codigo, registrado: true, modelo, fechaInstalacion, ...(real ? { real: true } : {}) }
+  escribir('hogares', hogares)
+  if (real) {
+    // En modo real el celular NO se guarda en el celular de la familia: viaja al servidor (queda en la cola solo hasta enviarse).
+    encolar(codigo, 'registrar', {
+      fecha_instalacion: fechaInstalacion,
+      celular,
+      consentimiento: { version: consentimiento.version, texto: consentimiento.texto },
+    })
+  } else {
+    escribir('contactos', { ...leer('contactos', {}), [codigo]: { celular, consentimiento } })
+  }
+}
 
 export function agregarMantenimiento(codigo, tipo, fecha) {
   const id = nuevoId()
   escribir('mantenimientos', [...leer('mantenimientos', []), { id, codigo, tipo, fecha }])
+  encolar(codigo, 'mantenimiento_agregar', { tipo, fecha, localId: id })
   return id
 }
 
 export function quitarMantenimiento(id) {
-  escribir('mantenimientos', leer('mantenimientos', []).filter((m) => m.id !== id))
+  const idServidor = leer('idmap', {})[id] ?? id // si ya se envió, el servidor le puso otro id
+  const lista = leer('mantenimientos', [])
+  const m = lista.find((x) => x.id === id || x.id === idServidor)
+  escribir('mantenimientos', lista.filter((x) => x !== m))
+  if (!m || !esReal(m.codigo)) return
+  const pendiente = cola().find((o) => o.accion === 'mantenimiento_agregar' && o.datos.localId === id)
+  if (pendiente) escribir('cola', cola().filter((o) => o !== pendiente)) // aún no se envió: se cancela
+  else encolar(m.codigo, 'mantenimiento_quitar', { id: idServidor })
 }
 
 // ---- Fallas ----
@@ -107,8 +132,10 @@ export const obtenerFoto = (id) => leer('fotos', {})[id] ?? null
 
 export function agregarReporte({ codigo, tipo, foto }) {
   const id = nuevoId()
-  if (foto) escribir('fotos', { ...leer('fotos', {}), [id]: foto })
-  escribir('reportes', [...leer('reportes', []), { id, codigo, tipo, fecha: new Date().toISOString(), estado: 'abierta', conFoto: !!foto }])
+  const real = esReal(codigo)
+  if (foto && !real) escribir('fotos', { ...leer('fotos', {}), [id]: foto }) // las fotos aún no se envían al servidor
+  escribir('reportes', [...leer('reportes', []), { id, codigo, tipo, fecha: new Date().toISOString(), estado: 'abierta', conFoto: !!foto && !real }])
+  encolar(codigo, 'reporte_agregar', { tipo })
   return id
 }
 
@@ -127,6 +154,104 @@ export function alternarPasoCorte(codigo, paso) {
 }
 export function reiniciarPasosCorte(codigo) {
   escribir('cortes', { ...leer('cortes', {}), [codigo]: [] })
+}
+
+// ---- Modo real (Supabase) ----
+// Un filtro pasa a "real" cuando se abre su QR con clave (#/f/AQ-007?k=…). Desde ahí sus datos viven en Supabase;
+// el celular guarda una copia para trabajar sin internet y una COLA de acciones pendientes de enviar.
+const claves = () => leer('claves', {})
+const cola = () => leer('cola', [])
+export const esReal = (codigo) => !!claves()[codigo]
+export const pendientesDe = (codigo) => cola().filter((o) => o.codigo === codigo).length
+let enCurso = false
+const errores = {} // codigo -> mensaje (solo en memoria)
+
+export function estadoSync(codigo) {
+  return { real: esReal(codigo), pendientes: pendientesDe(codigo), error: errores[codigo] ?? null, enCurso }
+}
+
+function notificar() {
+  version++
+  oyentes.forEach((f) => f())
+}
+
+function encolar(codigo, accion, datos) {
+  if (!esReal(codigo)) return
+  escribir('cola', [...cola(), { id: nuevoId(), codigo, accion, datos }])
+  sincronizar()
+}
+
+export function adoptarClave(codigo, secreto) {
+  if (claves()[codigo] === secreto) return
+  escribir('claves', { ...claves(), [codigo]: secreto })
+  // Los datos de ejemplo de ese código se descartan: desde ahora vale lo que diga el servidor.
+  const hogares = { ...leer('hogares', {}) }
+  hogares[codigo] = { codigo, registrado: false, modelo: hogares[codigo]?.modelo, fechaInstalacion: null, real: true }
+  escribir('hogares', hogares)
+  escribir('mantenimientos', leer('mantenimientos', []).filter((m) => m.codigo !== codigo))
+  escribir('reportes', leer('reportes', []).filter((r) => r.codigo !== codigo))
+  const contactos = { ...leer('contactos', {}) }
+  delete contactos[codigo]
+  escribir('contactos', contactos)
+  escribir('cola', cola().filter((o) => o.codigo !== codigo))
+  delete errores[codigo]
+  sincronizar()
+}
+
+function aplicarServidor(codigo, d) {
+  const h = d.hogar
+  const hogares = { ...leer('hogares', {}) }
+  hogares[codigo] = { codigo, registrado: !!h.registrado, modelo: h.modelo, fechaInstalacion: h.fecha_instalacion ?? null, real: true }
+  escribir('hogares', hogares)
+  escribir('mantenimientos', [
+    ...leer('mantenimientos', []).filter((m) => m.codigo !== codigo),
+    ...d.mantenimientos.map((m) => ({ id: m.id, codigo, tipo: m.tipo, fecha: m.fecha })),
+  ])
+  escribir('reportes', [
+    ...leer('reportes', []).filter((r) => r.codigo !== codigo),
+    ...d.reportes.map((r) => ({ id: r.id, codigo, tipo: r.tipo, estado: r.estado, fecha: r.creado_en, conFoto: false })),
+  ])
+}
+
+/** Envía lo pendiente (en orden) y luego trae el estado del servidor. Sin internet no hace nada y se reintenta después. */
+export async function sincronizar() {
+  const codigos = Object.keys(claves())
+  if (enCurso || !codigos.length || (typeof navigator !== 'undefined' && navigator.onLine === false)) return
+  enCurso = true
+  notificar()
+  let reintentar = false
+  try {
+    for (const codigo of codigos) {
+      const secreto = claves()[codigo]
+      try {
+        for (const op of cola().filter((o) => o.codigo === codigo)) {
+          const { localId, ...datos } = op.datos
+          try {
+            const res = await llamarHogar(op.accion, codigo, secreto, datos)
+            if (op.accion === 'mantenimiento_agregar' && res.id) escribir('idmap', { ...leer('idmap', {}), [localId]: res.id })
+          } catch (e) {
+            if (e instanceof ErrorRemoto && e.estado === 400) errores[codigo] = 'Un envío fue rechazado y se descartó.'
+            else throw e // 401, sin internet o error del servidor: se maneja abajo
+          }
+          escribir('cola', cola().filter((o) => o.id !== op.id))
+        }
+        if (cola().some((o) => o.codigo === codigo)) {
+          reintentar = true // el usuario hizo algo mientras se enviaba: se vuelve a pasar antes de traer datos
+          continue
+        }
+        aplicarServidor(codigo, await llamarHogar('ver', codigo, secreto))
+        delete errores[codigo]
+      } catch (e) {
+        if (e instanceof ErrorRemoto && e.estado === 401) errores[codigo] = 'Este QR ya no da acceso. Pide una ficha nueva al equipo.'
+        else if (e instanceof ErrorRemoto && e.estado === 429) errores[codigo] = 'Demasiados intentos. Prueba de nuevo en unos minutos.'
+        else return // sin internet o fallo del servidor: se reintenta cuando vuelva la conexión
+      }
+    }
+  } finally {
+    enCurso = false
+    notificar()
+    if (reintentar) setTimeout(sincronizar, 0)
+  }
 }
 
 // ---- Equipo del proyecto ----

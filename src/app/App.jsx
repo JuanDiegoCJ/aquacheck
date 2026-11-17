@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
-import { useRuta, resolverRuta } from './ruta.js'
-import { useDatos, obtenerHogar, recordarFiltro, equipoAutorizado } from '../data/repo.js'
+import { useRuta, resolverRuta, claveDeRuta, rutaFiltro } from './ruta.js'
+import { useDatos, obtenerHogar, recordarFiltro, equipoAutorizado, adoptarClave } from '../data/repo.js'
 import Falla from '../family/Falla.jsx'
 import Corte from '../family/Corte.jsx'
 import Ficha from '../family/Ficha.jsx'
@@ -35,13 +35,22 @@ export default function App() {
   const ruta = useRuta()
   useDatos()
   const { pantalla, codigo } = resolverRuta(ruta)
-  const hogar = codigo ? obtenerHogar(codigo) : null
+  const clave = codigo ? claveDeRuta(ruta) : null
+  const hogar = codigo && !clave ? obtenerHogar(codigo) : null
+
+  // QR con clave: activa el modo real de ese filtro y quita la clave de la dirección (no queda en el historial).
+  useEffect(() => {
+    if (!clave) return
+    adoptarClave(codigo, clave)
+    window.location.replace(`${window.location.pathname}${window.location.search}${rutaFiltro(codigo)}`)
+  }, [clave, codigo])
 
   // Recuerda el filtro de esta familia para abrirlo rápido la próxima vez (sin contraseñas).
   useEffect(() => {
     if (hogar?.registrado) recordarFiltro(hogar.codigo)
   }, [hogar])
 
+  if (clave) return null
   if (pantalla === 'inicio') return <Inicio />
   if (pantalla === 'acerca') return <Acerca />
   if (pantalla === 'equipo') return <Equipo />
