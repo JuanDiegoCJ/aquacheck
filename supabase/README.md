@@ -8,6 +8,7 @@ Equipo (correo + clave) →  Supabase Auth          →  tablas, solo si app_met
 ```
 
 ## Archivos
+- `migrations/0003_fotos.sql`: bucket privado `fotos-fallas` (solo JPEG, máx. 1 MB) y política de lectura para el equipo. Las familias suben con un enlace firmado de un solo uso que entrega la función.
 - `migrations/0002_permisos_servicio.sql`: permisos del rol de servidor (necesario porque el proyecto se creó sin exponer tablas; sin esto la función no puede leer).
 - `migrations/0001_esquema.sql`: tablas, RLS, permisos revocados, rol de equipo y función de borrado (`privado.borrar_vencidos`).
 - `functions/hogar/index.ts`: puerta de las familias (valida código + clave, limita intentos, nunca devuelve celulares).
@@ -30,7 +31,7 @@ Aleatoria de 128 bits o más, en la parte `#` de la dirección (no viaja al serv
 ## Pendientes y supuestos (no verificados)
 - Que `pg_cron` esté disponible en el plan gratis: probar con `create extension pg_cron;`. El borrado manual es el respaldo.
 - Que SUPABASE_SERVICE_ROLE_KEY esté disponible por defecto en las Edge Functions (según la documentación, sí; confirmar al desplegar).
-- Fotos: bucket privado de Storage con políticas propias (aún sin diseñar).
+- Fotos: implementadas (0003). Borrar filas de storage.objects con SQL NO borra los archivos: al terminar el plazo, vaciar el bucket desde Storage > fotos-fallas (seleccionar todo > Delete).
 - Este diseño es propio, apoyado en la guía oficial de RLS y Edge Functions; conviene una revisión de seguridad antes del piloto real.
 
 ## Estado (17/11/2026)

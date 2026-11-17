@@ -87,8 +87,17 @@ Deno.serve(async (req) => {
     }
     case 'reporte_agregar': {
       if (!TIPOS_FALLA.includes(b.tipo)) return json({ error: 'datos' }, 400)
-      const { data } = await db.from('reportes').insert({ codigo, tipo: b.tipo }).select('id').single()
-      return json({ id: data?.id })
+      const id = crypto.randomUUID()
+      const ruta = b.foto === true ? `${codigo}/${id}.jpg` : null
+      await db.from('reportes').insert({ id, codigo, tipo: b.tipo, foto_path: ruta })
+      if (!ruta) return json({ id })
+      // Enlace de subida firmado: permite subir SOLO ese archivo, una vez (la familia no tiene acceso directo a Storage).
+      const { data: firma, error } = await db.storage.from('fotos-fallas').createSignedUploadUrl(ruta)
+      if (error || !firma) {
+        await db.from('reportes').update({ foto_path: null }).eq('id', id) // el reporte queda, sin foto
+        return json({ id })
+      }
+      return json({ id, subida: { ruta: firma.path, token: firma.token } })
     }
     default:
       return json({ error: 'accion' }, 400)

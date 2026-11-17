@@ -28,6 +28,26 @@ export const cerrarSesionEquipo = (token) => pedir('/auth/v1/logout', { metodo: 
 export const consultarTabla = (tabla, consulta, token) => pedir(`/rest/v1/${tabla}?${consulta}`, { token })
 export const actualizarTabla = (tabla, filtro, cuerpo, token) => pedir(`/rest/v1/${tabla}?${filtro}`, { metodo: 'PATCH', token, cuerpo, extra: { Prefer: 'return=minimal' } })
 
+/** Sube la foto con el enlace firmado que entregó la función (un solo archivo, un solo uso). */
+export async function subirFotoFirmada(ruta, token, blob) {
+  const datos = new FormData()
+  datos.append('cacheControl', '3600')
+  datos.append('', blob)
+  const r = await fetch(`${URL_BASE}/storage/v1/object/upload/sign/fotos-fallas/${ruta}?token=${encodeURIComponent(token)}`, {
+    method: 'PUT',
+    headers: { apikey: LLAVE_PUBLICA },
+    body: datos,
+  })
+  if (!r.ok) throw new ErrorRemoto(r.status, 'foto')
+}
+
+/** Enlaces temporales (1 hora) para que el equipo vea las fotos. Devuelve { ruta: url }. */
+export async function firmarFotos(rutas, token) {
+  if (!rutas.length) return {}
+  const lista = await pedir('/storage/v1/object/sign/fotos-fallas', { metodo: 'POST', token, cuerpo: { expiresIn: 3600, paths: rutas } })
+  return Object.fromEntries(lista.filter((x) => x.signedURL).map((x) => [x.path, `${URL_BASE}/storage/v1${x.signedURL}`]))
+}
+
 /** Error de respuesta del servidor (distinto de "sin internet", que lanza TypeError desde fetch). */
 export class ErrorRemoto extends Error {
   constructor(estado, codigo) {

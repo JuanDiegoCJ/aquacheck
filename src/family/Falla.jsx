@@ -46,7 +46,7 @@ export default function Falla({ hogar }) {
         ))}
       </div>
 
-      {!hogar.real && <FotoInput foto={foto} alCambiar={setFoto} />}
+      <FotoInput foto={foto} alCambiar={setFoto} />
 
       <button
         type="button"

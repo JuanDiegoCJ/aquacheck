@@ -5,7 +5,7 @@
 // Privacidad: el celular y el consentimiento viven en 'contactos', separados del historial.
 import { useSyncExternalStore } from 'react'
 import { crearDatosDemo } from './datos_demo.js'
-import { llamarHogar, ErrorRemoto, iniciarSesionEquipo, renovarSesionEquipo, cerrarSesionEquipo, consultarTabla, actualizarTabla } from './remoto.js'
+import { llamarHogar, ErrorRemoto, iniciarSesionEquipo, renovarSesionEquipo, cerrarSesionEquipo, consultarTabla, actualizarTabla, subirFotoFirmada, firmarFotos } from './remoto.js'
 
 const PREFIJO = 'aquacheck:v1:'
 const cache = {}
@@ -133,10 +133,9 @@ export const obtenerFoto = (id) => leer('fotos', {})[id] ?? null
 
 export function agregarReporte({ codigo, tipo, foto }) {
   const id = nuevoId()
-  const real = esReal(codigo)
-  if (foto && !real) escribir('fotos', { ...leer('fotos', {}), [id]: foto }) // las fotos aún no se envían al servidor
-  escribir('reportes', [...leer('reportes', []), { id, codigo, tipo, fecha: new Date().toISOString(), estado: 'abierta', conFoto: !!foto && !real }])
-  encolar(codigo, 'reporte_agregar', { tipo })
+  if (foto) escribir('fotos', { ...leer('fotos', {}), [id]: foto }) // en modo real se borra de aquí cuando se sube
+  escribir('reportes', [...leer('reportes', []), { id, codigo, tipo, fecha: new Date().toISOString(), estado: 'abierta', conFoto: !!foto }])
+  encolar(codigo, 'reporte_agregar', { tipo, foto: !!foto, localId: id })
   return id
 }
 
@@ -238,10 +237,26 @@ export async function sincronizar() {
         for (const op of cola().filter((o) => o.codigo === codigo)) {
           const { localId, ...datos } = op.datos
           try {
-            const res = await llamarHogar(op.accion, codigo, secreto, datos)
-            if (op.accion === 'mantenimiento_agregar' && res.id) escribir('idmap', { ...leer('idmap', {}), [localId]: res.id })
+            if (op.accion === 'foto_subir') {
+              // Local: sube la foto con el enlace firmado que dio el servidor al crear el reporte.
+              const url = leer('fotos', {})[localId]
+              if (url) await subirFotoFirmada(datos.ruta, datos.token, await (await fetch(url)).blob())
+              const { [localId]: _quitada, ...resto } = leer('fotos', {})
+              escribir('fotos', resto)
+            } else {
+              const res = await llamarHogar(op.accion, codigo, secreto, datos)
+              if (op.accion === 'mantenimiento_agregar' && res.id) escribir('idmap', { ...leer('idmap', {}), [localId]: res.id })
+              if (op.accion === 'reporte_agregar' && res.subida) {
+                // La subida va aparte y también se reintenta sin internet.
+                escribir('cola', [...cola(), { id: nuevoId(), codigo, accion: 'foto_subir', datos: { localId, ruta: res.subida.ruta, token: res.subida.token } }])
+              } else if (op.accion === 'reporte_agregar' && localId) {
+                const { [localId]: _quitada, ...resto } = leer('fotos', {})
+                escribir('fotos', resto)
+              }
+            }
           } catch (e) {
-            if (e instanceof ErrorRemoto && e.estado === 400) errores[codigo] = 'Un envío fue rechazado y se descartó.'
+            if (e instanceof ErrorRemoto && op.accion === 'foto_subir' && e.estado >= 400 && e.estado < 500) errores[codigo] = 'No se pudo enviar una foto y se descartó.'
+            else if (e instanceof ErrorRemoto && e.estado === 400) errores[codigo] = 'Un envío fue rechazado y se descartó.'
             else throw e // 401, sin internet o error del servidor: se maneja abajo
           }
           escribir('cola', cola().filter((o) => o.id !== op.id))
@@ -295,7 +310,7 @@ export const hogaresPanel = () => (usaRemoto() ? datosRemotos.hogares : listarHo
 export const mantenimientosPanel = () => (usaRemoto() ? datosRemotos.mantenimientos : listarMantenimientosTodos())
 export const reportesPanel = () => (usaRemoto() ? datosRemotos.reportes : listarReportes())
 export const obtenerContacto = (codigo) => (usaRemoto() ? datosRemotos.contactos[codigo] ?? null : leer('contactos', {})[codigo] ?? null)
-export const fotoPanel = (id) => (usaRemoto() ? null : obtenerFoto(id))
+export const fotoPanel = (id) => (usaRemoto() ? datosRemotos.fotos[id] ?? null : obtenerFoto(id))
 export const panelEsReal = () => !!sesionEquipo
 export const estadoDelPanel = () => estadoPanel
 
@@ -321,7 +336,11 @@ export async function cargarEquipo() {
       consultarTabla('contactos', 'select=codigo,celular,consentimiento_version', t),
     ])
     if (!h.length) throw new ErrorRemoto(403, 'sin_permiso')
+    // Enlaces temporales a las fotos (si falla, el panel funciona igual, solo sin fotos).
+    const rutas = r.filter((x) => x.foto_path).map((x) => x.foto_path)
+    const firmadas = await firmarFotos(rutas, t).catch(() => ({}))
     datosRemotos = {
+      fotos: Object.fromEntries(r.filter((x) => firmadas[x.foto_path]).map((x) => [x.id, firmadas[x.foto_path]])),
       hogares: h.map((x) => ({ codigo: x.codigo, registrado: x.registrado, modelo: x.modelo, fechaInstalacion: x.fecha_instalacion })),
       mantenimientos: m,
       reportes: r.map((x) => ({ id: x.id, codigo: x.codigo, tipo: x.tipo, estado: x.estado, fecha: x.creado_en, conFoto: !!x.foto_path })),
