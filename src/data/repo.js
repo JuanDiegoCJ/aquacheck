@@ -63,6 +63,19 @@ export function iniciar() {
   if (typeof window !== 'undefined') window.addEventListener('online', () => sincronizar())
   sincronizar()
   cargarEquipo()
+  // Actualización automática: el panel del equipo cada 4 s y los filtros conectados cada 10 s, solo con la pantalla visible.
+  if (typeof document !== 'undefined') {
+    const visible = () => document.visibilityState === 'visible'
+    setInterval(() => visible() && cargarEquipo(true), 4000)
+    setInterval(() => visible() && sincronizar(), 10_000)
+    const alVolver = () => {
+      if (!visible()) return
+      cargarEquipo(true)
+      sincronizar()
+    }
+    document.addEventListener('visibilitychange', alVolver)
+    window.addEventListener('focus', alVolver)
+  }
 }
 
 export function reiniciarDemo() {
@@ -223,9 +236,14 @@ function aplicarServidor(codigo, d) {
     else if (op.accion === 'mantenimiento_quitar') mant = mant.filter((m) => m.id !== op.datos.id)
     else if (op.accion === 'reporte_agregar') rep.push({ id: op.datos.localId, codigo, tipo: op.datos.tipo, estado: 'abierta', fecha: new Date().toISOString(), conFoto: !!op.datos.foto })
   }
-  escribir('hogares', { ...leer('hogares', {}), [codigo]: hogar })
-  escribir('mantenimientos', [...leer('mantenimientos', []).filter((m) => m.codigo !== codigo), ...mant])
-  escribir('reportes', [...leer('reportes', []).filter((r) => r.codigo !== codigo), ...rep])
+  const igual = (a, b) => JSON.stringify(a) === JSON.stringify(b)
+  if (!igual(leer('hogares', {})[codigo], hogar)) escribir('hogares', { ...leer('hogares', {}), [codigo]: hogar })
+  if (!igual(leer('mantenimientos', []).filter((m) => m.codigo === codigo), mant)) {
+    escribir('mantenimientos', [...leer('mantenimientos', []).filter((m) => m.codigo !== codigo), ...mant])
+  }
+  if (!igual(leer('reportes', []).filter((r) => r.codigo === codigo), rep)) {
+    escribir('reportes', [...leer('reportes', []).filter((r) => r.codigo !== codigo), ...rep])
+  }
 }
 
 /** Envía lo pendiente (en orden) y luego trae el estado del servidor. Sin internet no hace nada y se reintenta después. */
@@ -233,7 +251,8 @@ export async function sincronizar() {
   const codigos = Object.keys(claves())
   if (enCurso || !codigos.length || (typeof navigator !== 'undefined' && navigator.onLine === false)) return
   enCurso = true
-  notificar()
+  const habiaCola = cola().length > 0 // la actualización automática de fondo no vuelve a dibujar la pantalla por sí sola
+  if (habiaCola) notificar()
   let reintentar = false
   try {
     for (const codigo of codigos) {
@@ -281,7 +300,7 @@ export async function sincronizar() {
     }
   } finally {
     enCurso = false
-    notificar()
+    if (habiaCola || reintentar) notificar()
     if (reintentar) setTimeout(sincronizar, 0)
   }
 }
@@ -327,11 +346,20 @@ async function tokenVigente() {
   return sesionEquipo.token
 }
 
-/** Trae del servidor todo lo que el equipo puede ver (si la cuenta no es del equipo, las tablas llegan vacías). */
-export async function cargarEquipo() {
-  if (!sesionEquipo) return
-  estadoPanel = { cargando: true, error: null }
-  avisar()
+let cargandoEquipo = false
+const urlsFoto = {} // ruta -> { url, en }: los enlaces firmados duran 1 h; se renuevan a los 50 min
+/**
+ * Trae del servidor todo lo que el equipo puede ver (si la cuenta no es del equipo, las tablas llegan vacías).
+ * silencioso = actualización automática en segundo plano: no muestra "Actualizando…" ni errores pasajeros y solo
+ * vuelve a dibujar la pantalla si algo cambió.
+ */
+export async function cargarEquipo(silencioso = false) {
+  if (!sesionEquipo || cargandoEquipo) return
+  cargandoEquipo = true
+  if (!silencioso) {
+    estadoPanel = { cargando: true, error: null }
+    avisar()
+  }
   try {
     const t = await tokenVigente()
     const [h, m, r, c] = await Promise.all([
@@ -341,27 +369,37 @@ export async function cargarEquipo() {
       consultarTabla('contactos', 'select=codigo,celular,consentimiento_version', t),
     ])
     if (!h.length) throw new ErrorRemoto(403, 'sin_permiso')
-    // Enlaces temporales a las fotos (si falla, el panel funciona igual, solo sin fotos).
-    const rutas = r.filter((x) => x.foto_path).map((x) => x.foto_path)
-    const firmadas = await firmarFotos(rutas, t).catch(() => ({}))
-    datosRemotos = {
-      fotos: Object.fromEntries(r.filter((x) => firmadas[x.foto_path]).map((x) => [x.id, firmadas[x.foto_path]])),
+    // Enlaces temporales a las fotos (si falla, el panel funciona igual, solo sin fotos). Solo se piden los que faltan.
+    const faltan = r.filter((x) => x.foto_path && (!urlsFoto[x.foto_path] || Date.now() - urlsFoto[x.foto_path].en > 50 * 60_000)).map((x) => x.foto_path)
+    if (faltan.length) {
+      const nuevas = await firmarFotos(faltan, t).catch(() => ({}))
+      for (const [ruta, url] of Object.entries(nuevas)) urlsFoto[ruta] = { url, en: Date.now() }
+    }
+    const nuevo = {
+      fotos: Object.fromEntries(r.filter((x) => urlsFoto[x.foto_path]).map((x) => [x.id, urlsFoto[x.foto_path].url])),
       hogares: h.map((x) => ({ codigo: x.codigo, registrado: x.registrado, modelo: x.modelo, fechaInstalacion: x.fecha_instalacion })),
       mantenimientos: m,
       reportes: r.map((x) => ({ id: x.id, codigo: x.codigo, tipo: x.tipo, estado: x.estado, fecha: x.creado_en, conFoto: !!x.foto_path })),
       contactos: Object.fromEntries(c.map((x) => [x.codigo, { celular: x.celular, consentimiento: { version: x.consentimiento_version } }])),
     }
+    const cambio = JSON.stringify(nuevo) !== JSON.stringify(datosRemotos)
+    const habiaEstado = estadoPanel.cargando || estadoPanel.error
+    datosRemotos = nuevo
     estadoPanel = { cargando: false, error: null }
+    if (!silencioso || cambio || habiaEstado) avisar()
   } catch (e) {
     if (e instanceof ErrorRemoto && (e.estado === 401 || e.estado === 403)) {
       guardarSesion(null)
       datosRemotos = null
       estadoPanel = { cargando: false, error: 'Esta cuenta no tiene permiso para ver el panel del equipo.' }
-    } else {
+      avisar()
+    } else if (!silencioso) {
       estadoPanel = { cargando: false, error: 'No se pudo cargar. Revisa tu internet e inténtalo de nuevo.' }
+      avisar()
     }
+  } finally {
+    cargandoEquipo = false
   }
-  avisar()
 }
 
 /** Devuelve null si todo salió bien, o el mensaje de error para mostrar. */

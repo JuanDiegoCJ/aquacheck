@@ -30,7 +30,7 @@ for (const [codigo, clave] of filas) {
   fichas.push(`<article class="ficha">
   <header class="ficha-cab"><div><p class="ficha-marca">💧 AquaCheck</p><h2>Filtro ${codigo}</h2>
   <p>Escanea el QR con tu celular para registrar el mantenimiento.</p></div>
-  <img class="qr" src="${qr}" width="130" height="130" alt="Código QR del filtro ${codigo}"></header>
+  <img class="qr" src="${qr}" width="170" height="170" alt="Código QR del filtro ${codigo}"></header>
   <table class="ficha-tabla"><thead><tr><th>Tarea</th><th>Cada</th><th>Fecha</th><th>Fecha</th><th>Fecha</th><th>Fecha</th></tr></thead><tbody>${filasTabla}</tbody></table>
   <p class="ficha-pie">Si no tienes celular o internet, anota aquí la fecha cada vez que hagas la tarea. Si el filtro gotea, el agua sale turbia o sale poca agua, avisa al equipo del proyecto. AquaCheck no mide la calidad del agua.</p>
 </article>`)

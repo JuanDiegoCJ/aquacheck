@@ -145,8 +145,8 @@ function Panel() {
   return (
     <Pantalla titulo="Panel del equipo" volver="#/" sinPie ancho>
       <p className="suave" role="status">
-        Datos del piloto (Supabase). {estado.cargando ? 'Actualizando…' : ''}{' '}
-        <button type="button" className="enlace-boton" onClick={cargarEquipo}>
+        Datos del piloto (Supabase). Se actualiza solo cada pocos segundos. {estado.cargando ? 'Actualizando…' : ''}{' '}
+        <button type="button" className="enlace-boton" onClick={() => cargarEquipo()}>
           Actualizar
         </button>
       </p>
