@@ -101,7 +101,9 @@ export function mensajeAviso(codigo, tareas) {
   if (!t) return null
   const nombre = TAREAS[t.tipo].etiqueta.toLowerCase()
   const cuando = t.dias < 0 ? 'ya toca' : t.dias === 0 ? 'toca hoy' : `toca en ${t.dias} ${t.dias === 1 ? 'día' : 'días'}`
-  return `Hola 👋 Te recordamos que la ${nombre} de tu filtro ${codigo} ${cuando}. Cuando termines, regístrala en AquaCheck.`
+  const articulo = nombre.startsWith('cambio') ? 'el' : 'la'
+  const registrala = articulo === 'el' ? 'regístralo' : 'regístrala'
+  return `Hola 👋 Te recordamos que ${articulo} ${nombre} (filtro ${codigo}) ${cuando}. Cuando termines, ${registrala} en AquaCheck.`
 }
 
 // ---- Código del filtro (el QR pegado en el equipo) ----
