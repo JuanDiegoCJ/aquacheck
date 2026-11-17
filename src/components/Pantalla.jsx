@@ -3,7 +3,7 @@
 //   - por defecto: una columna estrecha (formularios, historial…)
 //   - doble: hasta dos columnas en pantallas anchas (inicio, panel del filtro)
 //   - ancho: panel del equipo / fichas
-export default function Pantalla({ titulo, volver, children, sinPie = false, ancho = false, doble = false }) {
+export default function Pantalla({ titulo, volver, children, sinPie = false, ancho = false, doble = false, acciones = null }) {
   const clase = ancho ? 'app-ancho' : doble ? 'app-doble' : ''
   return (
     <div className={`app ${clase}`}>
@@ -18,14 +18,22 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
             <img src="./icon.svg" alt="" width="28" height="28" /> AquaCheck
           </a>
           <nav className="nav" aria-label="Principal">
-            <a href="#/">Inicio</a>
-            <a href="#/acerca">¿Qué hace?</a>
-            <a href="#/equipo">Equipo del proyecto</a>
+            <a href="#/" data-guia="nav-inicio">Inicio</a>
+            <a href="#/acerca" data-guia="nav-acerca">¿Qué hace?</a>
+            <a href="#/equipo" data-guia="nav-equipo">Equipo del proyecto</a>
           </nav>
         </div>
       </header>
       <main className="contenido">
-        {titulo && <h1 className="titulo">{titulo}</h1>}
+        {titulo &&
+          (acciones ? (
+            <div className="titulo-fila">
+              <h1 className="titulo">{titulo}</h1>
+              {acciones}
+            </div>
+          ) : (
+            <h1 className="titulo">{titulo}</h1>
+          ))}
         {children}
       </main>
       {!sinPie && (

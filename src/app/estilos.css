@@ -1325,3 +1325,28 @@ button.seg:hover {
 .indicadores { gap: 0.5rem; }
 .indicador { padding: 0.6rem 0.8rem; }
 .indicador strong { font-size: 1.5rem; }
+
+/* Barra superior: logo a la izquierda y navegación a la derecha, igual en todas las pantallas */
+.barra-in { max-width: 1760px; }
+.titulo-fila { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.titulo-fila .titulo { margin: 0; }
+.btn-mini-principal { background: #0b5fa5; color: #fff; border-color: #0b5fa5; }
+
+/* Guía con "?" */
+.ayuda-flotante { position: fixed; right: 16px; bottom: 16px; z-index: 40; width: 48px; height: 48px; border-radius: 50%; border: 0; background: #0b5fa5; color: #fff; font-size: 1.5rem; font-weight: 700; box-shadow: 0 4px 14px rgba(0,0,0,.3); cursor: pointer; }
+.guia { position: fixed; inset: 0; z-index: 60; }
+.guia-fondo { position: fixed; inset: 0; background: rgba(10, 25, 45, 0.7); }
+.guia-foco { position: fixed; border-radius: 14px; border: 3px solid #fff; box-shadow: 0 0 0 9999px rgba(10, 25, 45, 0.7); pointer-events: none; transition: top .2s, left .2s, width .2s, height .2s; }
+.guia-caja { position: fixed; left: 50%; transform: translateX(-50%); width: min(92vw, 440px); background: #fff; color: #14263a; border-radius: 16px; padding: 16px 18px; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+.guia-caja h2 { margin: 0.1rem 0 0.4rem; font-size: 1.15rem; }
+.guia-caja p { margin: 0 0 0.6rem; }
+.guia-paso { color: #4a6075; font-size: 0.85rem; margin: 0; }
+.guia-botones { display: flex; gap: 8px; align-items: center; }
+.guia-espacio { flex: 1; }
+
+/* Barra superior en tablet/computadora: marca siempre en el mismo lugar (izquierda), luego "Volver", y la navegación a la derecha */
+@media (min-width: 768px) {
+  .barra-in .marca { order: 0; }
+  .barra-in .volver { order: 1; padding-left: 8px; border-left: 1px solid rgba(255, 255, 255, 0.35); margin-left: 4px; }
+  .barra-in .nav { order: 2; margin-left: auto; }
+}

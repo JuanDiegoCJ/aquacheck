@@ -1,14 +1,24 @@
 import { useCallback, useState } from 'react'
 import Pantalla from '../components/Pantalla.jsx'
 import Escaner from '../components/Escaner.jsx'
+import Guia, { BotonAyuda } from '../components/Guia.jsx'
 import { Punto } from '../components/Semaforo.jsx'
 import { useDatos, miFiltro, esReal } from '../data/repo.js'
 import { extraerCodigo, resumenHogar } from '../domain/reglas.js'
 import { irA, rutaFiltro } from '../app/ruta.js'
 
+const PASOS_INICIO = [
+  { selector: '[data-guia="escanear"]', titulo: 'Escanear el QR', texto: 'Toca aquí y apunta la cámara al QR pegado en tu filtro. Se abre tu filtro al instante. También puedes usar la cámara normal del celular.' },
+  { selector: '[data-guia="codigo"]', titulo: 'Si no puedes escanear', texto: 'Escribe tu código (por ejemplo AQ-007) si ya abriste tu QR antes en este celular, o pega el enlace de tu ficha.' },
+  { selector: '[data-guia="nav-acerca"]', titulo: '¿Qué hace AquaCheck?', texto: 'Explica qué hace la app y qué no: no mide la calidad del agua ni certifica que sea potable. Aquí también están tus datos y tu privacidad.' },
+  { selector: '[data-guia="soy-equipo"]', titulo: 'Equipo del proyecto', texto: 'Solo para el equipo: entra con su correo y contraseña para ver cómo va cada hogar.' },
+  { selector: '[data-guia="nav-inicio"]', titulo: 'Inicio', texto: 'Desde cualquier pantalla, este botón te trae de vuelta aquí.' },
+]
+
 export default function Inicio() {
   useDatos()
   const [escaneando, setEscaneando] = useState(false)
+  const [guia, setGuia] = useState(false)
   const [texto, setTexto] = useState('')
   const [error, setError] = useState('')
   const guardado = miFiltro() && esReal(miFiltro()) ? miFiltro() : null
@@ -44,11 +54,11 @@ export default function Inicio() {
         </a>
       )}
 
-      <button type="button" className={`btn btn-grande ${guardado ? 'btn-secundario' : 'btn-principal'}`} onClick={() => setEscaneando(true)}>
+      <button type="button" data-guia="escanear" className={`btn btn-grande ${guardado ? 'btn-secundario' : 'btn-principal'}`} onClick={() => setEscaneando(true)}>
         📷 Escanear el QR de mi filtro
       </button>
 
-      <form className="tarjeta" onSubmit={enviar}>
+      <form className="tarjeta" onSubmit={enviar} data-guia="codigo">
         <label htmlFor="codigo">¿No puedes escanear? Escribe tu código (si ya abriste tu QR antes) o pega el enlace de tu ficha</label>
         <div className="fila">
           <input
@@ -73,26 +83,13 @@ export default function Inicio() {
       </form>
 
 
-      <details className="tarjeta tutorial">
-        <summary>¿Cómo funciona? (tutorial de 3 pasos)</summary>
-        <ol>
-          <li>
-            <strong>Escanea el QR</strong> pegado en tu filtro con la cámara de tu celular. Se abre AquaCheck con tu filtro.
-          </li>
-          <li>
-            <strong>Regístrate una sola vez:</strong> tu fecha de instalación y tu celular para los avisos.
-          </li>
-          <li>
-            <strong>Cada vez que limpies o cambies algo,</strong> toca “Registrar mantenimiento” y “Sí, guardar”. Si el filtro falla, toca “Reportar un problema”.
-          </li>
-        </ol>
-        <p className="suave">Funciona sin internet: se guarda en tu celular y se envía al volver la conexión.</p>
-      </details>
 
-      <a className="enlace-discreto" href="#/equipo">
+      <a className="enlace-discreto" href="#/equipo" data-guia="soy-equipo">
         Soy del equipo del proyecto
       </a>
 
+      <BotonAyuda alAbrir={() => setGuia(true)} />
+      {guia && <Guia alCerrar={() => setGuia(false)} pasos={PASOS_INICIO} />}
       {escaneando && (
         <Escaner
           alCerrar={() => setEscaneando(false)}

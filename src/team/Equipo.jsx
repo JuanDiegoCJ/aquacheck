@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import Pantalla from '../components/Pantalla.jsx'
+import Guia, { BotonAyuda } from '../components/Guia.jsx'
 import { Donut, BarrasPorTarea, BarrasSemanales, BarrasFallas } from '../components/Graficos.jsx'
 import {
   useDatos,
@@ -59,6 +60,14 @@ function Acceso() {
   )
 }
 
+const PASOS_EQUIPO = [
+  { selector: '[data-guia="indicadores"]', titulo: 'Indicadores', texto: 'Cuántos filtros están registrados, qué porcentaje está al día, cuántos tienen tareas próximas o pendientes y cuántas fallas siguen abiertas.' },
+  { selector: '[data-guia="actualizar"]', titulo: 'Actualizar', texto: 'El panel se actualiza solo cada 2 segundos. Este botón fuerza una actualización inmediata.' },
+  { selector: '[data-guia="pestanas"]', titulo: 'Secciones', texto: 'Resumen (gráficos), Hogares (tabla con búsqueda y páginas), Fallas (reportes con foto) e Informes (Excel, Word, PDF y fichas).' },
+  { selector: '[data-guia="graficos"]', titulo: 'Gráficos', texto: 'Toca un estado o un tramo de un gráfico para ver en Hogares solo esas familias.' },
+  { titulo: 'En Hogares', texto: '👁 Ver abre la vista de solo lectura de una familia (tareas, historial, fallas y contacto). “Ficha” muestra su QR definitivo para imprimir. “WhatsApp” abre el aviso ya escrito.' },
+]
+
 const enmascarar = (cel) => (cel ? `9•• ••• ${cel.slice(-3)}` : '—')
 
 export default function Equipo() {
@@ -73,6 +82,7 @@ function Panel() {
   const [filtro, setFiltro] = useState(null)
   const [busqueda, setBusqueda] = useState('')
   const tablaRef = useRef(null)
+  const [guia, setGuia] = useState(false)
   const [vista, setVista] = useState('resumen') // resumen | hogares | fallas | informes
   const [pagina, setPagina] = useState(0)
   const cambiarFiltro = (f) => {
@@ -153,19 +163,23 @@ function Panel() {
   const datosDonut = ESTADOS.map((e) => ({ ...e, valor: r.porEstado[e.id] }))
 
   return (
-    <Pantalla titulo="Panel del equipo" volver="#/" sinPie ancho>
-      <p className="suave" role="status">
-        Datos del piloto (Supabase). Se actualiza solo cada pocos segundos. {estado.cargando ? 'Actualizando…' : ''}{' '}
-        <button type="button" className="enlace-boton" onClick={() => cargarEquipo()}>
-          Actualizar
+    <Pantalla
+      titulo="Panel del equipo"
+      volver="#/"
+      sinPie
+      ancho
+      acciones={
+        <button type="button" className="btn-mini" data-guia="actualizar" onClick={() => cargarEquipo()} title="Se actualiza solo cada 2 segundos">
+          {estado.cargando ? 'Actualizando…' : '↻ Actualizar'}
         </button>
-      </p>
+      }
+    >
       {estado.error && (
         <p className="error" role="alert">
           {estado.error}
         </p>
       )}
-      <section className="indicadores" aria-label="Indicadores del piloto">
+      <section className="indicadores" data-guia="indicadores" aria-label="Indicadores del piloto">
         <div className="indicador">
           <strong>
             {r.registrados}/{r.total}
@@ -186,7 +200,7 @@ function Panel() {
         </div>
       </section>
 
-      <nav className="pestanas" role="tablist" aria-label="Secciones del panel">
+      <nav className="pestanas" data-guia="pestanas" role="tablist" aria-label="Secciones del panel">
         {[['resumen', 'Resumen'], ['hogares', 'Hogares'], ['fallas', 'Fallas'], ['informes', 'Informes']].map(([id, texto]) => (
           <button key={id} type="button" role="tab" className="pestana" aria-selected={vista === id} onClick={() => setVista(id)}>
             {texto}
@@ -198,7 +212,7 @@ function Panel() {
 
       {vista === 'resumen' && (
 
-      <section className="graficos" aria-label="Gráficos del piloto">
+      <section className="graficos" data-guia="graficos" aria-label="Gráficos del piloto">
         <article className="tarjeta grafico">
           <h2>Hogares por estado</h2>
           <p className="suave">Toca un estado para filtrar la tabla.</p>
@@ -401,6 +415,8 @@ function Panel() {
           </section>
           )}
       </div>
+      <BotonAyuda alAbrir={() => setGuia(true)} />
+      {guia && <Guia alCerrar={() => setGuia(false)} pasos={PASOS_EQUIPO} />}
     </Pantalla>
   )
 }
