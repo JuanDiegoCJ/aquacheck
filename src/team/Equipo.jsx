@@ -228,7 +228,7 @@ function Panel() {
 
         <article className="tarjeta grafico grafico-ancho">
           <h2>Mantenimientos por semana</h2>
-          <p className="suave">Últimas 8 semanas.</p>
+          <p className="suave">Últimas 8 semanas (bloques de 7 días). Bajo cada barra: el día en que empieza.</p>
           <BarrasSemanales semanas={r.semanas} />
         </article>
 
@@ -344,7 +344,7 @@ function Panel() {
           )}
 
           {vista === 'fallas' && (
-          <section className="tarjeta">
+          <section className="tarjeta fallas-panel">
             <h2>Fallas reportadas</h2>
             {r.reportes.length === 0 ? (
               <p className="suave">Aún no hay reportes.</p>

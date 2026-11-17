@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { Menu, X } from 'lucide-react'
 import { Icono } from './Iconos.jsx'
 // Marco común de todas las pantallas: barra superior (con navegación en pantallas anchas),
 // contenido centrado y pie con los límites de la app.
@@ -5,6 +7,7 @@ import { Icono } from './Iconos.jsx'
 //   - doble: hasta dos columnas en pantallas anchas (inicio, panel del filtro)
 //   - ancho: panel del equipo / fichas
 export default function Pantalla({ titulo, volver, children, sinPie = false, ancho = false, doble = false, acciones = null }) {
+  const [menu, setMenu] = useState(false)
   const clase = ancho ? 'app-ancho' : doble ? 'app-doble' : ''
   return (
     <div className={`app ${clase}`}>
@@ -18,7 +21,10 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
           <a className={`marca ${volver ? 'marca-escritorio' : ''}`} href="#/">
             <img src="./icon.svg" alt="" width="28" height="28" /> AquaCheck
           </a>
-          <nav className="nav" aria-label="Principal">
+          <button type="button" className="menu-movil" aria-expanded={menu} aria-controls="nav-principal" aria-label={menu ? 'Cerrar el menú' : 'Abrir el menú'} onClick={() => setMenu(!menu)}>
+            {menu ? <X size={26} aria-hidden="true" /> : <Menu size={26} aria-hidden="true" />}
+          </button>
+          <nav id="nav-principal" className={`nav ${menu ? 'abierto' : ''}`} aria-label="Principal" onClick={() => setMenu(false)}>
             <a href="#/" data-guia="nav-inicio">Inicio</a>
             <a href="#/acerca" data-guia="nav-acerca">¿Qué hace?</a>
             <a href="#/equipo" data-guia="nav-equipo">Equipo del proyecto</a>

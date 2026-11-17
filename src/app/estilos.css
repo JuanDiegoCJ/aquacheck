@@ -1471,3 +1471,68 @@ body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; 
 .btn-grande { min-height: 56px; }
 .semaforo { box-shadow: 0 1px 2px rgba(16, 42, 67, 0.05), 0 6px 18px rgba(16, 42, 67, 0.05); }
 .tarea { box-shadow: 0 1px 2px rgba(16, 42, 67, 0.04); }
+
+/* =====================================================================
+   Mobile first: menú en celular, pestañas con scroll, objetivos táctiles y centrado en pantallas anchas
+   ===================================================================== */
+.barra { position: sticky; }
+.menu-movil { margin-left: auto; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; background: none; border: 0; color: #fff; cursor: pointer; border-radius: 10px; }
+.menu-movil:hover { background: rgba(255, 255, 255, 0.16); }
+.nav.abierto { display: flex; flex-direction: column; position: absolute; left: 0; right: 0; top: 100%; margin: 0; gap: 0; background: #0b5fa5; padding: 6px 16px 12px; border-top: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 12px 24px rgba(10, 25, 45, 0.25); }
+.nav.abierto a { padding: 14px 8px; font-size: 1.05rem; border-radius: 8px; }
+@media (min-width: 768px) {
+  .menu-movil { display: none; }
+  .nav, .nav.abierto { display: flex; flex-direction: row; position: static; margin-left: auto; padding: 0; border: 0; background: none; box-shadow: none; gap: 4px; }
+  .nav.abierto a { padding: 8px 12px; font-size: 0.9rem; }
+}
+
+/* Pestañas: una sola línea con desplazamiento en celular */
+.pestanas { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.pestanas::-webkit-scrollbar { display: none; }
+.pestana { flex: none; min-height: 48px; }
+
+/* Indicadores: 2 columnas en celular, 4 en pantallas anchas */
+.indicadores { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 900px) { .indicadores { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 420px) { .indicador strong { font-size: 1.45rem; } .indicador { padding: 12px; } }
+
+/* Objetivos táctiles de 44 px y letra de campos de 16 px (evita el zoom automático en iPhone) */
+@media (pointer: coarse) {
+  .btn-mini { min-height: 44px; padding: 0 14px; }
+  .btn-chico { min-height: 48px; }
+  .filtro-chip { min-height: 44px; }
+  .nav a, .enlace-discreto, .enlace-boton { min-height: 44px; display: inline-flex; align-items: center; }
+}
+input, select, textarea { font-size: 1rem; }
+
+/* El botón "?" respeta las zonas seguras de los celulares */
+.ayuda-flotante { right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); }
+
+/* Descargas: 1 columna en celular, 3 desde 481 px (mobile first) */
+.descargas { grid-template-columns: 1fr; }
+.descarga { grid-template-columns: auto 1fr; justify-items: start; align-items: center; column-gap: 12px; padding: 14px 16px; }
+.descarga span { grid-column: 2; }
+.descarga .icono { grid-row: span 2; }
+.descarga strong { margin-top: 0; }
+@media (min-width: 481px) {
+  .descargas { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .descarga { grid-template-columns: none; justify-items: center; padding: 16px 8px; }
+  .descarga span { grid-column: auto; }
+  .descarga .icono { grid-row: auto; }
+  .descarga strong { margin-top: 4px; }
+}
+
+/* Paneles angostos centrados en pantallas anchas (informes y fallas) */
+.informes, .fallas-panel { max-width: 820px; margin-left: auto; margin-right: auto; width: 100%; }
+
+/* Celular (< 768 px): objetivos táctiles cómodos de al menos 44 px */
+@media (max-width: 767px) {
+  .marca { min-height: 44px; }
+  .btn-mini, .buscador, .filtro-chip, .paginacion .btn-mini { min-height: 44px; }
+  .seg { min-height: 44px; }
+  .casilla { min-height: 48px; display: flex; align-items: center; gap: 12px; }
+  .casilla input[type='checkbox'] { width: 26px; height: 26px; flex: none; }
+}
+@media (max-width: 767px) {
+  .tabla td a:not(.btn-mini) { display: inline-flex; align-items: center; min-height: 44px; }
+}

@@ -139,7 +139,7 @@ export function BarrasSemanales({ semanas }) {
   const grande = useAnchoGrande()
   const max = Math.max(1, ...semanas.map((s) => s.n))
   const W = grande ? 960 : 320
-  const H = grande ? 250 : 170
+  const H = grande ? 235 : 160
   const base = grande ? 208 : 138
   const alto = grande ? 150 : 100
   const ancho = W / semanas.length
@@ -168,9 +168,6 @@ export function BarrasSemanales({ semanas }) {
           </g>
         )
       })}
-      <text x="0" y={H - 4} className="sem-f">
-        Semana que empieza el…
-      </text>
     </svg>
   )
 }
