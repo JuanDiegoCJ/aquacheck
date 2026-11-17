@@ -172,6 +172,8 @@ export function reiniciarPasosCorte(codigo) {
 const claves = () => leer('claves', {})
 const cola = () => leer('cola', [])
 export const esReal = (codigo) => !!claves()[codigo]
+/** Clave del QR de un filtro conectado (solo está en el celular de esa familia); null si es de demostración. */
+export const claveDe = (codigo) => claves()[codigo] ?? null
 export const pendientesDe = (codigo) => cola().filter((o) => o.codigo === codigo).length
 let enCurso = false
 const errores = {} // codigo -> mensaje (solo en memoria)
@@ -210,17 +212,20 @@ export function adoptarClave(codigo, secreto) {
 
 function aplicarServidor(codigo, d) {
   const h = d.hogar
-  const hogares = { ...leer('hogares', {}) }
-  hogares[codigo] = { codigo, registrado: !!h.registrado, modelo: h.modelo, fechaInstalacion: h.fecha_instalacion ?? null, real: true }
-  escribir('hogares', hogares)
-  escribir('mantenimientos', [
-    ...leer('mantenimientos', []).filter((m) => m.codigo !== codigo),
-    ...d.mantenimientos.map((m) => ({ id: m.id, codigo, tipo: m.tipo, fecha: m.fecha })),
-  ])
-  escribir('reportes', [
-    ...leer('reportes', []).filter((r) => r.codigo !== codigo),
-    ...d.reportes.map((r) => ({ id: r.id, codigo, tipo: r.tipo, estado: r.estado, fecha: r.creado_en, conFoto: false })),
-  ])
+  let hogar = { codigo, registrado: !!h.registrado, modelo: h.modelo, fechaInstalacion: h.fecha_instalacion ?? null, real: true }
+  let mant = d.mantenimientos.map((m) => ({ id: m.id, codigo, tipo: m.tipo, fecha: m.fecha }))
+  let rep = d.reportes.map((r) => ({ id: r.id, codigo, tipo: r.tipo, estado: r.estado, fecha: r.creado_en, conFoto: false }))
+  // Lo que el usuario guardó y aún no se envió se vuelve a superponer: si no, una respuesta lenta del servidor
+  // (pedida antes de guardar) lo borraría de la pantalla hasta la siguiente sincronización.
+  for (const op of cola().filter((o) => o.codigo === codigo)) {
+    if (op.accion === 'registrar') hogar = { ...hogar, registrado: true, fechaInstalacion: op.datos.fecha_instalacion }
+    else if (op.accion === 'mantenimiento_agregar') mant.push({ id: op.datos.localId, codigo, tipo: op.datos.tipo, fecha: op.datos.fecha })
+    else if (op.accion === 'mantenimiento_quitar') mant = mant.filter((m) => m.id !== op.datos.id)
+    else if (op.accion === 'reporte_agregar') rep.push({ id: op.datos.localId, codigo, tipo: op.datos.tipo, estado: 'abierta', fecha: new Date().toISOString(), conFoto: !!op.datos.foto })
+  }
+  escribir('hogares', { ...leer('hogares', {}), [codigo]: hogar })
+  escribir('mantenimientos', [...leer('mantenimientos', []).filter((m) => m.codigo !== codigo), ...mant])
+  escribir('reportes', [...leer('reportes', []).filter((r) => r.codigo !== codigo), ...rep])
 }
 
 /** Envía lo pendiente (en orden) y luego trae el estado del servidor. Sin internet no hace nada y se reintenta después. */
@@ -267,6 +272,7 @@ export async function sincronizar() {
         }
         aplicarServidor(codigo, await llamarHogar('ver', codigo, secreto))
         delete errores[codigo]
+        if (cola().some((o) => o.codigo === codigo)) reintentar = true // guardaron algo mientras se traían los datos
       } catch (e) {
         if (e instanceof ErrorRemoto && e.estado === 401) errores[codigo] = 'Este QR ya no da acceso. Pide una ficha nueva al equipo.'
         else if (e instanceof ErrorRemoto && e.estado === 429) errores[codigo] = 'Demasiados intentos. Prueba de nuevo en unos minutos.'
