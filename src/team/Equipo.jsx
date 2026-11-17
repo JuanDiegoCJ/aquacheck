@@ -274,7 +274,7 @@ function Panel() {
                 ))}
               </div>
               <div className="buscar-grupo">
-              <input type="search" className="buscador" placeholder="Buscar (AQ-007)" aria-label="Buscar filtro por código" value={busqueda} onChange={(e) => {
+              <input type="search" className="buscador" placeholder="Buscar" aria-label="Buscar filtro por código" value={busqueda} onChange={(e) => {
                   setBusqueda(e.target.value)
                   setPagina(0)
                 }} />
