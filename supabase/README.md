@@ -1,0 +1,30 @@
+# Supabase · diseño del backend de AquaCheck
+
+Todo el backend es Supabase (sin servidor aparte). La app (Vercel) solo habla con Supabase.
+
+```
+Familia (QR con clave)  →  Edge Function `hogar`  →  tablas CERRADAS (RLS + sin permisos para anon)
+Equipo (correo + clave) →  Supabase Auth          →  tablas, solo si app_metadata.rol = 'equipo'
+```
+
+## Archivos
+- `migrations/0001_esquema.sql`: tablas, RLS, permisos revocados, rol de equipo y función de borrado (`privado.borrar_vencidos`).
+- `functions/hogar/index.ts`: puerta de las familias (valida código + clave, limita intentos, nunca devuelve celulares).
+
+## Cómo aplicarlo (cuando exista el proyecto)
+1. Editor SQL de Supabase → pegar y ejecutar `0001_esquema.sql`.
+2. Crear a los hogares AQ-001…AQ-020 con una clave aleatoria larga cada uno (guardar solo el SHA-256 en `secreto_hash`; la clave va en el QR).
+3. Desplegar la función `hogar` (Edge Functions → desplegar; o `supabase functions deploy hogar`).
+4. Crear a los usuarios del equipo (Auth) y ponerles `app_metadata = {"rol": "equipo"}` desde el panel.
+5. En la app: reemplazar `src/data/repo.js` por un adaptador que llame a la función y conserve la cola sin internet.
+6. Las variables públicas van en Vercel como `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY`. La llave secreta NUNCA va en el frontend.
+
+## Clave del QR
+Aleatoria de 128 bits o más, en la parte `#` de la dirección (no viaja al servidor ni en el encabezado Referer):
+`https://aquacheck-moche.vercel.app/#/f/AQ-007?k=<clave>`. Si se pierde un QR, se rota la clave del hogar.
+
+## Pendientes y supuestos (no verificados)
+- Que `pg_cron` esté disponible en el plan gratis: probar con `create extension pg_cron;`. El borrado manual es el respaldo.
+- Que SUPABASE_SERVICE_ROLE_KEY esté disponible por defecto en las Edge Functions (según la documentación, sí; confirmar al desplegar).
+- Fotos: bucket privado de Storage con políticas propias (aún sin diseñar).
+- Este diseño es propio, apoyado en la guía oficial de RLS y Edge Functions; conviene una revisión de seguridad antes del piloto real.
