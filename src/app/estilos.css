@@ -1568,3 +1568,10 @@ input, select, textarea { font-size: 1rem; }
 .acciones-ficha { display: flex; flex-wrap: wrap; gap: 10px; }
 @media (max-width: 480px) { .acciones-ficha .btn { width: 100%; } }
 .btn-mini[disabled] { opacity: 0.5; cursor: default; }
+
+/* Buscar filtro + Agregar hogar en la misma fila y a la misma altura */
+.buscar-grupo { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; width: 100%; }
+.buscar-grupo .buscador { flex: 1 1 110px; min-width: 0; min-height: 44px; margin: 0; }
+.buscar-grupo > .btn-mini { min-height: 44px; flex: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 16px; }
+.buscar-grupo .confirmar-nuevo { flex: 1 1 100%; justify-content: space-between; }
+@media (min-width: 900px) { .buscar-grupo { width: auto; flex-wrap: nowrap; } .buscar-grupo .buscador { flex: 0 1 260px; } .buscar-grupo .confirmar-nuevo { flex: none; } }

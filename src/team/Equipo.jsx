@@ -260,31 +260,7 @@ function Panel() {
       <div className="equipo-una" ref={tablaRef}>
           {vista === 'hogares' && (
           <section className="tarjeta">
-            <div className="hogares-cab">
-              <h2>Hogares ({visibles.length}{visibles.length !== r.total ? ` de ${r.total}` : ''})</h2>
-              {!confirmandoNuevo ? (
-                <button type="button" className="btn-mini btn-mini-principal" data-guia="agregar-hogar" disabled={!siguienteCodigo()} onClick={() => { setErrorNuevo(null); setConfirmandoNuevo(true) }}>
-                  <Icono nombre="agregar" /> Agregar hogar
-                </button>
-              ) : (
-                <div className="confirmar-nuevo" role="group" aria-label="Confirmar nuevo hogar">
-                  <span>
-                    ¿Crear <strong>{siguienteCodigo()}</strong>?
-                  </span>
-                  <button type="button" className="btn-mini btn-mini-principal" disabled={creando} onClick={crear}>
-                    {creando ? 'Creando…' : 'Sí, crear'}
-                  </button>
-                  <button type="button" className="btn-mini" disabled={creando} onClick={() => setConfirmandoNuevo(false)}>
-                    Cancelar
-                  </button>
-                </div>
-              )}
-            </div>
-            {errorNuevo && (
-              <p className="error" role="alert">
-                {errorNuevo}
-              </p>
-            )}
+            <h2>Hogares ({visibles.length}{visibles.length !== r.total ? ` de ${r.total}` : ''})</h2>
 
             <div className="filtros-barra">
               <div className="filtros" role="group" aria-label="Filtrar por estado">
@@ -297,11 +273,35 @@ function Panel() {
                   </button>
                 ))}
               </div>
+              <div className="buscar-grupo">
               <input type="search" className="buscador" placeholder="Buscar filtro (AQ-007)" aria-label="Buscar filtro por código" value={busqueda} onChange={(e) => {
                   setBusqueda(e.target.value)
                   setPagina(0)
                 }} />
+              {!confirmandoNuevo ? (
+                  <button type="button" className="btn-mini btn-mini-principal" data-guia="agregar-hogar" disabled={!siguienteCodigo()} onClick={() => { setErrorNuevo(null); setConfirmandoNuevo(true) }}>
+                    <Icono nombre="agregar" /> Agregar hogar
+                  </button>
+                ) : (
+                  <div className="confirmar-nuevo" role="group" aria-label="Confirmar nuevo hogar">
+                    <span>
+                      ¿Crear <strong>{siguienteCodigo()}</strong>?
+                    </span>
+                    <button type="button" className="btn-mini btn-mini-principal" disabled={creando} onClick={crear}>
+                      {creando ? 'Creando…' : 'Sí, crear'}
+                    </button>
+                    <button type="button" className="btn-mini" disabled={creando} onClick={() => setConfirmandoNuevo(false)}>
+                      Cancelar
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
+            {errorNuevo && (
+              <p className="error" role="alert">
+                {errorNuevo}
+              </p>
+            )}
             {descripcionFiltro && (
               <p className="filtro-activo" role="status">
                 Mostrando: <strong>{descripcionFiltro}</strong>{' '}
