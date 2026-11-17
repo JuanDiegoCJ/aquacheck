@@ -28,6 +28,10 @@ Aleatoria de 128 bits o más, en la parte `#` de la dirección (no viaja al serv
 ## Fichas definitivas
 `npm run build` y luego `node tools/generar_fichas.mjs <claves.csv> <salida.html>` crea las 20 fichas con el QR de cada hogar (código + clave). El CSV y la salida contienen claves: guardarlos FUERA del repositorio. Se imprimen desde el navegador (o a PDF).
 
+## Datos de prueba (solo ensayos)
+- `seed/datos_de_prueba.sql` carga datos FICTICIOS (celulares 900 000 0NN) para ver el panel con información. `seed/borrar_datos_de_prueba.sql` los quita y deja los 20 hogares sin registrar.
+- **Antes del piloto real hay que ejecutar el de borrado** y comprobar que contactos, mantenimientos y reportes tienen 0 filas. No repartir los QR mientras haya datos de prueba cargados.
+
 ## Fin del piloto y borrado de datos
 - Fin del piloto: **31/01/2027**. Plazo de conservación: 30 días → el borrado corresponde a partir del **02/03/2027**.
 - Ese día, en el editor SQL de Supabase: `select privado.borrar_vencidos(date '2027-01-31');` (borra celulares y consentimientos, invalida las claves de los QR y quita las rutas de fotos). Antes de la fecha solo devuelve un aviso y no borra nada.

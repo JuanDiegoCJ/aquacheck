@@ -5,15 +5,12 @@ import {
   useDatos,
   fotoPanel,
   entrarEquipoReal,
-  panelEsReal,
   estadoDelPanel,
   cargarEquipo,
   obtenerContacto,
   marcarReporteResuelto,
   equipoAutorizado,
-  entrarEquipo,
   salirEquipo,
-  PIN_EQUIPO,
 } from '../data/repo.js'
 import { TAREAS, ORDEN_TAREAS, textoDias, mensajeAviso, formatoFecha } from '../domain/reglas.js'
 import { TIPOS_FALLA } from '../domain/fallas.js'
@@ -28,8 +25,6 @@ function Acceso() {
   const [clave, setClave] = useState('')
   const [error, setError] = useState(null)
   const [enviando, setEnviando] = useState(false)
-  const [pin, setPin] = useState('')
-  const [errorPin, setErrorPin] = useState(false)
   return (
     <Pantalla titulo="Equipo del proyecto" volver="#/" sinPie>
       <form
@@ -60,30 +55,6 @@ function Acceso() {
         </button>
       </form>
 
-      <details className="tarjeta">
-        <summary>Ver una demostración con datos de ejemplo</summary>
-        <form
-          className="formulario"
-          onSubmit={(e) => {
-            e.preventDefault()
-            setErrorPin(!entrarEquipo(pin))
-          }}
-        >
-          <p className="suave">Datos ficticios guardados en este dispositivo; no muestra datos reales. PIN de demostración: {PIN_EQUIPO}.</p>
-          <div className="campo">
-            <label htmlFor="pin">PIN</label>
-            <input id="pin" type="password" inputMode="numeric" autoComplete="off" value={pin} onChange={(e) => setPin(e.target.value)} aria-invalid={errorPin} />
-            {errorPin && (
-              <p className="error" role="alert">
-                PIN incorrecto.
-              </p>
-            )}
-          </div>
-          <button type="submit" className="btn btn-secundario">
-            Ver demostración
-          </button>
-        </form>
-      </details>
     </Pantalla>
   )
 }
@@ -173,16 +144,12 @@ function Panel() {
 
   return (
     <Pantalla titulo="Panel del equipo" volver="#/" sinPie ancho>
-      {panelEsReal() ? (
-        <p className="suave" role="status">
-          Datos reales del piloto (Supabase). {estado.cargando ? 'Actualizando…' : ''}{' '}
-          <button type="button" className="enlace-boton" onClick={cargarEquipo}>
-            Actualizar
-          </button>
-        </p>
-      ) : (
-        <p className="suave" role="status">Demostración con datos de ejemplo.</p>
-      )}
+      <p className="suave" role="status">
+        Datos del piloto (Supabase). {estado.cargando ? 'Actualizando…' : ''}{' '}
+        <button type="button" className="enlace-boton" onClick={cargarEquipo}>
+          Actualizar
+        </button>
+      </p>
       {estado.error && (
         <p className="error" role="alert">
           {estado.error}

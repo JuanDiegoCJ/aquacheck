@@ -281,8 +281,8 @@ export async function sincronizar() {
 }
 
 // ---- Equipo del proyecto ----
-// Dos modos. REAL: inicio de sesión con Supabase Auth; los datos se leen del servidor y viven solo en memoria
-// (los celulares no se guardan en el dispositivo). DEMO: PIN y datos de ejemplo locales, sin ningún dato real.
+// Inicio de sesión con Supabase Auth; los datos se leen del servidor y viven solo en memoria
+// (los celulares no se guardan en el dispositivo).
 let sesionEquipo = null
 let datosRemotos = null // { hogares, mantenimientos, reportes, contactos }
 let estadoPanel = { cargando: false, error: null }
@@ -311,7 +311,6 @@ export const mantenimientosPanel = () => (usaRemoto() ? datosRemotos.mantenimien
 export const reportesPanel = () => (usaRemoto() ? datosRemotos.reportes : listarReportes())
 export const obtenerContacto = (codigo) => (usaRemoto() ? datosRemotos.contactos[codigo] ?? null : leer('contactos', {})[codigo] ?? null)
 export const fotoPanel = (id) => (usaRemoto() ? datosRemotos.fotos[id] ?? null : obtenerFoto(id))
-export const panelEsReal = () => !!sesionEquipo
 export const estadoDelPanel = () => estadoPanel
 
 async function tokenVigente() {
@@ -372,33 +371,13 @@ export async function entrarEquipoReal(correo, clave) {
   return sesionEquipo ? null : estadoPanel.error
 }
 
-// DEMO: PIN y datos de ejemplo locales. No es seguridad real ni toca datos reales.
-export const PIN_EQUIPO = '2026'
-let equipoActivo = false
-try {
-  equipoActivo = sessionStorage.getItem('aquacheck:equipo') === '1'
-} catch {
-  /* sin sessionStorage */
-}
-export const equipoAutorizado = () => equipoActivo || !!sesionEquipo
-export function entrarEquipo(pin) {
-  if (pin !== PIN_EQUIPO) return false
-  equipoActivo = true
-  try {
-    sessionStorage.setItem('aquacheck:equipo', '1')
-  } catch {
-    /* ignorado */
-  }
-  avisar()
-  return true
-}
+export const equipoAutorizado = () => !!sesionEquipo
 export function salirEquipo() {
   if (sesionEquipo) cerrarSesionEquipo(sesionEquipo.token)
   guardarSesion(null)
   datosRemotos = null
-  equipoActivo = false
   try {
-    sessionStorage.removeItem('aquacheck:equipo')
+    sessionStorage.removeItem('aquacheck:equipo') // resto de la antigua demostración con PIN
   } catch {
     /* ignorado */
   }
