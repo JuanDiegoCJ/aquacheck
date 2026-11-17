@@ -1310,3 +1310,18 @@ button.seg:hover {
     transition: background 0.15s;
   }
 }
+
+/* Inicio centrado y tutorial */
+.tutorial summary { cursor: pointer; font-weight: 600; }
+.tutorial ol { margin: 0.75rem 0; padding-left: 1.25rem; display: grid; gap: 0.6rem; }
+
+/* Panel del equipo compacto: pestañas y paginación */
+.pestanas { display: flex; gap: 0.35rem; flex-wrap: wrap; margin: 0.25rem 0 0.75rem; border-bottom: 2px solid var(--borde, #d8e3ee); }
+.pestana { background: none; border: 0; border-bottom: 3px solid transparent; padding: 0.55rem 0.9rem; font: inherit; font-weight: 600; color: #4a6075; cursor: pointer; }
+.pestana[aria-selected='true'] { color: #0b5fa5; border-bottom-color: #0b5fa5; }
+.insignia { margin-left: 0.4rem; background: #b3261e; color: #fff; border-radius: 999px; padding: 0 0.45rem; font-size: 0.8rem; }
+.paginacion { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin: 0.75rem 0; }
+.paginacion .btn-mini[disabled] { opacity: 0.4; cursor: default; }
+.indicadores { gap: 0.5rem; }
+.indicador { padding: 0.6rem 0.8rem; }
+.indicador strong { font-size: 1.5rem; }

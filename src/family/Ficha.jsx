@@ -4,7 +4,7 @@ import { ORDEN_TAREAS, TAREAS } from '../domain/reglas.js'
 import { rutaFiltro } from '../app/ruta.js'
 
 /** Ficha impresa para pegar junto al filtro: QR + marcas a mano. Es la alternativa sin celular ni internet. */
-export function FichaHoja({ codigo }) {
+export function FichaHoja({ codigo, url }) {
   return (
     <article className="ficha">
       <header className="ficha-cab">
@@ -13,7 +13,7 @@ export function FichaHoja({ codigo }) {
           <h2>Filtro {codigo}</h2>
           <p>Escanea el QR con tu celular para registrar el mantenimiento.</p>
         </div>
-        <Qr codigo={codigo} tamano={130} />
+        <Qr codigo={codigo} tamano={170} url={url} />
       </header>
 
       <table className="ficha-tabla">

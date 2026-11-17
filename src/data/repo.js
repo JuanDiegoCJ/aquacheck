@@ -65,10 +65,10 @@ export function iniciar() {
   if (typeof window !== 'undefined') window.addEventListener('online', () => sincronizar())
   sincronizar()
   cargarEquipo()
-  // Actualización automática: el panel del equipo cada 4 s y los filtros conectados cada 10 s, solo con la pantalla visible.
+  // Actualización automática: el panel del equipo cada 2 s y los filtros conectados cada 10 s, solo con la pantalla visible.
   if (typeof document !== 'undefined') {
     const visible = () => document.visibilityState === 'visible'
-    setInterval(() => visible() && cargarEquipo(true), 4000)
+    setInterval(() => visible() && cargarEquipo(true), 2000)
     setInterval(() => visible() && sincronizar(), 10_000)
     const alVolver = () => {
       if (!visible()) return
@@ -329,6 +329,8 @@ export const hogaresPanel = () => (usaRemoto() ? datosRemotos.hogares : [])
 export const mantenimientosPanel = () => (usaRemoto() ? datosRemotos.mantenimientos : [])
 export const reportesPanel = () => (usaRemoto() ? datosRemotos.reportes : [])
 export const obtenerContacto = (codigo) => (usaRemoto() ? datosRemotos.contactos[codigo] ?? null : leer('contactos', {})[codigo] ?? null)
+/** Clave del QR de un hogar, visible solo para el equipo con sesión iniciada. */
+export const claveQrPanel = (codigo) => (usaRemoto() ? datosRemotos.claves?.[codigo] ?? null : null)
 export const fotoPanel = (id) => (usaRemoto() ? datosRemotos.fotos[id] ?? null : obtenerFoto(id))
 export const estadoDelPanel = () => estadoPanel
 
@@ -356,11 +358,12 @@ export async function cargarEquipo(silencioso = false) {
   }
   try {
     const t = await tokenVigente()
-    const [h, m, r, c] = await Promise.all([
+    const [h, m, r, c, kq] = await Promise.all([
       consultarTabla('hogares', 'select=codigo,modelo,fecha_instalacion,registrado&order=codigo', t),
       consultarTabla('mantenimientos', 'select=id,codigo,tipo,fecha', t),
       consultarTabla('reportes', 'select=id,codigo,tipo,estado,creado_en,foto_path&order=creado_en.desc', t),
       consultarTabla('contactos', 'select=codigo,celular,consentimiento_version', t),
+      consultarTabla('claves_qr', 'select=codigo,clave', t).catch(() => []), // claves de los QR (solo el equipo las ve)
     ])
     if (!h.length) throw new ErrorRemoto(403, 'sin_permiso')
     // Enlaces temporales a las fotos (si falla, el panel funciona igual, solo sin fotos). Solo se piden los que faltan.
@@ -370,6 +373,7 @@ export async function cargarEquipo(silencioso = false) {
       for (const [ruta, url] of Object.entries(nuevas)) urlsFoto[ruta] = { url, en: Date.now() }
     }
     const nuevo = {
+      claves: Object.fromEntries(kq.map((x) => [x.codigo, x.clave])),
       fotos: Object.fromEntries(r.filter((x) => urlsFoto[x.foto_path]).map((x) => [x.id, urlsFoto[x.foto_path].url])),
       hogares: h.map((x) => ({ codigo: x.codigo, registrado: x.registrado, modelo: x.modelo, fechaInstalacion: x.fecha_instalacion })),
       mantenimientos: m,

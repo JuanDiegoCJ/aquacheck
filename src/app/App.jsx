@@ -8,6 +8,7 @@ import Equipo from '../team/Equipo.jsx'
 import Fichas from '../team/Fichas.jsx'
 import Informe from '../team/Informe.jsx'
 import VerHogar from '../team/VerHogar.jsx'
+import FichaEquipo from '../team/FichaEquipo.jsx'
 import Inicio from '../family/Inicio.jsx'
 import Registro from '../family/Registro.jsx'
 import Panel from '../family/Panel.jsx'
@@ -21,7 +22,7 @@ function NoEncontrado({ codigo }) {
     <Pantalla titulo="Escanea el QR de tu filtro" volver="#/">
       <div className="tarjeta">
         <p>
-          Para entrar al filtro <strong>{codigo}</strong> en este celular, escanea el QR pegado en tu filtro con la cámara del celular. Sin ese QR no se puede abrir un filtro.
+          El filtro <strong>{codigo}</strong> aún no está abierto en este celular. Escanea con la cámara el QR pegado en tu filtro. Si no puedes, pide a tu contacto del proyecto el enlace de tu ficha y pégalo en el inicio.
         </p>
         <a className="btn btn-principal" href="#/">
           Volver al inicio
@@ -55,6 +56,7 @@ export default function App() {
   if (pantalla === 'acerca') return <Acerca />
   if (pantalla === 'equipo') return <Equipo />
   if (pantalla === 'fichas') return equipoAutorizado() ? <Fichas /> : <Equipo />
+  if (pantalla === 'fichaequipo') return equipoAutorizado() ? <FichaEquipo codigo={codigo} /> : <Equipo />
   if (pantalla === 'hogarequipo') return equipoAutorizado() ? <VerHogar codigo={codigo} /> : <Equipo />
   if (pantalla === 'informe') return equipoAutorizado() ? <Informe /> : <Equipo />
   if (!hogar) return <NoEncontrado codigo={codigo} />

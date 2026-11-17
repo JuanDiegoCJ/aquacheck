@@ -73,10 +73,16 @@ function Panel() {
   const [filtro, setFiltro] = useState(null)
   const [busqueda, setBusqueda] = useState('')
   const tablaRef = useRef(null)
+  const [vista, setVista] = useState('resumen') // resumen | hogares | fallas | informes
+  const [pagina, setPagina] = useState(0)
+  const cambiarFiltro = (f) => {
+    setFiltro(f)
+    setPagina(0)
+  }
 
   function aplicarFiltro(f) {
-    setFiltro(f)
-    if (f) tablaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    cambiarFiltro(f)
+    if (f) setVista('hogares')
   }
 
   const visibles = r.filas.filter((f) => {
@@ -88,6 +94,10 @@ function Panel() {
     }
     return f.general === filtro.estado
   })
+  const POR_PAGINA = 10
+  const paginas = Math.max(1, Math.ceil(visibles.length / POR_PAGINA))
+  const pg = Math.min(pagina, paginas - 1)
+  const pagVisibles = visibles.slice(pg * POR_PAGINA, (pg + 1) * POR_PAGINA)
   const descripcionFiltro = filtro ? `${etiquetaEstado(filtro.estado)}${filtro.tarea ? ` · ${TAREAS[filtro.tarea].etiqueta}` : ''}` : null
 
   // ---- Exportaciones (cada una en su propio botón: Chrome en celular bloquea varias descargas de un toque) ----
@@ -176,6 +186,18 @@ function Panel() {
         </div>
       </section>
 
+      <nav className="pestanas" role="tablist" aria-label="Secciones del panel">
+        {[['resumen', 'Resumen'], ['hogares', 'Hogares'], ['fallas', 'Fallas'], ['informes', 'Informes']].map(([id, texto]) => (
+          <button key={id} type="button" role="tab" className="pestana" aria-selected={vista === id} onClick={() => setVista(id)}>
+            {texto}
+            {id === 'fallas' && r.abiertas.length > 0 ? <span className="insignia">{r.abiertas.length}</span> : null}
+          </button>
+        ))}
+      </nav>
+
+
+      {vista === 'resumen' && (
+
       <section className="graficos" aria-label="Gráficos del piloto">
         <article className="tarjeta grafico">
           <h2>Hogares por estado</h2>
@@ -201,29 +223,33 @@ function Panel() {
           <BarrasFallas tipos={r.fallasPorTipo} />
         </article>
       </section>
+      )}
 
-      <div className="equipo-cols">
-        <div className="equipo-main" ref={tablaRef}>
+      <div className="equipo-una" ref={tablaRef}>
+          {vista === 'hogares' && (
           <section className="tarjeta">
             <h2>Hogares ({visibles.length}{visibles.length !== r.total ? ` de ${r.total}` : ''})</h2>
 
             <div className="filtros-barra">
               <div className="filtros" role="group" aria-label="Filtrar por estado">
-                <button type="button" className="filtro-chip" aria-pressed={!filtro} onClick={() => setFiltro(null)}>
+                <button type="button" className="filtro-chip" aria-pressed={!filtro} onClick={() => cambiarFiltro(null)}>
                   Todos
                 </button>
                 {ESTADOS.map((e) => (
-                  <button key={e.id} type="button" className="filtro-chip" aria-pressed={!!filtro && !filtro.tarea && filtro.estado === e.id} onClick={() => setFiltro({ estado: e.id, tarea: null })}>
+                  <button key={e.id} type="button" className="filtro-chip" aria-pressed={!!filtro && !filtro.tarea && filtro.estado === e.id} onClick={() => cambiarFiltro({ estado: e.id, tarea: null })}>
                     <span className="punto" style={{ background: e.color }} aria-hidden="true" /> {e.etiqueta}
                   </button>
                 ))}
               </div>
-              <input type="search" className="buscador" placeholder="Buscar filtro (AQ-007)" aria-label="Buscar filtro por código" value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
+              <input type="search" className="buscador" placeholder="Buscar filtro (AQ-007)" aria-label="Buscar filtro por código" value={busqueda} onChange={(e) => {
+                  setBusqueda(e.target.value)
+                  setPagina(0)
+                }} />
             </div>
             {descripcionFiltro && (
               <p className="filtro-activo" role="status">
                 Mostrando: <strong>{descripcionFiltro}</strong>{' '}
-                <button type="button" className="enlace-boton" onClick={() => setFiltro(null)}>
+                <button type="button" className="enlace-boton" onClick={() => cambiarFiltro(null)}>
                   Quitar filtro
                 </button>
               </p>
@@ -249,12 +275,12 @@ function Panel() {
                       </td>
                     </tr>
                   )}
-                  {visibles.map((f) => {
+                  {pagVisibles.map((f) => {
                     const aviso = f.general === 'pronto' || f.general === 'vencido' ? mensajeAviso(f.h.codigo, f.tareas) : null
                     const contacto = obtenerContacto(f.h.codigo)
                     const cel = contacto?.celular
                     // Los celulares de los filtros de ejemplo son ficticios: no se abre un chat con ellos (podrían ser de otra persona).
-                    const esEjemplo = contacto?.consentimiento?.origen === 'datos de ejemplo'
+                    const esEjemplo = contacto?.consentimiento?.version === 'datos-de-prueba'
                     const enlaceWhatsApp = aviso ? `https://wa.me/${esEjemplo ? '' : '51' + cel}?text=${encodeURIComponent(aviso)}` : null
                     const color = ESTADOS.find((e) => e.id === f.general)?.color
                     return (
@@ -277,7 +303,7 @@ function Panel() {
                           <a className="btn-mini" href={'#/equipo/hogar/' + f.h.codigo} aria-label={'Ver el filtro ' + f.h.codigo} title="Ver cómo va este hogar">
                             👁 Ver
                           </a>
-                          <a className="btn-mini" href={rutaFiltro(f.h.codigo, 'ficha')}>
+                          <a className="btn-mini" href={'#/equipo/ficha/' + f.h.codigo}>
                             Ficha
                           </a>
                         </td>
@@ -287,15 +313,22 @@ function Panel() {
                 </tbody>
               </table>
             </div>
-            <p className="suave">
-              El botón de WhatsApp abre el mensaje ya escrito para que el equipo lo envíe (semiautomático). En los filtros de ejemplo no se usa el número
-              (es ficticio): WhatsApp te deja elegir a quién enviarlo, por ejemplo a tu propio chat. En el piloto real se puede automatizar con la API de
-              WhatsApp.
-            </p>
+            <div className="paginacion" role="navigation" aria-label="Páginas de hogares">
+              <button type="button" className="btn-mini" disabled={pg === 0} onClick={() => setPagina(pg - 1)}>
+                ← Anterior
+              </button>
+              <span>
+                Página {pg + 1} de {paginas}
+              </span>
+              <button type="button" className="btn-mini" disabled={pg >= paginas - 1} onClick={() => setPagina(pg + 1)}>
+                Siguiente →
+              </button>
+            </div>
+            <p className="suave">El botón de WhatsApp abre el mensaje ya escrito para que el equipo lo envíe.</p>
           </section>
-        </div>
+          )}
 
-        <aside className="equipo-lado">
+          {vista === 'fallas' && (
           <section className="tarjeta">
             <h2>Fallas reportadas</h2>
             {r.reportes.length === 0 ? (
@@ -329,7 +362,9 @@ function Panel() {
               </ul>
             )}
           </section>
+          )}
 
+          {vista === 'informes' && (
           <section className="tarjeta">
             <h2>Informes y descargas</h2>
             <p className="suave">Se generan en este dispositivo y no incluyen celulares ni fotos.</p>
@@ -364,7 +399,7 @@ function Panel() {
               Salir del panel del equipo
             </button>
           </section>
-        </aside>
+          )}
       </div>
     </Pantalla>
   )

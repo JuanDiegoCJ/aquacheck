@@ -1,21 +1,20 @@
 import Pantalla from '../components/Pantalla.jsx'
 import { FichaHoja } from '../family/Ficha.jsx'
-import { hogaresPanel } from '../data/repo.js'
+import { hogaresPanel, claveQrPanel } from '../data/repo.js'
+import { urlConClave } from '../components/Qr.jsx'
 
 /** Todas las fichas del piloto, listas para imprimir (una por hoja). */
 export default function Fichas() {
   const hogares = hogaresPanel()
   return (
     <Pantalla titulo="Fichas de los 20 filtros" volver="#/equipo" sinPie ancho>
-      <p className="suave sin-imprimir">
-        Vista de ejemplo: estos QR NO llevan la clave de cada hogar. Las fichas definitivas se generan aparte con tools/generar_fichas.mjs (ver supabase/README.md) y no se publican.
-      </p>
+      <p className="suave sin-imprimir">Cada ficha lleva el QR definitivo de su hogar (con su clave). Trata las hojas impresas como material del proyecto: no las publiques.</p>
       <button type="button" className="btn btn-principal sin-imprimir" onClick={() => window.print()}>
         🖨️ Imprimir todas
       </button>
       <div className="fichas">
         {hogares.map((h) => (
-          <FichaHoja key={h.codigo} codigo={h.codigo} />
+          <FichaHoja key={h.codigo} codigo={h.codigo} url={claveQrPanel(h.codigo) ? urlConClave(h.codigo, claveQrPanel(h.codigo)) : undefined} />
         ))}
       </div>
     </Pantalla>

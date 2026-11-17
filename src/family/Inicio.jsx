@@ -31,9 +31,7 @@ export default function Inicio() {
   }
 
   return (
-    <Pantalla doble>
-      <div className="cols">
-        <div className="col">
+    <Pantalla>
       <section className="portada">
         <img src="./icon.svg" alt="" width="72" height="72" />
         <h1>AquaCheck</h1>
@@ -51,7 +49,7 @@ export default function Inicio() {
       </button>
 
       <form className="tarjeta" onSubmit={enviar}>
-        <label htmlFor="codigo">¿No puedes escanear? Escribe el código del filtro</label>
+        <label htmlFor="codigo">¿No puedes escanear? Escribe tu código (si ya abriste tu QR antes) o pega el enlace de tu ficha</label>
         <div className="fila">
           <input
             id="codigo"
@@ -74,8 +72,22 @@ export default function Inicio() {
         )}
       </form>
 
-        </div>
-      </div>
+
+      <details className="tarjeta tutorial">
+        <summary>¿Cómo funciona? (tutorial de 3 pasos)</summary>
+        <ol>
+          <li>
+            <strong>Escanea el QR</strong> pegado en tu filtro con la cámara de tu celular. Se abre AquaCheck con tu filtro.
+          </li>
+          <li>
+            <strong>Regístrate una sola vez:</strong> tu fecha de instalación y tu celular para los avisos.
+          </li>
+          <li>
+            <strong>Cada vez que limpies o cambies algo,</strong> toca “Registrar mantenimiento” y “Sí, guardar”. Si el filtro falla, toca “Reportar un problema”.
+          </li>
+        </ol>
+        <p className="suave">Funciona sin internet: se guarda en tu celular y se envía al volver la conexión.</p>
+      </details>
 
       <a className="enlace-discreto" href="#/equipo">
         Soy del equipo del proyecto

@@ -32,7 +32,7 @@ export default function Escaner({ alLeer, alCerrar }) {
             // Se analiza TODO el cuadro (no solo el centro) y con más resolución: los QR con clave son más densos y a veces
             // se escanean de lejos o desde una pantalla.
             calculateScanRegion: (v) => {
-              const ancho = Math.min(v.videoWidth, 1280)
+              const ancho = Math.min(v.videoWidth, 960)
               return { x: 0, y: 0, width: v.videoWidth, height: v.videoHeight, downScaledWidth: ancho, downScaledHeight: Math.round((ancho * v.videoHeight) / v.videoWidth) }
             },
           },
