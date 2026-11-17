@@ -1,0 +1,114 @@
+import { useCallback, useState } from 'react'
+import Pantalla from '../components/Pantalla.jsx'
+import Escaner from '../components/Escaner.jsx'
+import { Punto } from '../components/Semaforo.jsx'
+import { useDatos, listarHogares, listarMantenimientos, miFiltro } from '../data/repo.js'
+import { extraerCodigo, resumenHogar } from '../domain/reglas.js'
+import { irA, rutaFiltro } from '../app/ruta.js'
+
+export default function Inicio() {
+  useDatos()
+  const [escaneando, setEscaneando] = useState(false)
+  const [texto, setTexto] = useState('')
+  const [error, setError] = useState('')
+  const guardado = miFiltro()
+
+  const abrir = useCallback((codigo) => irA(rutaFiltro(codigo).slice(1)), [])
+
+  function enviar(e) {
+    e.preventDefault()
+    const codigo = extraerCodigo(texto)
+    if (!codigo) {
+      setError('El código tiene la forma AQ-007 (letras AQ y tres números).')
+      return
+    }
+    setError('')
+    abrir(codigo)
+  }
+
+  return (
+    <Pantalla doble>
+      <div className="cols">
+        <div className="col">
+      <section className="portada">
+        <img src="./icon.svg" alt="" width="72" height="72" />
+        <h1>AquaCheck</h1>
+        <p>Te avisamos cuándo limpiar tu filtro y guardamos el historial. Sin contraseñas.</p>
+      </section>
+
+      {guardado && (
+        <a className="btn btn-principal btn-grande" href={rutaFiltro(guardado)}>
+          Ir a mi filtro <strong>{guardado}</strong>
+        </a>
+      )}
+
+      <button type="button" className={`btn btn-grande ${guardado ? 'btn-secundario' : 'btn-principal'}`} onClick={() => setEscaneando(true)}>
+        📷 Escanear el QR de mi filtro
+      </button>
+
+      <form className="tarjeta" onSubmit={enviar}>
+        <label htmlFor="codigo">¿No puedes escanear? Escribe el código del filtro</label>
+        <div className="fila">
+          <input
+            id="codigo"
+            value={texto}
+            onChange={(e) => setTexto(e.target.value)}
+            placeholder="AQ-007"
+            autoCapitalize="characters"
+            autoComplete="off"
+            inputMode="text"
+            aria-describedby={error ? 'error-codigo' : undefined}
+          />
+          <button type="submit" className="btn btn-principal">
+            Entrar
+          </button>
+        </div>
+        {error && (
+          <p id="error-codigo" className="error" role="alert">
+            {error}
+          </p>
+        )}
+      </form>
+
+        </div>
+        <div className="col">
+      <section className="tarjeta demo">
+        <h2>Modo demostración</h2>
+        <p className="suave">
+          Filtros de ejemplo del piloto (datos ficticios). Toca uno para ver cómo lo vería esa familia. Los grises aún no se
+          registran.
+        </p>
+        <ul className="lista-demo">
+          {listarHogares().map((h) => {
+            const { general } = resumenHogar(h, listarMantenimientos(h.codigo))
+            return (
+              <li key={h.codigo}>
+                <a href={rutaFiltro(h.codigo)} className="chip">
+                  {h.registrado ? <Punto estado={general} /> : <span className="punto punto-nuevo" aria-label="Sin registrar" />}
+                  {h.codigo}
+                </a>
+              </li>
+            )
+          })}
+        </ul>
+      </section>
+
+        </div>
+      </div>
+
+      <a className="enlace-discreto" href="#/equipo">
+        Soy del equipo del proyecto
+      </a>
+
+      {escaneando && (
+        <Escaner
+          alCerrar={() => setEscaneando(false)}
+          alLeer={(codigo) => {
+            setEscaneando(false)
+            abrir(codigo)
+          }}
+        />
+      )}
+    </Pantalla>
+  )
+}

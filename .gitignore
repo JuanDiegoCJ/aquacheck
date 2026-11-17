@@ -1,0 +1,9 @@
+node_modules
+dist
+*.local
+.DS_Store
+dist.zip
+*.zip
+.env
+.env.*
+!.env.example
