@@ -274,7 +274,7 @@ function Panel() {
                 ))}
               </div>
               <div className="buscar-grupo">
-              <input type="search" className="buscador" placeholder="Buscar filtro (AQ-007)" aria-label="Buscar filtro por código" value={busqueda} onChange={(e) => {
+              <input type="search" className="buscador" placeholder="Buscar (AQ-007)" aria-label="Buscar filtro por código" value={busqueda} onChange={(e) => {
                   setBusqueda(e.target.value)
                   setPagina(0)
                 }} />
@@ -370,14 +370,14 @@ function Panel() {
               </table>
             </div>
             <div className="paginacion" role="navigation" aria-label="Páginas de hogares">
-              <button type="button" className="btn-mini" disabled={pg === 0} onClick={() => setPagina(pg - 1)}>
-                <Icono nombre="izquierda" /> Anterior
+              <button type="button" className="btn-mini btn-flecha" disabled={pg === 0} onClick={() => setPagina(pg - 1)} aria-label="Página anterior">
+                <Icono nombre="izquierda" tam={20} />
               </button>
-              <span>
-                Página {pg + 1} de {paginas}
+              <span aria-live="polite">
+                {pg + 1} de {paginas}
               </span>
-              <button type="button" className="btn-mini" disabled={pg >= paginas - 1} onClick={() => setPagina(pg + 1)}>
-                Siguiente <Icono nombre="derecha" />
+              <button type="button" className="btn-mini btn-flecha" disabled={pg >= paginas - 1} onClick={() => setPagina(pg + 1)} aria-label="Página siguiente">
+                <Icono nombre="derecha" tam={20} />
               </button>
             </div>
             <p className="suave">El botón de WhatsApp abre el mensaje ya escrito para que el equipo lo envíe.</p>

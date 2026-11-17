@@ -1575,3 +1575,10 @@ input, select, textarea { font-size: 1rem; }
 .buscar-grupo > .btn-mini { min-height: 44px; flex: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 16px; }
 .buscar-grupo .confirmar-nuevo { flex: 1 1 100%; justify-content: space-between; }
 @media (min-width: 900px) { .buscar-grupo { width: auto; flex-wrap: nowrap; } .buscar-grupo .buscador { flex: 0 1 260px; } .buscar-grupo .confirmar-nuevo { flex: none; } }
+
+/* Paginación compacta: ← 1 de 2 → */
+.paginacion { justify-content: center; gap: 18px; }
+.paginacion span { min-width: 4.5em; text-align: center; font-weight: 600; white-space: nowrap; }
+.btn-flecha { width: 44px; min-width: 44px; padding: 0 !important; display: inline-flex; align-items: center; justify-content: center; }
+.btn-flecha .icono { margin: 0 !important; }
+.buscador { text-overflow: ellipsis; }
