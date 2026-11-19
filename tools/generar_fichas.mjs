@@ -8,7 +8,7 @@ import path from 'node:path'
 import QRCode from 'qrcode'
 import { ORDEN_TAREAS, TAREAS } from '../src/domain/reglas.js'
 
-const [csvRuta, salida, base = 'https://aquacheck-moche.vercel.app/'] = process.argv.slice(2)
+const [csvRuta, salida, base = 'https://aquacheck-26.vercel.app/'] = process.argv.slice(2)
 if (!csvRuta || !salida) {
   console.error('Uso: node tools/generar_fichas.mjs <claves.csv> <salida.html> [url_base]')
   process.exit(1)

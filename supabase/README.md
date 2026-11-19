@@ -23,7 +23,7 @@ Equipo (correo + clave) →  Supabase Auth          →  tablas, solo si app_met
 
 ## Clave del QR
 Aleatoria de 128 bits o más, en la parte `#` de la dirección (no viaja al servidor ni en el encabezado Referer):
-`https://aquacheck-moche.vercel.app/#/f/AQ-007?k=<clave>`. Si se pierde un QR, se rota la clave del hogar.
+`https://aquacheck-26.vercel.app/#/f/AQ-007?k=<clave>`. Si se pierde un QR, se rota la clave del hogar.
 
 ## Fichas definitivas
 `npm run build` y luego `node tools/generar_fichas.mjs <claves.csv> <salida.html>` crea las 20 fichas con el QR de cada hogar (código + clave). El CSV y la salida contienen claves: guardarlos FUERA del repositorio. Se imprimen desde el navegador (o a PDF).
