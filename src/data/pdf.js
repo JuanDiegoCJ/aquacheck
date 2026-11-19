@@ -342,7 +342,7 @@ export function construirPDF(r) {
   // Indicadores
   const iw = (CW - 3 * 10) / 4
   const indicadores = [
-    [`${r.registrados}/${r.total}`, ['filtros registrados']],
+    [`${r.registrados}/${r.total}`, ['hogares registrados']],
     [`${r.pctAlDia}%`, ['de los registrados', 'está al día']],
     [String(r.conTareaPendiente), ['hogares con tarea', 'próxima o pendiente']],
     [String(r.abiertas.length), ['fallas abiertas']],
@@ -367,7 +367,7 @@ export function construirPDF(r) {
   const ly = gy + 2 * gh + 12 + 26
   pg.texto('Lectura rápida', M, ly, { size: 11, negrita: true, color: COLOR.azul })
   const hechos = [
-    `${r.registrados} de ${r.total} filtros están registrados; ${r.pctAlDia} % de ellos está al día.`,
+    `${r.registrados} de ${r.total} hogares están registrados; ${r.pctAlDia} % de ellos está al día.`,
     `${r.conTareaPendiente} hogares tienen una tarea próxima (hasta 7 días) o pendiente. Hay ${r.abiertas.length} fallas abiertas.`,
   ]
   let yy = ly + 14
@@ -382,7 +382,7 @@ export function construirPDF(r) {
     nueva,
     M + 12,
     'Hogares',
-    ['Filtro', 'Estado', 'Próxima tarea', 'Fallas abiertas'],
+    ['Hogar', 'Estado', 'Próxima tarea', 'Fallas abiertas'],
     [70, 110, 255, 80],
     r.filas.map((f) => [
       f.h.codigo,
@@ -401,7 +401,7 @@ export function construirPDF(r) {
       nueva,
       y + 6,
       'Fallas reportadas',
-      ['Filtro', 'Problema', 'Fecha', 'Estado'],
+      ['Hogar', 'Problema', 'Fecha', 'Estado'],
       [70, 200, 155, 90],
       r.reportes.map((x) => [x.codigo, TIPOS_FALLA[x.tipo].etiqueta, formatoFecha(x.fecha.slice(0, 10)), x.estado === 'abierta' ? 'Abierta' : 'Resuelta']),
     )
@@ -416,7 +416,7 @@ export function construirPDF(r) {
   pg.texto('Notas', M, y + 4, { size: 13, negrita: true, color: COLOR.azul })
   y += 20
   ;[
-    'AquaCheck no mide la calidad del agua ni certifica que sea potable. Su función es organizar el mantenimiento del filtro.',
+    'AquaCheck no mide la calidad del agua ni certifica que sea potable. Su función es organizar el mantenimiento del equipo de agua del hogar.',
     'Los datos corresponden al dispositivo desde el que se generó este informe (prototipo sin servidor). No se incluyen celulares ni fotos.',
     'Los intervalos de mantenimiento son valores de referencia, pendientes de confirmar con la ficha técnica del fabricante.',
   ].forEach((t) => {

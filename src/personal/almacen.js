@@ -18,7 +18,7 @@ function leerTexto() {
 }
 
 /** Perfil guardado o null. Siempre devuelve el mismo objeto mientras no cambie. */
-export function leerPerfil() {
+function leerPerfil() {
   const texto = leerTexto()
   if (texto === cacheTexto) return cacheValor
   cacheTexto = texto

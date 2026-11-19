@@ -12,7 +12,7 @@ export default function Historial({ hogar }) {
 
   return (
     <Pantalla titulo="Historial" volver={rutaFiltro(hogar.codigo)}>
-      <p className="suave">Filtro {hogar.codigo} · instalado el {formatoFecha(hogar.fechaInstalacion)}</p>
+      <p className="suave">Hogar {hogar.codigo} · desde el {formatoFecha(hogar.fechaInstalacion)}</p>
 
       {lista.length === 0 ? (
         <div className="tarjeta vacio">

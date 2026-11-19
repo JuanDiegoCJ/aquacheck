@@ -36,25 +36,20 @@ export default function Registro({ hogar }) {
   }
 
   return (
-    <Pantalla titulo={yaRegistrado ? 'Actualizar mis datos' : 'Registrar mi filtro'} volver={yaRegistrado ? rutaFiltro(hogar.codigo) : '#/'}>
+    <Pantalla titulo={yaRegistrado ? 'Actualizar mis datos' : 'Registrar mi hogar'} volver={yaRegistrado ? rutaFiltro(hogar.codigo) : '#/'}>
       <p className="suave">
-        Solo pedimos lo necesario. No pedimos DNI, nombre ni dirección: tu hogar se identifica con el código del filtro.
+        Solo pedimos lo necesario. No pedimos DNI, nombre ni dirección: tu hogar se identifica con el código de tu hogar.
       </p>
 
       <form className="tarjeta formulario" onSubmit={enviar} noValidate>
         <div className="campo">
-          <span className="etiqueta">Código del filtro</span>
+          <span className="etiqueta">Código del hogar</span>
           <p className="valor-fijo">{hogar.codigo}</p>
         </div>
 
         <div className="campo">
-          <span className="etiqueta">Modelo</span>
-          <p className="valor-fijo">{MODELO_FILTRO}</p>
-        </div>
-
-        <div className="campo">
-          <label htmlFor="fecha">¿Cuándo se instaló el filtro?</label>
-          <input id="fecha" type="date" max={hoyISO()} value={fecha} onChange={(e) => setFecha(e.target.value)} aria-invalid={intento && !fechaValida} />
+          <label htmlFor="fecha">¿Desde qué fecha empiezas a llevar el mantenimiento?</label>
+          <input id="fecha" type="date" max={hoyISO()} value={fecha} onChange={(e) => setFecha(e.target.value > hoyISO() ? hoyISO() : e.target.value)} aria-invalid={intento && !fechaValida} />
           {intento && !fechaValida && (
             <p className="error" role="alert">
               Elige una fecha que no sea futura.
@@ -105,7 +100,7 @@ export default function Registro({ hogar }) {
         )}
 
         <button type="submit" className="btn btn-principal btn-grande">
-          Guardar y ver mi filtro
+          Guardar y ver mi hogar
         </button>
       </form>
     </Pantalla>

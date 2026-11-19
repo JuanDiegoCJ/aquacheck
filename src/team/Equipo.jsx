@@ -14,7 +14,6 @@ import {
   obtenerContacto,
   marcarReporteResuelto,
   equipoAutorizado,
-  salirEquipo,
 } from '../data/repo.js'
 import { TAREAS, ORDEN_TAREAS, textoDias, mensajeAviso, formatoFecha } from '../domain/reglas.js'
 import { TIPOS_FALLA } from '../domain/fallas.js'
@@ -22,7 +21,6 @@ import { aCSV, descargarCSV } from '../data/csv.js'
 import { construirExcel, construirWord, descargarBinario, nombreArchivo, MIME_XLSX, MIME_DOCX } from '../data/exportar.js'
 import { construirPDF, MIME_PDF } from '../data/pdf.js'
 import { calcularResumen, ESTADOS, etiquetaEstado } from './resumen.js'
-import { rutaFiltro } from '../app/ruta.js'
 
 function Acceso() {
   const [correo, setCorreo] = useState('')
@@ -103,6 +101,7 @@ function Panel() {
   }
   const [vista, setVista] = useState('resumen') // resumen | hogares | fallas | informes
   const [pagina, setPagina] = useState(0)
+  const [paginaFallas, setPaginaFallas] = useState(0)
   const cambiarFiltro = (f) => {
     setFiltro(f)
     setPagina(0)
@@ -123,6 +122,10 @@ function Panel() {
     return f.general === filtro.estado
   })
   const POR_PAGINA = 10
+  const FALLAS_POR_PAGINA = 5
+  const paginasFallas = Math.max(1, Math.ceil(r.reportes.length / FALLAS_POR_PAGINA))
+  const pgF = Math.min(paginaFallas, paginasFallas - 1)
+  const fallasVisibles = r.reportes.slice(pgF * FALLAS_POR_PAGINA, (pgF + 1) * FALLAS_POR_PAGINA)
   const paginas = Math.max(1, Math.ceil(visibles.length / POR_PAGINA))
   const pg = Math.min(pagina, paginas - 1)
   const pagVisibles = visibles.slice(pg * POR_PAGINA, (pg + 1) * POR_PAGINA)
@@ -130,47 +133,30 @@ function Panel() {
 
   // ---- Exportaciones (cada una en su propio botón: Chrome en celular bloquea varias descargas de un toque) ----
   const hoy = r.hoy
-  function exportarHogares() {
+  // Un solo CSV general: una fila por hogar, mantenimiento o falla (se filtra por la columna «tipo» al abrirlo en Excel).
+  function exportarCSV() {
+    const filas = [
+      ...r.filas.map((f) => ({
+        tipo: 'hogar',
+        codigo: f.h.codigo,
+        detalle: `${f.h.registrado ? 'registrado' : 'sin registrar'} · fallas abiertas: ${f.fallas}`,
+        fecha: f.h.fechaInstalacion ?? '',
+        estado: f.general,
+      })),
+      ...r.mantenimientos.map((m) => ({ tipo: 'mantenimiento', codigo: m.codigo, detalle: TAREAS[m.tipo].etiqueta, fecha: m.fecha, estado: '' })),
+      ...r.reportes.map((x) => ({
+        tipo: 'falla',
+        codigo: x.codigo,
+        detalle: TIPOS_FALLA[x.tipo].etiqueta + (x.conFoto ? ' (con foto)' : ''),
+        fecha: x.fecha.slice(0, 10),
+        estado: x.estado,
+      })),
+    ].sort((a, b) => a.codigo.localeCompare(b.codigo) || a.tipo.localeCompare(b.tipo) || a.fecha.localeCompare(b.fecha))
     descargarCSV(
-      nombreArchivo('aquacheck_hogares', 'csv', hoy),
+      nombreArchivo('aquacheck_datos', 'csv', hoy),
       aCSV(
-        [
-          { titulo: 'codigo', valor: (f) => f.h.codigo },
-          { titulo: 'registrado', valor: (f) => (f.h.registrado ? 'si' : 'no') },
-          { titulo: 'fecha_instalacion', valor: (f) => f.h.fechaInstalacion },
-          { titulo: 'estado', valor: (f) => f.general },
-          ...['limpieza_filtro', 'cambio_cartucho', 'limpieza_tanque'].map((t, i) => ({ titulo: `dias_para_${t}`, valor: (f) => f.tareas[i]?.dias })),
-          { titulo: 'fallas_abiertas', valor: (f) => f.fallas },
-        ],
-        r.filas,
-      ),
-    )
-  }
-  function exportarMantenimientos() {
-    descargarCSV(
-      nombreArchivo('aquacheck_mantenimientos', 'csv', hoy),
-      aCSV(
-        [
-          { titulo: 'codigo', valor: (m) => m.codigo },
-          { titulo: 'tarea', valor: (m) => TAREAS[m.tipo].etiqueta },
-          { titulo: 'fecha', valor: (m) => m.fecha },
-        ],
-        [...r.mantenimientos].sort((a, b) => a.fecha.localeCompare(b.fecha)),
-      ),
-    )
-  }
-  function exportarFallas() {
-    descargarCSV(
-      nombreArchivo('aquacheck_fallas', 'csv', hoy),
-      aCSV(
-        [
-          { titulo: 'codigo', valor: (x) => x.codigo },
-          { titulo: 'tipo', valor: (x) => TIPOS_FALLA[x.tipo].etiqueta },
-          { titulo: 'fecha', valor: (x) => x.fecha.slice(0, 10) },
-          { titulo: 'estado', valor: (x) => x.estado },
-          { titulo: 'con_foto', valor: (x) => (x.conFoto ? 'si' : 'no') },
-        ],
-        r.reportes,
+        ['tipo', 'codigo', 'detalle', 'fecha', 'estado'].map((c) => ({ titulo: c, valor: (x) => x[c] })),
+        filas,
       ),
     )
   }
@@ -202,7 +188,7 @@ function Panel() {
           <strong>
             {r.registrados}/{r.total}
           </strong>
-          <span>filtros registrados</span>
+          <span>hogares registrados</span>
         </div>
         <div className="indicador">
           <strong>{r.pctAlDia}%</strong>
@@ -315,7 +301,7 @@ function Panel() {
               <table className="tabla tabla-hogares">
                 <thead>
                   <tr>
-                    <th>Filtro</th>
+                    <th>Hogar</th>
                     <th>Estado</th>
                     <th>Próxima tarea</th>
                     <th>Celular</th>
@@ -380,7 +366,6 @@ function Panel() {
                 <Icono nombre="derecha" tam={20} />
               </button>
             </div>
-            <p className="suave">El botón de WhatsApp abre el mensaje ya escrito para que el equipo lo envíe.</p>
           </section>
           )}
 
@@ -391,7 +376,7 @@ function Panel() {
               <p className="suave">Aún no hay reportes.</p>
             ) : (
               <ul className="fallas">
-                {r.reportes.map((x) => {
+                {fallasVisibles.map((x) => {
                   const foto = x.conFoto ? fotoPanel(x.id) : null
                   return (
                     <li key={x.id} className={x.estado === 'abierta' ? 'falla-abierta' : 'falla-resuelta'}>
@@ -417,6 +402,19 @@ function Panel() {
                 })}
               </ul>
             )}
+            {paginasFallas > 1 && (
+              <div className="paginacion" role="navigation" aria-label="Páginas de fallas">
+                <button type="button" className="btn-mini btn-flecha" disabled={pgF === 0} onClick={() => setPaginaFallas(pgF - 1)} aria-label="Página anterior">
+                  <Icono nombre="izquierda" tam={20} />
+                </button>
+                <span aria-live="polite">
+                  {pgF + 1} de {paginasFallas}
+                </span>
+                <button type="button" className="btn-mini btn-flecha" disabled={pgF >= paginasFallas - 1} onClick={() => setPaginaFallas(pgF + 1)} aria-label="Página siguiente">
+                  <Icono nombre="derecha" tam={20} />
+                </button>
+              </div>
+            )}
           </section>
           )}
 
@@ -440,30 +438,16 @@ function Panel() {
                 <strong>PDF</strong>
                 <span>Con gráficos</span>
               </button>
-            </div>
-            <a className="enlace-discreto" href="#/equipo/informe">
-              Ver el informe en pantalla
-            </a>
-            <p className="suave grupo-titulo">Archivos CSV (se abren en Excel)</p>
-            <div className="acciones-chicas">
-              <button type="button" className="btn btn-secundario btn-chico" onClick={exportarHogares}>
-                Hogares
+              <button type="button" className="descarga" onClick={exportarCSV}>
+                <Icono nombre="csv" tam={30} />
+                <strong>CSV</strong>
+                <span>Datos en una tabla</span>
               </button>
-              <button type="button" className="btn btn-secundario btn-chico" onClick={exportarMantenimientos}>
-                Mantenimientos
-              </button>
-              <button type="button" className="btn btn-secundario btn-chico" onClick={exportarFallas}>
-                Fallas
-              </button>
-            </div>
-            <hr className="separador" />
-            <div className="acciones-chicas">
-              <a className="btn btn-secundario btn-chico" href="#/equipo/fichas">
-                <Icono nombre="imprimir" /> Fichas de todos los filtros
+              <a className="descarga" href="#/equipo/fichas">
+                <Icono nombre="imprimir" tam={30} />
+                <strong>Imprimir</strong>
+                <span>Fichas con QR</span>
               </a>
-              <button type="button" className="btn btn-secundario btn-chico" onClick={salirEquipo}>
-                Salir del panel
-              </button>
             </div>
           </section>
           )}

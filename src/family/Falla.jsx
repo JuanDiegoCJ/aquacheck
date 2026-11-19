@@ -22,7 +22,7 @@ export default function Falla({ hogar }) {
           <p>Guardamos tu reporte. El equipo del proyecto lo revisará y te contactará si hace falta.</p>
         </div>
         <a className="btn btn-principal btn-grande" href={volver}>
-          Ver mi filtro
+          Ver mi hogar
         </a>
       </Pantalla>
     )

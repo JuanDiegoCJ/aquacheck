@@ -2,8 +2,8 @@
 // Los datos viven solo en el celular de la persona (ver almacen.js).
 import { hoyISO, sumarDias, diferenciaDias, DIAS_PRONTO } from '../domain/reglas.js'
 
-export const LITROS_BIDON = 20
-export const LITROS_POR_PERSONA_DIA = 4 // referencial: solo para beber y cocinar
+const LITROS_BIDON = 20
+const LITROS_POR_PERSONA_DIA = 4 // referencial: solo para beber y cocinar
 
 // Tareas de mantenimiento. Los intervalos son REFERENCIALES: la persona puede cambiarlos.
 export const CATALOGO = {
@@ -47,7 +47,7 @@ export const CATALOGO = {
     origen: 'Referencia: ficha de un equipo de ósmosis inversa (una vez al año).',
   },
 }
-export const ORDEN_TAREAS_PERSONAL = ['tanque', 'cartuchos', 'uv', 'membrana', 'preventivo']
+const ORDEN_TAREAS_PERSONAL = ['tanque', 'cartuchos', 'uv', 'membrana', 'preventivo']
 export const TAREAS_DEL_FILTRO = ['cartuchos', 'uv', 'membrana', 'preventivo']
 
 // «¿Cuándo lo hiciste por última vez?» → días atrás (null = no sé, se muestra como pendiente hoy).
@@ -92,7 +92,7 @@ export function reservaRestante(p, hoy = hoyISO()) {
 }
 
 /** Estado de una tarea: 'aldia' | 'pronto' | 'vencido'. */
-export function estadoTareaPersonal(id, perfil, hoy = hoyISO()) {
+function estadoTareaPersonal(id, perfil, hoy = hoyISO()) {
   const t = perfil.tareas[id]
   const vence = sumarDias(t.ultima, t.cadaDias)
   const dias = diferenciaDias(hoy, vence)

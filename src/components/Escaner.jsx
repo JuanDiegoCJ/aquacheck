@@ -52,7 +52,7 @@ export default function Escaner({ alLeer, alCerrar }) {
     <div className="escaner" role="dialog" aria-modal="true" aria-label="Escanear código QR">
       <div className="escaner-caja">
         {error ? <p className="aviso">{error}</p> : <video ref={video} muted playsInline />}
-        {!error && <p className="escaner-ayuda">Apunta al QR pegado en tu filtro</p>}
+        {!error && <p className="escaner-ayuda">Apunta al QR de tu hogar</p>}
         <button type="button" className="btn btn-secundario" onClick={alCerrar}>
           Cerrar
         </button>

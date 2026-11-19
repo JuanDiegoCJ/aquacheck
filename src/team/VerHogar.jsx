@@ -11,7 +11,7 @@ export default function VerHogar({ codigo }) {
   const hogar = hogaresPanel().find((h) => h.codigo === codigo)
   if (!hogar) {
     return (
-      <Pantalla titulo={`Filtro ${codigo}`} volver="#/equipo" sinPie>
+      <Pantalla titulo={`Hogar ${codigo}`} volver="#/equipo" sinPie>
         <div className="tarjeta">
           <p>No hay datos de este filtro todavía.</p>
         </div>
@@ -24,7 +24,7 @@ export default function VerHogar({ codigo }) {
   const { tareas, general } = resumenHogar(hogar, mantenimientos)
 
   return (
-    <Pantalla titulo={`Filtro ${codigo} · vista del equipo`} volver="#/equipo" sinPie ancho>
+    <Pantalla titulo={`Hogar ${codigo} · vista del equipo`} volver="#/equipo" sinPie ancho>
       <div className="cols">
         <div className="col">
           {hogar.registrado ? (
