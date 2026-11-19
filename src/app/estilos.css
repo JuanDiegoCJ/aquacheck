@@ -1611,12 +1611,6 @@ fieldset.grupo legend {
   margin-bottom: 6px;
 }
 
-/* Barra con un solo enlace (Administrador): siempre visible, sin menú de hamburguesa. Los demás enlaces van en el pie. */
-.menu-movil { display: none !important; }
-.nav { display: flex; margin-left: auto; }
-.pie-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; margin: 0 0 10px; }
-.pie-links a { color: #0b5fa5; font-weight: 600; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
-.pie-links a:hover { text-decoration: underline; }
 
 /* Fuentes oficiales: acciones en cuadrícula y filas de enlace compactas */
 .fuente-lista { list-style: none; margin: 0; padding: 0; }
@@ -1644,3 +1638,19 @@ fieldset.grupo legend {
 @media (min-width: 481px) { .descargas { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .descarga:hover, .descarga:focus-visible { background: #f3f8fd; border-color: #0b5fa5; box-shadow: 0 8px 22px rgba(11, 95, 165, 0.28); transform: translateY(-2px); }
 .descarga:active { transform: translateY(0); box-shadow: 0 3px 10px rgba(11, 95, 165, 0.22); }
+
+/* Pie de página: marca, enlaces y contacto */
+.pie { text-align: left; padding: 24px 16px 76px; }
+.pie-grid { max-width: 1100px; margin: 0 auto; display: grid; gap: 18px; }
+.pie-logo { display: inline-flex; align-items: center; gap: 8px; color: #0b5fa5; font-weight: 700; font-size: 1.1rem; text-decoration: none; }
+.pie-marca p { margin: 6px 0 0; line-height: 1.45; max-width: 40ch; }
+.pie-col { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+.pie-titulo { margin: 0 0 2px; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: #4a6075; font-weight: 700; }
+.pie-col a { color: #0b5fa5; font-weight: 600; text-decoration: none; min-height: 40px; display: inline-flex; align-items: center; }
+.pie-col a:hover { text-decoration: underline; }
+.pie .pie-aviso { max-width: 1100px; margin: 14px auto 0; padding-top: 14px; border-top: 1px solid #cfdeec; }
+.pie .pie-copy { max-width: 1100px; margin: 4px auto 0; font-size: 0.8rem; color: #5b7289; }
+@media (min-width: 768px) {
+  .pie { padding: 28px 32px 22px; }
+  .pie-grid { grid-template-columns: 1.6fr 1fr 1fr; gap: 40px; }
+}

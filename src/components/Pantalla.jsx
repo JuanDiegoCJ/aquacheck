@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { Menu, X } from 'lucide-react'
 import { Icono } from './Iconos.jsx'
 // Marco común de todas las pantallas: barra superior (con navegación en pantallas anchas),
 // contenido centrado y pie con los límites de la app.
@@ -12,6 +14,7 @@ const volverAtras = (e) => {
 }
 
 export default function Pantalla({ titulo, volver, children, sinPie = false, ancho = false, doble = false, acciones = null }) {
+  const [menu, setMenu] = useState(false)
   const clase = ancho ? 'app-ancho' : doble ? 'app-doble' : ''
   return (
     <div className={`app ${clase}`}>
@@ -25,8 +28,13 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
           <a className={`marca ${volver ? 'marca-escritorio' : ''}`} href="#/" data-guia="nav-inicio">
             <img src="./icon.svg" alt="" width="28" height="28" /> AquaCheck
           </a>
-          <nav id="nav-principal" className="nav" aria-label="Principal">
+          <button type="button" className="menu-movil" aria-expanded={menu} aria-controls="nav-principal" aria-label={menu ? 'Cerrar el menú' : 'Abrir el menú'} onClick={() => setMenu(!menu)}>
+            {menu ? <X size={26} aria-hidden="true" /> : <Menu size={26} aria-hidden="true" />}
+          </button>
+          <nav id="nav-principal" className={`nav ${menu ? 'abierto' : ''}`} aria-label="Principal" onClick={() => setMenu(false)}>
             <a href="#/mi-plan" data-guia="nav-miplan">Mi plan</a>
+            <a href="#/fuentes">Fuentes oficiales</a>
+            <a href="#/acerca" data-guia="nav-acerca">¿Qué hace?</a>
             <a href="#/equipo" data-guia="nav-equipo">Administrador</a>
           </nav>
         </div>
@@ -44,12 +52,26 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
         {children}
       </main>
       <footer className="pie">
-        <nav className="pie-links" aria-label="Más información">
-          <a href="#/fuentes">Fuentes oficiales</a>
-          <a href="#/acerca" data-guia="nav-acerca">¿Qué hace?</a>
-        </nav>
-        <p className="pie-aviso">AquaCheck te ayuda a cuidar el agua de tu hogar. No mide ni certifica su calidad.</p>
-        <p className="pie-copy">© 2026 AquaCheck · Equipo estudiantil del Desafío UPAO</p>
+        <div className="pie-grid">
+          <div className="pie-marca">
+            <a className="pie-logo" href="#/">
+              <img src="./icon.svg" alt="" width="26" height="26" /> AquaCheck
+            </a>
+            <p>Tu plan de agua para antes, durante y después de un corte. Gratuita y sin cuenta.</p>
+          </div>
+          <nav className="pie-col" aria-label="Más información">
+            <p className="pie-titulo">Explora</p>
+            <a href="#/mi-plan">Mi plan</a>
+            <a href="#/fuentes">Fuentes oficiales</a>
+            <a href="#/acerca">¿Qué hace?</a>
+          </nav>
+          <div className="pie-col">
+            <p className="pie-titulo">Contacto</p>
+            <a href="mailto:aquacheck26@gmail.com">aquacheck26@gmail.com</a>
+          </div>
+        </div>
+        <p className="pie-aviso">AquaCheck no mide ni certifica la calidad del agua.</p>
+        <p className="pie-copy">© 2026 AquaCheck · Equipo estudiantil SINERGIA · Desafío UPAO</p>
       </footer>
     </div>
   )
