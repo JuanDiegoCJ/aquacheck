@@ -1687,3 +1687,7 @@ a.descarga { text-decoration: none; }
   .pie .pie-base { flex-direction: row; justify-content: space-between; align-items: baseline; gap: 24px; }
   .pie .pie-base .pie-copy { text-align: right; }
 }
+
+/* Fallas e Informes ocupan el mismo ancho que Hogares; el botón de ayuda («?») no tapa el texto del pie */
+.informes, .fallas-panel { max-width: none; }
+@media (min-width: 768px) { .pie .pie-base { padding-right: 76px; } }

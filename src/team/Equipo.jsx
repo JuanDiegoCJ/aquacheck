@@ -363,7 +363,6 @@ function Panel() {
                 <Icono nombre="derecha" tam={20} />
               </button>
             </div>
-            <p className="suave">El botón de WhatsApp abre el mensaje ya escrito para que el equipo lo envíe.</p>
           </section>
           )}
 
