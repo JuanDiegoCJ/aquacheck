@@ -21,6 +21,21 @@ import Crear from '../personal/Crear.jsx'
 import MiPlan from '../personal/MiPlan.jsx'
 import Fuentes from '../personal/Fuentes.jsx'
 
+const SUFIJO = ' · AquaCheck'
+const TITULOS = {
+  inicio: 'AquaCheck · Plan de agua para cortes en Trujillo',
+  crear: 'Crear mi plan de agua' + SUFIJO,
+  miplan: 'Mi plan de agua' + SUFIJO,
+  fuentes: 'Fuentes oficiales y contacto' + SUFIJO,
+  acerca: '¿Qué hace AquaCheck?',
+  agregar: 'Agregar mi casa' + SUFIJO,
+  equipo: 'Administrador' + SUFIJO,
+  fichas: 'Administrador' + SUFIJO,
+  fichaequipo: 'Administrador' + SUFIJO,
+  hogarequipo: 'Administrador' + SUFIJO,
+  informe: 'Administrador' + SUFIJO,
+}
+
 function NoEncontrado({ codigo }) {
   return (
     <Pantalla titulo="Escanea el QR de tu hogar" volver="#/">
@@ -58,6 +73,11 @@ export default function App() {
   // Al cambiar de pantalla se vuelve arriba (si no, se queda en el scroll de la pantalla anterior).
   useEffect(() => {
     window.scrollTo(0, 0)
+  }, [pantalla, codigo])
+
+  // Título de la pestaña según la pantalla (ayuda a reconocer la página en el historial y al compartirla).
+  useEffect(() => {
+    document.title = TITULOS[pantalla] ?? (codigo ? `Hogar ${codigo} · AquaCheck` : TITULOS.inicio)
   }, [pantalla, codigo])
 
   if (clave) return null

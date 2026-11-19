@@ -13,7 +13,7 @@ export default defineConfig({
       manifest: {
         name: 'AquaCheck',
         short_name: 'AquaCheck',
-        description: 'Seguimiento del mantenimiento de tu filtro de agua.',
+        description: 'Prepárate para un corte de agua: cuánto te dura el agua, recordatorios y contactos oficiales.',
         lang: 'es',
         start_url: './',
         scope: './',
@@ -27,6 +27,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
+        navigateFallbackDenylist: [/^\/robots\.txt$/, /^\/sitemap\.xml$/], // los buscadores reciben estos archivos tal cual, no la app
       },
     }),
   ],
