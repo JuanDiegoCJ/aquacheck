@@ -4,6 +4,13 @@ import { Icono } from './Iconos.jsx'
 //   - por defecto: una columna estrecha (formularios, historial…)
 //   - doble: hasta dos columnas en pantallas anchas (inicio, panel del filtro)
 //   - ancho: panel del equipo / fichas
+// «atras»: vuelve a la pantalla de la que se vino (o al inicio si se abrió directo).
+const volverAtras = (e) => {
+  e.preventDefault()
+  if (window.history.length > 1) window.history.back()
+  else window.location.hash = '#/'
+}
+
 export default function Pantalla({ titulo, volver, children, sinPie = false, ancho = false, doble = false, acciones = null }) {
   const clase = ancho ? 'app-ancho' : doble ? 'app-doble' : ''
   return (
@@ -11,7 +18,7 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
       <header className="barra">
         <div className="barra-in">
           {volver && (
-            <a className="volver" href={volver} aria-label="Volver">
+            <a className="volver" href={volver === 'atras' ? '#/' : volver} aria-label="Volver" onClick={volver === 'atras' ? volverAtras : undefined}>
               <Icono nombre="izquierda" tam={18} /> Volver
             </a>
           )}
@@ -19,6 +26,7 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
             <img src="./icon.svg" alt="" width="28" height="28" /> AquaCheck
           </a>
           <nav id="nav-principal" className="nav" aria-label="Principal">
+            <a href="#/mi-plan" data-guia="nav-miplan">Mi plan</a>
             <a href="#/equipo" data-guia="nav-equipo">Administrador</a>
           </nav>
         </div>
@@ -37,7 +45,6 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
       </main>
       <footer className="pie">
         <nav className="pie-links" aria-label="Más información">
-          <a href="#/mi-plan">Mi plan</a>
           <a href="#/fuentes">Fuentes oficiales</a>
           <a href="#/acerca" data-guia="nav-acerca">¿Qué hace?</a>
         </nav>

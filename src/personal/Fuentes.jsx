@@ -29,7 +29,7 @@ const externo = { target: '_blank', rel: 'noopener noreferrer' }
 
 export default function Fuentes() {
   return (
-    <Pantalla titulo="Fuentes oficiales y contacto" volver="#/mi-plan">
+    <Pantalla titulo="Fuentes oficiales y contacto" volver="atras">
       <p className="suave">
         AquaCheck no es un canal oficial y no publica avisos de cortes de agua. Para evitar información falsa, te lleva a las fuentes oficiales.
         Confirma siempre allí.

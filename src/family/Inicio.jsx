@@ -60,7 +60,7 @@ export default function Inicio() {
       </p>
 
       <h2 className="titulo" style={{ fontSize: '1.05rem' }}>
-        ¿Tu hogar participa en un programa con el equipo?
+        ¿Tienes un QR de AquaCheck?
       </h2>
 
       {guardado && (
