@@ -245,7 +245,6 @@ function graficoSemanal(pg, x, y, w, h, r) {
     pg.texto(String(s.n), bx + bw / 2, base - bh - 5, { size: 9, negrita: true, color: COLOR.azul, align: 'center' })
     pg.texto(formatoFechaCorta(s.ini), bx + bw / 2, base + 12, { size: 6.5, color: COLOR.suave, align: 'center' })
   })
-  pg.texto('Semana que empieza el…', x + 14, base + 28, { size: 7.5, color: COLOR.suave })
 }
 
 function graficoFallas(pg, x, y, w, h, r) {
