@@ -13,8 +13,7 @@ export const CATALOGO = {
     boton: 'Limpié el tanque',
     icono: 'limpieza_tanque',
     cadaDias: 180,
-    origen: 'SUNASS recomienda limpiar y desinfectar tanques y cisternas al menos dos veces al año.',
-  },
+    origen: 'SUNASS recomienda limpiar y desinfectar tanques y cisternas al menos dos veces al año.',  },
   cartuchos: {
     id: 'cartuchos',
     etiqueta: 'Cambio de cartuchos del filtro',
