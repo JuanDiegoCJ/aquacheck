@@ -64,6 +64,9 @@ export default function Registro({ hogar }) {
 
         <div className="campo">
           <label htmlFor="celular">Tu celular (opcional, solo si quieres recibir avisos)</label>
+          {yaRegistrado && (
+            <p className="suave">Por privacidad no mostramos tu celular. Si ya registraste uno, se conserva: escribe uno nuevo solo si quieres cambiarlo.</p>
+          )}
           <input
             id="celular"
             type="tel"
