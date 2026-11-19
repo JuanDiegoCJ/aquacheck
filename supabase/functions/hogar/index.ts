@@ -90,7 +90,7 @@ Deno.serve(async (req) => {
       db.from('hogares').select('codigo', { count: 'exact', head: true }).gte('creado_en', hace1h),
       db.from('hogares').select('codigo', { count: 'exact', head: true }).gte('creado_en', hace1d),
     ])
-    if (h1.error || d1.error) return json({ error: 'servidor' }, 500)
+    if (h1.error || d1.error) return json({ error: 'servidor', paso: 'conteo' }, 500)
     if ((h1.count ?? 0) >= MAX_ALTAS_HORA || (d1.count ?? 0) >= MAX_ALTAS_DIA) return json({ error: 'demasiados_intentos' }, 429)
 
     const claveNueva = (() => {
@@ -99,7 +99,7 @@ Deno.serve(async (req) => {
     })()
     const hash = await sha256Hex(claveNueva)
     const { data: ult, error: eUlt } = await db.from('hogares').select('codigo').order('codigo', { ascending: false }).limit(1)
-    if (eUlt) return json({ error: 'servidor' }, 500)
+    if (eUlt) return json({ error: 'servidor', paso: 'ultimo' }, 500)
     let n = ult && ult.length ? Number(String(ult[0].codigo).slice(3)) : 0
     for (let intento = 0; intento < 4; intento++) {
       n++
@@ -108,7 +108,7 @@ Deno.serve(async (req) => {
       const { error } = await db.from('hogares').insert({ codigo: nuevo, secreto_hash: hash, fecha_instalacion: b.fecha_instalacion, registrado: true })
       if (error) {
         if (error.code === '23505') continue // otro hogar tomó ese código a la vez: se prueba el siguiente
-        return json({ error: 'servidor' }, 500)
+        return json({ error: 'servidor', paso: 'hogar' }, 500)
       }
       const k = await db.from('claves_qr').insert({ codigo: nuevo, clave: claveNueva }) // para que el equipo pueda reimprimir su ficha
       let c = { error: null as unknown }
@@ -117,7 +117,7 @@ Deno.serve(async (req) => {
       }
       if (k.error || c.error) {
         await db.from('hogares').delete().eq('codigo', nuevo) // no queda un hogar a medias
-        return json({ error: 'servidor' }, 500)
+        return json({ error: 'servidor', paso: k.error ? 'clave' : 'contacto', detalle: (k.error ?? c.error as { message?: string })?.message }, 500)
       }
       return json({ codigo: nuevo, secreto: claveNueva })
     }
