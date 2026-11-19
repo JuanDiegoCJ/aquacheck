@@ -1618,3 +1618,8 @@ a.descarga { text-decoration: none; }
 .pie-logo { min-height: 44px; }
 .aviso-detalle summary { min-height: 44px; display: flex; align-items: center; }
 .marca, .nav a, .volver { min-height: 44px; align-items: center; } /* también en tableta, donde se usa el dedo */
+
+/* Descargas: se reparten según el ancho disponible (no quedan 5 tarjetas apretadas en pantallas medianas) */
+@media (min-width: 481px) { .descargas { grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); } }
+/* Códigos de la tabla de hogares: zona táctil de 44 px en celular y tableta */
+@media (max-width: 767px) { .tabla td a:not(.btn-mini) { display: inline-flex; align-items: center; min-height: 44px; } }
