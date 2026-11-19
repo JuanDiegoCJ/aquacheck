@@ -1585,3 +1585,28 @@ input, select, textarea { font-size: 1rem; }
 
 /* Contraste del pie de página (WCAG AA: al menos 4,5:1) */
 .pie, .pie-aviso, .pie-copy { color: #36495c; }
+
+/* ---------- Modo personal («Mi plan de agua») ---------- */
+input[type='number'],
+select {
+  width: 100%;
+  min-height: 52px;
+  padding: 10px 14px;
+  font: inherit;
+  color: var(--texto);
+  background: #fff;
+  border: 2px solid var(--borde);
+  border-radius: 12px;
+}
+fieldset.grupo {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+fieldset.grupo legend {
+  padding: 0;
+  margin-bottom: 6px;
+}
