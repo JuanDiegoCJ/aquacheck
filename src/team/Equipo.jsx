@@ -336,7 +336,7 @@ function Panel() {
                     const contacto = obtenerContacto(f.h.codigo)
                     const cel = contacto?.celular
                     // Los celulares de los filtros de ejemplo son ficticios: no se abre un chat con ellos (podrían ser de otra persona).
-                    const esEjemplo = contacto?.consentimiento?.version === 'datos-de-prueba'
+                    const esEjemplo = contacto?.consentimiento?.version === 'datos-de-prueba' || /^900/.test(cel ?? '') // 900… = número ficticio de prueba
                     const enlaceWhatsApp = aviso ? `https://wa.me/${esEjemplo ? '' : '51' + cel}?text=${encodeURIComponent(aviso)}` : null
                     const color = ESTADOS.find((e) => e.id === f.general)?.color
                     return (
