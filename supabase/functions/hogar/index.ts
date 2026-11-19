@@ -97,15 +97,26 @@ Deno.serve(async (req) => {
       return json({ hogar: hogarPublico, mantenimientos: m.data ?? [], reportes: r.data ?? [] }) // nunca devuelve el celular
     }
     case 'registrar': {
-      const c = b.consentimiento ?? {}
-      const version = String(c.version ?? '')
-      const texto = String(c.texto ?? '')
-      if (!fechaValida(b.fecha_instalacion) || !/^9\d{8}$/.test(String(b.celular)) || !version || version.length > 40 || !texto || texto.length > 6000) {
-        return json({ error: 'datos' }, 400)
+      // El celular es OPCIONAL. Si viene, debe ser válido y traer el consentimiento; si no viene, solo se guarda la fecha de instalación.
+      // Registrar sin celular nunca borra ni cambia un celular ya guardado (para retirarlo, la familia escribe al contacto del aviso).
+      if (!fechaValida(b.fecha_instalacion)) return json({ error: 'datos' }, 400)
+      const conCelular = b.celular !== undefined && b.celular !== null && String(b.celular) !== ''
+      let version = ''
+      let texto = ''
+      if (conCelular) {
+        const c = b.consentimiento ?? {}
+        version = String(c.version ?? '')
+        texto = String(c.texto ?? '')
+        if (!/^9\d{8}$/.test(String(b.celular)) || !version || version.length > 40 || !texto || texto.length > 6000) {
+          return json({ error: 'datos' }, 400)
+        }
       }
       const a = await db.from('hogares').update({ fecha_instalacion: b.fecha_instalacion, registrado: true }).eq('codigo', codigo)
-      const k = await db.from('contactos').upsert({ codigo, celular: b.celular, consentimiento_version: version, consentimiento_texto: texto })
-      if (a.error || k.error) return falla()
+      if (a.error) return falla()
+      if (conCelular) {
+        const k = await db.from('contactos').upsert({ codigo, celular: b.celular, consentimiento_version: version, consentimiento_texto: texto })
+        if (k.error) return falla()
+      }
       return json({ ok: true })
     }
     case 'mantenimiento_agregar': {
