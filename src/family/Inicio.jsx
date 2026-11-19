@@ -12,7 +12,7 @@ import { usePerfil } from '../personal/almacen.js'
 const PASOS_INICIO = [
   { selector: '[data-guia="escanear"]', titulo: 'Escanear el QR', texto: 'Toca aquí y apunta la cámara al QR de tu hogar. Se abre tu hogar al instante. También puedes usar la cámara normal del celular.' },
   { selector: '[data-guia="agregar"]', titulo: 'Agregar mi casa', texto: 'Si no tienes QR, toca aquí: llenas un formulario corto y recibes tu código y tu QR al instante, sin que nadie vaya a tu casa.' },
-  { selector: '[data-guia="codigo"]', titulo: 'Si no puedes escanear', texto: 'Pega el enlace que te enviaron por WhatsApp, o escribe tu código (por ejemplo AQ-007) si ya abriste tu QR antes en este celular.' },
+  { selector: '[data-guia="codigo"]', titulo: 'Si no puedes escanear', texto: 'Escribe tu código (por ejemplo AQ-007) si ya abriste tu QR antes en este celular.' },
   { selector: '[data-guia="nav-acerca"]', titulo: '¿Qué hace AquaCheck?', texto: 'Al final de la página: explica qué hace la app, cómo se usan tus datos y cómo se protege tu privacidad.' },
   { selector: '[data-guia="nav-equipo"]', titulo: 'Administrador', texto: 'Solo para quien administra el proyecto: entra con su correo y contraseña para ver cómo va cada hogar.' },
   { selector: '[data-guia="nav-inicio"]', titulo: 'Volver al inicio', texto: 'Desde cualquier pantalla, toca el logo de AquaCheck para volver aquí.' },
@@ -78,7 +78,7 @@ export default function Inicio() {
       </a>
 
       <form className="tarjeta" onSubmit={enviar} data-guia="codigo">
-        <label htmlFor="codigo">¿No puedes escanear? Pega aquí el enlace que te enviaron o escribe tu código (por ejemplo AQ-007)</label>
+        <label htmlFor="codigo">¿No puedes escanear? Escribe tu código (si ya abriste tu QR antes)</label>
         <div className="fila">
           <input
             id="codigo"
