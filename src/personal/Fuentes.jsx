@@ -39,13 +39,19 @@ export default function Fuentes() {
         <h2 id="f-sedalib">Comunicarte con SEDALIB (Trujillo y La Libertad)</h2>
         <p className="suave">Si tu servicio de agua es de SEDALIB, estos son sus canales según su sitio web:</p>
         <a className="btn btn-principal" href="tel:044480555">
-          Llamar: 044 480555
+          Reportar un corte o avería: 044 480555
+        </a>
+        <a className="btn btn-secundario" href="tel:044482335">
+          Central telefónica: 044 482335
         </a>
         <a className="btn btn-secundario" href="https://wa.me/51961479006" {...externo}>
           WhatsApp: 961 479 006
         </a>
         <a className="btn btn-secundario" href="https://sedalib.com.pe/" {...externo}>
           Ver avisos en sedalib.com.pe
+        </a>
+        <a className="btn btn-secundario" href="https://www.gob.pe/institucion/sedalib/contacto-y-numeros-de-emergencias" {...externo}>
+          Sedes y contactos (incluye la oficina de Moche)
         </a>
         <p className="suave">
           Según las preguntas frecuentes de SEDALIB: los cortes programados deben avisarse con al menos 48 horas, indicando horario, motivo y hora de
