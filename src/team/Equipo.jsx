@@ -188,7 +188,7 @@ function Panel() {
           <strong>
             {r.registrados}/{r.total}
           </strong>
-          <span>filtros registrados</span>
+          <span>hogares registrados</span>
         </div>
         <div className="indicador">
           <strong>{r.pctAlDia}%</strong>
@@ -301,7 +301,7 @@ function Panel() {
               <table className="tabla tabla-hogares">
                 <thead>
                   <tr>
-                    <th>Filtro</th>
+                    <th>Hogar</th>
                     <th>Estado</th>
                     <th>Próxima tarea</th>
                     <th>Celular</th>
