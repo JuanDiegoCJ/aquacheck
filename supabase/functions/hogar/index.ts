@@ -5,6 +5,7 @@
 //
 // Cuerpo esperado (POST, JSON): { accion, codigo, secreto, ...datos }
 //   accion: 'ver' | 'registrar' | 'mantenimiento_agregar' | 'mantenimiento_quitar' | 'reporte_agregar'
+//   Aparte: { accion: 'crear', fecha_instalacion, celular?, consentimiento? } crea un hogar nuevo y devuelve { codigo, secreto }.
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
 // Solo estos orígenes pueden llamar a la función desde un navegador (defensa adicional: igual hace falta la clave del QR).
@@ -40,6 +41,8 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const MAX_CUERPO = 16_384 // bytes; el cuerpo más grande legítimo es el registro (≈ 3 KB)
 const MAX_MANTENIMIENTOS = 500 // por hogar (evita llenar la base con una clave válida)
 const MAX_REPORTES = 200
+const MAX_ALTAS_HORA = 30 // hogares nuevos creados por la propia familia (todos juntos)
+const MAX_ALTAS_DIA = 150
 
 // Fecha real (no solo con forma de fecha), entre 2020 y mañana (por la zona horaria).
 function fechaValida(v: unknown) {
@@ -68,6 +71,59 @@ Deno.serve(async (req) => {
   } catch {
     return json({ error: 'json' }, 400)
   }
+  // Una familia nueva se une sola: crea su hogar (código + clave) sin tener QR todavía. No pide clave porque aún no existe.
+  // Para que nadie llene la base con hogares falsos hay un tope global por hora y por día.
+  if (b.accion === 'crear') {
+    if (!fechaValida(b.fecha_instalacion)) return json({ error: 'datos' }, 400)
+    const conCelular = b.celular !== undefined && b.celular !== null && String(b.celular) !== ''
+    let version = ''
+    let texto = ''
+    if (conCelular) {
+      const c = b.consentimiento ?? {}
+      version = String(c.version ?? '')
+      texto = String(c.texto ?? '')
+      if (!/^9\d{8}$/.test(String(b.celular)) || !version || version.length > 40 || !texto || texto.length > 6000) return json({ error: 'datos' }, 400)
+    }
+    const hace1h = new Date(Date.now() - 3600_000).toISOString()
+    const hace1d = new Date(Date.now() - 24 * 3600_000).toISOString()
+    const [h1, d1] = await Promise.all([
+      db.from('hogares').select('codigo', { count: 'exact', head: true }).gte('creado_en', hace1h),
+      db.from('hogares').select('codigo', { count: 'exact', head: true }).gte('creado_en', hace1d),
+    ])
+    if (h1.error || d1.error) return json({ error: 'servidor' }, 500)
+    if ((h1.count ?? 0) >= MAX_ALTAS_HORA || (d1.count ?? 0) >= MAX_ALTAS_DIA) return json({ error: 'demasiados_intentos' }, 429)
+
+    const claveNueva = (() => {
+      const bytes = crypto.getRandomValues(new Uint8Array(24)) // 192 bits
+      return btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+    })()
+    const hash = await sha256Hex(claveNueva)
+    const { data: ult, error: eUlt } = await db.from('hogares').select('codigo').order('codigo', { ascending: false }).limit(1)
+    if (eUlt) return json({ error: 'servidor' }, 500)
+    let n = ult && ult.length ? Number(String(ult[0].codigo).slice(3)) : 0
+    for (let intento = 0; intento < 4; intento++) {
+      n++
+      if (n > 999) return json({ error: 'lleno' }, 409)
+      const nuevo = `AQ-${String(n).padStart(3, '0')}`
+      const { error } = await db.from('hogares').insert({ codigo: nuevo, secreto_hash: hash, fecha_instalacion: b.fecha_instalacion, registrado: true })
+      if (error) {
+        if (error.code === '23505') continue // otro hogar tomó ese código a la vez: se prueba el siguiente
+        return json({ error: 'servidor' }, 500)
+      }
+      const k = await db.from('claves_qr').insert({ codigo: nuevo, clave: claveNueva }) // para que el equipo pueda reimprimir su ficha
+      let c = { error: null as unknown }
+      if (!k.error && conCelular) {
+        c = await db.from('contactos').insert({ codigo: nuevo, celular: b.celular, consentimiento_version: version, consentimiento_texto: texto })
+      }
+      if (k.error || c.error) {
+        await db.from('hogares').delete().eq('codigo', nuevo) // no queda un hogar a medias
+        return json({ error: 'servidor' }, 500)
+      }
+      return json({ codigo: nuevo, secreto: claveNueva })
+    }
+    return json({ error: 'servidor' }, 500)
+  }
+
   const codigo = String(b.codigo ?? '').toUpperCase()
   const secreto = String(b.secreto ?? '')
   if (!/^AQ-\d{3}$/.test(codigo) || secreto.length < 16 || secreto.length > 128) return json({ error: 'acceso' }, 401)
