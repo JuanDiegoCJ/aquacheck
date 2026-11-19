@@ -1654,3 +1654,9 @@ fieldset.grupo legend {
   .pie { padding: 28px 32px 22px; }
   .pie-grid { grid-template-columns: 1.6fr 1fr 1fr; gap: 40px; }
 }
+
+/* Barra con dos enlaces (Mi plan y Administrador): siempre visible, sin menú de hamburguesa. */
+.menu-movil { display: none !important; }
+.nav { display: flex; margin-left: auto; }
+.nav a { white-space: nowrap; }
+@media (max-width: 420px) { .nav { gap: 0; } .nav a { padding: 8px 7px; font-size: 0.85rem; } .barra-in { gap: 6px; } }
