@@ -1613,3 +1613,8 @@ a.descarga { text-decoration: none; }
 /* Fallas e Informes ocupan el mismo ancho que Hogares; el botón de ayuda («?») no tapa el texto del pie */
 .informes, .fallas-panel { max-width: none; }
 @media (min-width: 768px) { .pie .pie-base { padding-right: 76px; } }
+
+/* Zonas táctiles de al menos 44 px: logo del pie y desplegables */
+.pie-logo { min-height: 44px; }
+.aviso-detalle summary { min-height: 44px; display: flex; align-items: center; }
+.marca, .nav a, .volver { min-height: 44px; align-items: center; } /* también en tableta, donde se usa el dedo */
