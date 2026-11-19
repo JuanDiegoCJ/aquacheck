@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { Icono } from '../components/Iconos.jsx'
 import Pantalla from '../components/Pantalla.jsx'
-import { TriangleAlert, Check } from 'lucide-react'
+import { TriangleAlert, Check, CalendarPlus } from 'lucide-react'
+import { descargarICS, enlaceWhatsApp } from './calendario.js'
 import { PASOS_CORTE } from '../domain/fallas.js'
 import { hoyISO, textoDias, formatoFecha } from '../domain/reglas.js'
 import { usePerfil, actualizarPerfil, borrarPerfil } from './almacen.js'
-import { CATALOGO, resumenPersonal, litrosTotales, diasDeReserva, diasDeCorte, reservaRestante, consumoDiario, pasosPersonales } from './plan.js'
+import { CATALOGO, resumenPersonal, litrosTotales, diasDeReserva, diasDeCorte, reservaRestante, consumoDiario, pasosPersonales, textoParaCompartir } from './plan.js'
 
 const TEXTO = {
   aldia: { etiqueta: 'Al día', titulo: 'Todo al día', detalle: 'Tus tareas de mantenimiento van bien.' },
@@ -181,7 +182,7 @@ export default function MiPlan() {
                         <summary>Cambiar cada cuántos días</summary>
                         <label htmlFor={`dias-${t.id}`}>Repetir cada (días)</label>
                         <input id={`dias-${t.id}`} type="number" inputMode="numeric" min="1" max="3650" value={t.cadaDias} onChange={(e) => cambiarIntervalo(t.id, e.target.value)} />
-                        <p className="suave">{c.origen} Referencial: sigue el manual de tu equipo.</p>
+                        <p className="suave">{c.origen}</p>
                         {t.cadaDias !== c.cadaDias && (
                           <button type="button" className="btn btn-secundario" onClick={() => restablecerIntervalo(t.id)}>
                             Volver al plazo de referencia ({c.cadaDias} días)
@@ -215,6 +216,21 @@ export default function MiPlan() {
           <p className="aviso">
             AquaCheck no mide ni certifica la calidad del agua. Para beber agua guardada, sigue las indicaciones de salud y de tu empresa de agua.
           </p>
+
+          <section className="tarjeta" aria-labelledby="t-recordar">
+            <h2 id="t-recordar">Recordatorios y compartir</h2>
+            <p className="suave">
+              El calendario de tu celular te avisa, incluso sin internet. Compartir por WhatsApp solo envía el texto que ves aquí, sin tus datos.
+            </p>
+            {tareas.length > 0 && (
+              <button type="button" className="btn btn-secundario" onClick={() => descargarICS(perfil)}>
+                <CalendarPlus size={18} aria-hidden="true" /> Añadir recordatorios a mi calendario
+              </button>
+            )}
+            <a className="btn btn-secundario" href={enlaceWhatsApp(textoParaCompartir(perfil, hoy))} target="_blank" rel="noopener noreferrer">
+              <Icono nombre="whatsapp" /> Compartir mi plan por WhatsApp
+            </a>
+          </section>
 
           <a className="enlace-discreto" href="#/crear">
             Cambiar mis datos
