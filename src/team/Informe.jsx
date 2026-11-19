@@ -41,7 +41,7 @@ export default function Informe() {
             <strong>
               {r.registrados}/{r.total}
             </strong>
-            <span>filtros registrados</span>
+            <span>hogares registrados</span>
           </div>
           <div className="indicador">
             <strong>{r.pctAlDia}%</strong>
@@ -81,7 +81,7 @@ export default function Informe() {
           <table className="tabla">
             <thead>
               <tr>
-                <th>Filtro</th>
+                <th>Hogar</th>
                 <th>Estado</th>
                 <th>Próxima tarea</th>
                 <th>Fallas abiertas</th>
@@ -106,7 +106,7 @@ export default function Informe() {
             <table className="tabla">
               <thead>
                 <tr>
-                  <th>Filtro</th>
+                  <th>Hogar</th>
                   <th>Problema</th>
                   <th>Fecha</th>
                   <th>Estado</th>

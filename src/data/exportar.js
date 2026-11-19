@@ -76,8 +76,8 @@ export function construirExcel(r) {
       filas: [
         ['Indicador', 'Valor'],
         ['Fecha del informe', r.hoy],
-        ['Filtros registrados', r.registrados],
-        ['Filtros en total', r.total],
+        ['Hogares registrados', r.registrados],
+        ['Hogares en total', r.total],
         ['Registrados que están al día (%)', r.pctAlDia],
         ['Hogares con tarea próxima o pendiente', r.conTareaPendiente],
         ['Fallas abiertas', r.abiertas.length],
@@ -102,7 +102,7 @@ export function construirExcel(r) {
       nombre: 'Hogares',
       anchos: [10, 12, 18, 14, 40, 14, 16, 16, 16, 14],
       filas: [
-        ['Filtro', 'Registrado', 'Instalación', 'Estado', 'Próxima tarea', 'Días a próxima tarea', 'Días limpieza filtro', 'Días cambio cartucho', 'Días limpieza tanque', 'Fallas abiertas'],
+        ['Hogar', 'Registrado', 'Instalación', 'Estado', 'Próxima tarea', 'Días a próxima tarea', 'Días limpieza filtro', 'Días cambio cartucho', 'Días limpieza tanque', 'Fallas abiertas'],
         ...r.filas.map((f) => [
           f.h.codigo,
           f.h.registrado ? 'Sí' : 'No',
@@ -120,12 +120,12 @@ export function construirExcel(r) {
     {
       nombre: 'Mantenimientos',
       anchos: [10, 26, 14],
-      filas: [['Filtro', 'Tarea', 'Fecha'], ...[...r.mantenimientos].sort((a, b) => a.fecha.localeCompare(b.fecha)).map((m) => [m.codigo, TAREAS[m.tipo].etiqueta, m.fecha])],
+      filas: [['Hogar', 'Tarea', 'Fecha'], ...[...r.mantenimientos].sort((a, b) => a.fecha.localeCompare(b.fecha)).map((m) => [m.codigo, TAREAS[m.tipo].etiqueta, m.fecha])],
     },
     {
       nombre: 'Fallas',
       anchos: [10, 26, 14, 12, 10],
-      filas: [['Filtro', 'Tipo', 'Fecha', 'Estado', 'Con foto'], ...r.reportes.map((x) => [x.codigo, TIPOS_FALLA[x.tipo].etiqueta, x.fecha.slice(0, 10), x.estado === 'abierta' ? 'Abierta' : 'Resuelta', x.conFoto ? 'Sí' : 'No'])],
+      filas: [['Hogar', 'Tipo', 'Fecha', 'Estado', 'Con foto'], ...r.reportes.map((x) => [x.codigo, TIPOS_FALLA[x.tipo].etiqueta, x.fecha.slice(0, 10), x.estado === 'abierta' ? 'Abierta' : 'Resuelta', x.conFoto ? 'Sí' : 'No'])],
     },
   ]
 
@@ -200,7 +200,7 @@ export function construirWord(r) {
     tabla(
       ['Indicador', 'Valor'],
       [
-        ['Filtros registrados', `${r.registrados} de ${r.total}`],
+        ['Hogares registrados', `${r.registrados} de ${r.total}`],
         ['Registrados que están al día', `${r.pctAlDia} %`],
         ['Hogares con tarea próxima o pendiente', String(r.conTareaPendiente)],
         ['Fallas abiertas', String(r.abiertas.length)],
@@ -223,18 +223,18 @@ export function construirWord(r) {
 
     parrafo('Hogares', { estilo: 'Heading1' }),
     tabla(
-      ['Filtro', 'Estado', 'Próxima tarea', 'Fallas'],
+      ['Hogar', 'Estado', 'Próxima tarea', 'Fallas'],
       r.filas.map((f) => [f.h.codigo, etiquetaEstado(f.general), f.h.registrado && f.siguiente ? `${TAREAS[f.siguiente.tipo].etiqueta}: ${textoDias(f.siguiente.dias).toLowerCase()}` : '—', f.fallas ? String(f.fallas) : '—']),
       [1300, 1800, 5638, 900],
     ),
 
     parrafo('Fallas reportadas', { estilo: 'Heading1' }),
     r.reportes.length
-      ? tabla(['Filtro', 'Problema', 'Fecha', 'Estado'], r.reportes.map((x) => [x.codigo, TIPOS_FALLA[x.tipo].etiqueta, formatoFecha(x.fecha.slice(0, 10)), x.estado === 'abierta' ? 'Abierta' : 'Resuelta']), [1300, 3600, 3000, 1738])
+      ? tabla(['Hogar', 'Problema', 'Fecha', 'Estado'], r.reportes.map((x) => [x.codigo, TIPOS_FALLA[x.tipo].etiqueta, formatoFecha(x.fecha.slice(0, 10)), x.estado === 'abierta' ? 'Abierta' : 'Resuelta']), [1300, 3600, 3000, 1738])
       : parrafo('Aún no hay reportes de falla.'),
 
     parrafo('Notas', { estilo: 'Heading1' }),
-    parrafo('AquaCheck no mide la calidad del agua ni certifica que sea potable. Su función es organizar el mantenimiento del filtro.'),
+    parrafo('AquaCheck no mide la calidad del agua ni certifica que sea potable. Su función es organizar el mantenimiento del equipo de agua del hogar.'),
     parrafo('Los datos corresponden al dispositivo desde el que se generó este informe (prototipo sin servidor). No se incluyen celulares ni fotos.'),
     parrafo('Los intervalos de mantenimiento son valores de referencia, pendientes de confirmar con la ficha técnica del fabricante.'),
   ].join('')

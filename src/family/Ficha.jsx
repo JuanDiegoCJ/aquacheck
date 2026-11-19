@@ -13,7 +13,7 @@ export function FichaHoja({ codigo, url }) {
           <p className="ficha-marca">
             <Icono nombre="marca" /> AquaCheck
           </p>
-          <h2>Filtro {codigo}</h2>
+          <h2>Hogar {codigo}</h2>
           <p>Escanea el QR con tu celular para registrar el mantenimiento.</p>
         </div>
         <Qr codigo={codigo} tamano={170} url={url} />
@@ -55,7 +55,7 @@ export function FichaHoja({ codigo, url }) {
 export default function Ficha({ hogar }) {
   return (
     <Pantalla titulo="Ficha para imprimir" volver={rutaFiltro(hogar.codigo)} sinPie>
-      <p className="suave sin-imprimir">Imprímela y pégala junto al filtro. Sirve también si no hay celular o internet.</p>
+      <p className="suave sin-imprimir">Imprímela y pégala en un lugar visible de tu casa. Sirve también si no hay celular o internet.</p>
       <FichaHoja codigo={hogar.codigo} />
       <button type="button" className="btn btn-principal btn-grande sin-imprimir" onClick={() => window.print()}>
         <Icono nombre="imprimir" /> Imprimir

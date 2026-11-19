@@ -21,12 +21,27 @@ import Crear from '../personal/Crear.jsx'
 import MiPlan from '../personal/MiPlan.jsx'
 import Fuentes from '../personal/Fuentes.jsx'
 
+const SUFIJO = ' · AquaCheck'
+const TITULOS = {
+  inicio: 'AquaCheck · Plan de agua para cortes en Trujillo',
+  crear: 'Crear mi plan de agua' + SUFIJO,
+  miplan: 'Mi plan de agua' + SUFIJO,
+  fuentes: 'Fuentes oficiales y contacto' + SUFIJO,
+  acerca: '¿Qué hace AquaCheck?',
+  agregar: 'Agregar mi casa' + SUFIJO,
+  equipo: 'Administrador' + SUFIJO,
+  fichas: 'Administrador' + SUFIJO,
+  fichaequipo: 'Administrador' + SUFIJO,
+  hogarequipo: 'Administrador' + SUFIJO,
+  informe: 'Administrador' + SUFIJO,
+}
+
 function NoEncontrado({ codigo }) {
   return (
-    <Pantalla titulo="Escanea el QR de tu filtro" volver="#/">
+    <Pantalla titulo="Escanea el QR de tu hogar" volver="#/">
       <div className="tarjeta">
         <p>
-          El filtro <strong>{codigo}</strong> aún no está abierto en este celular. Escanea con la cámara el QR pegado en tu filtro. Si no puedes, pide a tu contacto del proyecto el enlace de tu ficha y pégalo en el inicio.
+          El hogar <strong>{codigo}</strong> aún no está abierto en este celular. Escanea con la cámara el QR de tu hogar. Si no puedes, pide a tu contacto del proyecto el enlace de tu hogar y ábrelo desde este celular.
         </p>
         <a className="btn btn-principal" href="#/">
           Volver al inicio
@@ -60,6 +75,11 @@ export default function App() {
     window.scrollTo(0, 0)
   }, [pantalla, codigo])
 
+  // Título de la pestaña según la pantalla (ayuda a reconocer la página en el historial y al compartirla).
+  useEffect(() => {
+    document.title = TITULOS[pantalla] ?? (codigo ? `Hogar ${codigo} · AquaCheck` : TITULOS.inicio)
+  }, [pantalla, codigo])
+
   if (clave) return null
   if (pantalla === 'inicio') return <Inicio />
   if (pantalla === 'acerca') return <Acerca />
@@ -75,9 +95,9 @@ export default function App() {
   if (!hogar) return <NoEncontrado codigo={codigo} />
   if (hogar.cargando) {
     return (
-      <Pantalla titulo={'Filtro ' + hogar.codigo} volver="#/">
+      <Pantalla titulo={'Hogar ' + hogar.codigo} volver="#/">
         <div className="tarjeta" role="status">
-          <p>Conectando con tu filtro… Si no avanza, revisa tu internet.</p>
+          <p>Conectando con tu hogar… Si no avanza, revisa tu internet.</p>
         </div>
       </Pantalla>
     )

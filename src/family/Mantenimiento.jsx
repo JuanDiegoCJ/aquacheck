@@ -43,7 +43,7 @@ export default function Mantenimiento({ hogar }) {
           </p>
         </div>
         <a className="btn btn-principal btn-grande" href={volver}>
-          Ver mi filtro
+          Ver mi hogar
         </a>
         <button type="button" className="btn btn-secundario" onClick={deshacer}>
           Me equivoqué, deshacer
@@ -66,7 +66,7 @@ export default function Mantenimiento({ hogar }) {
           {cambiarFecha ? (
             <div className="campo">
               <label htmlFor="fecha-m">¿Qué día lo hiciste?</label>
-              <input id="fecha-m" type="date" max={hoyISO()} min={hogar.fechaInstalacion} value={fecha} onChange={(e) => setFecha(e.target.value || hoyISO())} />
+              <input id="fecha-m" type="date" max={hoyISO()} min={hogar.fechaInstalacion} value={fecha} onChange={(e) => setFecha(!e.target.value || e.target.value > hoyISO() ? hoyISO() : e.target.value)} />
             </div>
           ) : (
             <button type="button" className="enlace-boton" onClick={() => setCambiarFecha(true)}>

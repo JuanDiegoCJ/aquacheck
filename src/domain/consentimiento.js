@@ -8,7 +8,7 @@
 // Los textos entre [corchetes] son decisiones del equipo y se muestran resaltados hasta completarse.
 // Conviene que UPAO o un asesor lo revise antes del piloto real. Al cambiar el texto, subir la versión.
 
-export const VERSION_CONSENTIMIENTO = 'borrador-0.7'
+export const VERSION_CONSENTIMIENTO = 'borrador-0.9'
 
 export const TEXTO_CASILLA =
   'Autorizo al equipo de AquaCheck el tratamiento de mi número de celular y del código de mi hogar para enviarme ' +
@@ -18,35 +18,26 @@ export const TEXTO_CASILLA =
 export const AVISO_COMPLETO = [
   {
     titulo: 'Responsable',
-    texto: 'Equipo de AquaCheck. Contacto: aquacheck26@gmail.com.',
+    texto: 'Equipo de AquaCheck · aquacheck26@gmail.com',
   },
   {
-    titulo: 'Datos y finalidad',
+    titulo: 'Qué guardamos y para qué',
     texto:
-      'Código del hogar, modelo del filtro, fecha de instalación e historial de mantenimiento. El número de celular es OPCIONAL: ' +
-      'solo se guarda si decides escribirlo para recibir recordatorios. No se solicita DNI, nombre ni dirección.',
+      'El código de tu hogar, la fecha de instalación y tu historial de mantenimiento, para llevar tu seguimiento. El celular es opcional: ' +
+      'solo si lo escribes, para enviarte recordatorios. No pedimos DNI, nombre ni dirección.',
   },
   {
-    titulo: 'Destinatarios',
-    texto:
-      'El equipo del proyecto. Los recordatorios se envían por WhatsApp, cuyo proveedor puede tratar el número de celular ' +
-      'conforme a sus propias políticas.',
+    titulo: 'Con quién se comparte',
+    texto: 'Solo con el equipo del proyecto. Los recordatorios salen por WhatsApp, cuyo proveedor puede tratar tu número según sus propias políticas.',
   },
   {
-    titulo: 'Plazo de conservación',
+    titulo: 'Tus derechos',
     texto:
-      'Hasta la finalización del piloto, más 30 días. Vencido este plazo, se eliminan el número de celular y los datos que ' +
-      'permitan identificar al hogar. El historial de mantenimiento se conserva sin datos identificables, solo con fines ' +
-      'estadísticos del proyecto.',
-  },
-  {
-    titulo: 'Derechos',
-    texto:
-      'La entrega de los datos es voluntaria. Puede ejercer sus derechos de acceso, rectificación, cancelación y oposición, o ' +
-      'retirar su autorización, escribiendo a aquacheck26@gmail.com o respondiendo "BAJA" a un recordatorio.',
+      'Dar tus datos es voluntario. Puedes pedir acceso, rectificación, cancelación u oposición, o retirar tu autorización, escribiendo a ' +
+      'aquacheck26@gmail.com o respondiendo "BAJA" a un recordatorio.',
   },
   {
     titulo: 'Marco legal',
-    texto: 'Ley N.° 29733, Ley de Protección de Datos Personales, y su Reglamento (D.S. N.° 016-2024-JUS).',
+    texto: 'Ley N.° 29733 de Protección de Datos Personales y su Reglamento (D.S. N.° 016-2024-JUS).',
   },
 ]

@@ -105,7 +105,7 @@ a {
 }
 
 .nav {
-  display: none;
+  display: flex;
   margin-left: auto;
   gap: 4px;
 }
@@ -388,9 +388,7 @@ input[aria-invalid='true'] {
 
 /* ---------- Tareas ---------- */
 .tareas,
-.historial,
-.vinetas,
-.lista-demo {
+.historial{
   list-style: none;
   margin: 0;
   padding: 0;
@@ -468,25 +466,7 @@ input[aria-invalid='true'] {
 }
 
 /* ---------- Inicio / demo ---------- */
-.lista-demo {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  padding: 6px 12px;
-  border: 1px solid var(--borde);
-  border-radius: 999px;
-  background: #fff;
-  color: var(--texto);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
+
 .punto {
   width: 14px;
   height: 14px;
@@ -502,31 +482,8 @@ input[aria-invalid='true'] {
 .punto-vencido {
   background: var(--rojo);
 }
-.punto-nuevo {
-  background: #fff;
-  border: 2px solid #8aa0b3;
-}
 
 /* ---------- Acerca ---------- */
-.vinetas {
-  display: grid;
-  gap: 8px;
-}
-.vinetas li {
-  padding-left: 22px;
-  position: relative;
-}
-.vinetas li::before {
-  content: '•';
-  position: absolute;
-  left: 6px;
-  color: var(--azul);
-  font-weight: 800;
-}
-.limites {
-  border-color: #d98e04;
-  background: #fffaf0;
-}
 
 /* ---------- Escáner ---------- */
 .escaner {
@@ -646,17 +603,7 @@ input[aria-invalid='true'] {
 }
 
 /* Equipo */
-.equipo-cols {
-  display: grid;
-  gap: 14px;
-}
-.equipo-main,
-.equipo-lado {
-  display: grid;
-  gap: 14px;
-  min-width: 0;
-  align-content: start;
-}
+
 .indicadores {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -902,8 +849,7 @@ input[aria-invalid='true'] {
   color: var(--suave);
   font-weight: 400;
 }
-.barra-apilada,
-.barra-simple {
+.barra-apilada{
   display: flex;
   gap: 2px;
   border-radius: 10px;
@@ -1020,10 +966,7 @@ button.seg:hover {
 .filtro-activo {
   font-size: 0.9rem;
 }
-.grupo-titulo {
-  margin-top: 6px;
-  font-weight: 600;
-}
+
 .par-botones.tres {
   grid-template-columns: minmax(0, 1fr); /* en celular, un botón por fila (el texto no cabe en tres columnas) */
 }
@@ -1175,11 +1118,7 @@ button.seg:hover {
   .app-doble .col {
     gap: 18px;
   }
-  .equipo-cols {
-    grid-template-columns: minmax(0, 1fr) 340px;
-    gap: 24px;
-    align-items: start;
-  }
+  
   .fichas {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1203,10 +1142,7 @@ button.seg:hover {
   .graficos {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
-  .equipo-cols {
-    grid-template-columns: minmax(0, 1fr) 440px;
-    gap: 28px;
-  }
+  
   .indicador strong {
     font-size: 2.5rem;
   }
@@ -1241,10 +1177,7 @@ button.seg:hover {
   .btn-accion:hover {
     border-color: var(--azul);
   }
-  .chip:hover {
-    border-color: var(--azul);
-    background: var(--azul-claro);
-  }
+  
   .btn-mini:hover {
     background: var(--azul-claro);
   }
@@ -1312,8 +1245,6 @@ button.seg:hover {
 }
 
 /* Inicio centrado y tutorial */
-.tutorial summary { cursor: pointer; font-weight: 600; }
-.tutorial ol { margin: 0.75rem 0; padding-left: 1.25rem; display: grid; gap: 0.6rem; }
 
 /* Panel del equipo compacto: pestañas y paginación */
 .pestanas { display: flex; gap: 0.35rem; flex-wrap: wrap; margin: 0.25rem 0 0.75rem; border-bottom: 2px solid var(--borde, #d8e3ee); }
@@ -1353,16 +1284,15 @@ button.seg:hover {
 
 /* Pie de página común a todas las pantallas */
 .pie { max-width: none; width: 100%; margin: 24px 0 0; padding: 0; text-align: left; display: block; background: #e6eff8; border-top: 1px solid #cfdeec; color: #3d556b; font-size: 0.9rem; }
-.pie-in { max-width: 1760px; margin: 0 auto; padding: 20px 16px 8px; display: grid; gap: 14px; }
+
 .pie-logo { display: inline-flex; align-items: center; gap: 8px; color: #0b5fa5; font-weight: 700; font-size: 1.05rem; text-decoration: none; }
 .pie-marca p, .pie-aviso { margin: 4px 0 0; line-height: 1.45; }
 .pie-aviso strong { color: #14263a; }
-.pie-enlaces { display: flex; flex-wrap: wrap; gap: 6px 18px; }
-.pie-enlaces a { color: #0b5fa5; font-weight: 600; }
+
 .pie-copy { max-width: 1760px; margin: 0 auto; padding: 8px 16px 64px; font-size: 0.8rem; color: #5b7289; }
 @media (min-width: 900px) {
-  .pie-in { grid-template-columns: 1.1fr 1.6fr auto; align-items: start; gap: 40px; padding: 24px 32px 8px; }
-  .pie-enlaces { flex-direction: column; align-items: flex-end; }
+  
+  
   .pie-copy { padding: 8px 32px 20px; }
 }
 
@@ -1453,8 +1383,7 @@ body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; 
 .descarga span { font-size: 0.8rem; color: #4a6075; }
 .descarga:hover { border-color: #0b5fa5; box-shadow: 0 4px 14px rgba(11, 95, 165, 0.18); }
 .descarga:active { transform: translateY(1px); }
-.acciones-chicas { display: flex; flex-wrap: wrap; gap: 10px; }
-.separador { border: 0; border-top: 1px solid #e2ebf3; margin: 14px 0; width: 100%; }
+
 @media (max-width: 480px) { .descargas { grid-template-columns: 1fr; } .descarga { grid-template-columns: auto 1fr; justify-items: start; align-items: center; column-gap: 12px; } .descarga span { grid-column: 2; } .descarga .icono { grid-row: span 2; } }
 
 /* Tabla de hogares: filas más cómodas */
@@ -1476,14 +1405,11 @@ body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; 
    Mobile first: menú en celular, pestañas con scroll, objetivos táctiles y centrado en pantallas anchas
    ===================================================================== */
 .barra { position: sticky; }
-.menu-movil { margin-left: auto; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; background: none; border: 0; color: #fff; cursor: pointer; border-radius: 10px; }
-.menu-movil:hover { background: rgba(255, 255, 255, 0.16); }
-.nav.abierto { display: flex; flex-direction: column; position: absolute; left: 0; right: 0; top: 100%; margin: 0; gap: 0; background: #0b5fa5; padding: 6px 16px 12px; border-top: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 12px 24px rgba(10, 25, 45, 0.25); }
-.nav.abierto a { padding: 14px 8px; font-size: 1.05rem; border-radius: 8px; }
+
 @media (min-width: 768px) {
-  .menu-movil { display: none; }
-  .nav, .nav.abierto { display: flex; flex-direction: row; position: static; margin-left: auto; padding: 0; border: 0; background: none; box-shadow: none; gap: 4px; }
-  .nav.abierto a { padding: 8px 12px; font-size: 0.9rem; }
+  
+  .nav{ display: flex; flex-direction: row; position: static; margin-left: auto; padding: 0; border: 0; background: none; box-shadow: none; gap: 4px; }
+  
 }
 
 /* Pestañas: una sola línea con desplazamiento en celular */
@@ -1556,14 +1482,12 @@ input, select, textarea { font-size: 1rem; }
 }
 
 /* Pie simplificado en celular: solo lo esencial */
-.pie-largo { display: none; }
-@media (min-width: 768px) { .pie-largo { display: inline; } }
+
 .pie { padding-top: 14px; }
 @media (max-width: 767px) { .ayuda-flotante { width: 44px; height: 44px; font-size: 1.3rem; } }
 
 /* Agregar hogar y acciones de la ficha */
-.hogares-cab { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
-.hogares-cab h2 { margin: 0; }
+
 .confirmar-nuevo { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 8px; background: #eaf3fb; border-radius: 12px; }
 .acciones-ficha { display: flex; flex-wrap: wrap; gap: 10px; }
 @media (max-width: 480px) { .acciones-ficha .btn { width: 100%; } }
@@ -1610,3 +1534,92 @@ fieldset.grupo legend {
   padding: 0;
   margin-bottom: 6px;
 }
+
+/* Fuentes oficiales: acciones en cuadrícula y filas de enlace compactas */
+.fuente-lista { list-style: none; margin: 0; padding: 0; }
+.fuente-lista li + li { border-top: 1px solid #dbe6f1; }
+.fuente-fila { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 10px 2px; color: inherit; text-decoration: none; }
+.fuente-fila strong { display: block; color: #0b5fa5; }
+.fuente-fila .suave { display: block; margin: 2px 0 0; }
+.fuente-fila > span:last-child { color: #0b5fa5; font-size: 1.4rem; }
+.fuente-fila:hover strong { text-decoration: underline; }
+
+/* ¿Qué hace AquaCheck?: introducción, listas con iconos y bloques de privacidad */
+.acerca-intro { display: flex; align-items: flex-start; gap: 14px; background: linear-gradient(135deg, #eaf4fc, #f6fbff); border-color: #bcd6ee; }
+.acerca-intro > .icono { flex: none; color: #0b5fa5; margin-top: 2px; }
+.acerca-intro p { margin: 0; line-height: 1.5; }
+.acerca-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.acerca-lista li { display: flex; align-items: flex-start; gap: 10px; line-height: 1.4; }
+.acerca-ico { flex: none; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-top: 1px; }
+.acerca-ico.si { background: #dff3e6; color: #1a7f4b; }
+.acerca-ico.no { background: #fbe4e4; color: #b03a3a; }
+.acerca-priv { border-left: 3px solid #bcd6ee; padding-left: 12px; margin: 10px 0; }
+.acerca-priv h3 { margin: 0 0 2px; font-size: 1rem; color: #0b5fa5; }
+.acerca-priv p { margin: 0; line-height: 1.45; }
+
+/* Descargas del panel: cuatro tarjetas (Excel, Word, PDF, CSV) con sombra y color al pasar el cursor */
+@media (min-width: 481px) { .descargas { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.descarga:hover, .descarga:focus-visible { background: #f3f8fd; border-color: #0b5fa5; box-shadow: 0 8px 22px rgba(11, 95, 165, 0.28); transform: translateY(-2px); }
+.descarga:active { transform: translateY(0); box-shadow: 0 3px 10px rgba(11, 95, 165, 0.22); }
+
+/* Pie de página: marca, enlaces y contacto */
+.pie { text-align: left; padding: 24px 16px 76px; }
+.pie-grid { max-width: 1100px; margin: 0 auto; display: grid; gap: 18px; }
+.pie-logo { display: inline-flex; align-items: center; gap: 8px; color: #0b5fa5; font-weight: 700; font-size: 1.1rem; text-decoration: none; }
+.pie-marca p { margin: 6px 0 0; line-height: 1.45; max-width: 40ch; }
+.pie-col { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+.pie-titulo { margin: 0 0 2px; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: #4a6075; font-weight: 700; }
+.pie-col a { color: #0b5fa5; font-weight: 600; text-decoration: none; min-height: 40px; display: inline-flex; align-items: center; }
+.pie-col a:hover { text-decoration: underline; }
+.pie .pie-aviso { max-width: 1100px; margin: 14px auto 0; padding-top: 14px; border-top: 1px solid #cfdeec; }
+.pie .pie-copy { max-width: 1100px; margin: 4px auto 0; font-size: 0.8rem; color: #5b7289; }
+@media (min-width: 768px) {
+  .pie { padding: 28px 32px 22px; }
+  .pie-grid { grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+}
+/* Mismo ancho que la barra superior: el pie ocupa todo el largo de la página */
+.pie-grid, .pie .pie-aviso, .pie .pie-copy { max-width: 1760px; }
+
+/* Barra con dos enlaces (Mi plan y Administrador): siempre visible, sin menú de hamburguesa. */
+
+.nav a { white-space: nowrap; }
+@media (max-width: 420px) { .nav { gap: 0; } .nav a { padding: 8px 7px; font-size: 0.85rem; } .barra-in { gap: 6px; } }
+
+/* Cinco tarjetas de descarga (Excel, Word, PDF, CSV, Imprimir); «Imprimir» es un enlace con el mismo aspecto */
+@media (min-width: 481px) { .descargas { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+a.descarga { text-decoration: none; }
+/* «Salir del panel» en la barra: mismo estilo que los enlaces de la barra */
+.nav-salir { display: inline-flex; align-items: center; gap: 6px; color: #fff; background: none; border: 0; font: inherit; font-weight: 600; font-size: 0.9rem; padding: 8px 12px; border-radius: 10px; cursor: pointer; min-height: 44px; white-space: nowrap; }
+.nav-salir:hover, .nav-salir:focus-visible { background: rgba(255, 255, 255, 0.16); }
+@media (max-width: 420px) { .nav-salir { padding: 8px 7px; font-size: 0.85rem; } }
+
+/* Franja inferior del pie: aviso a la izquierda y derechos a la derecha (uno encima del otro en celular) */
+.pie-base { max-width: 1760px; margin: 14px auto 0; padding-top: 14px; border-top: 1px solid #cfdeec; display: grid; gap: 4px; }
+.pie .pie-base .pie-aviso { margin: 0; padding: 0; border: 0; max-width: none; }
+.pie .pie-base .pie-copy { margin: 0; max-width: none; text-align: left; }
+@media (min-width: 768px) {
+  .pie-base { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; }
+  .pie .pie-base .pie-copy { text-align: right; }
+}
+
+/* Línea final del pie: aviso a la izquierda y derechos a la derecha (uno encima del otro en celular) */
+.pie .pie-base { max-width: 1760px; margin: 14px auto 0; padding-top: 14px; border-top: 1px solid #cfdeec; display: flex; flex-direction: column; gap: 4px; }
+.pie .pie-base .pie-aviso, .pie .pie-base .pie-copy { margin: 0; padding: 0; border: 0; max-width: none; }
+@media (min-width: 768px) {
+  .pie .pie-base { flex-direction: row; justify-content: space-between; align-items: baseline; gap: 24px; }
+  .pie .pie-base .pie-copy { text-align: right; }
+}
+
+/* Fallas e Informes ocupan el mismo ancho que Hogares; el botón de ayuda («?») no tapa el texto del pie */
+.informes, .fallas-panel { max-width: none; }
+@media (min-width: 768px) { .pie .pie-base { padding-right: 76px; } }
+
+/* Zonas táctiles de al menos 44 px: logo del pie y desplegables */
+.pie-logo { min-height: 44px; }
+.aviso-detalle summary { min-height: 44px; display: flex; align-items: center; }
+.marca, .nav a, .volver { min-height: 44px; align-items: center; } /* también en tableta, donde se usa el dedo */
+
+/* Descargas: se reparten según el ancho disponible (no quedan 5 tarjetas apretadas en pantallas medianas) */
+@media (min-width: 481px) { .descargas { grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); } }
+/* Códigos de la tabla de hogares: zona táctil de 44 px en celular y tableta */
+@media (max-width: 767px) { .tabla td a:not(.btn-mini) { display: inline-flex; align-items: center; min-height: 44px; } }
