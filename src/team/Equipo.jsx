@@ -14,7 +14,6 @@ import {
   obtenerContacto,
   marcarReporteResuelto,
   equipoAutorizado,
-  salirEquipo,
 } from '../data/repo.js'
 import { TAREAS, ORDEN_TAREAS, textoDias, mensajeAviso, formatoFecha } from '../domain/reglas.js'
 import { TIPOS_FALLA } from '../domain/fallas.js'
@@ -22,7 +21,6 @@ import { aCSV, descargarCSV } from '../data/csv.js'
 import { construirExcel, construirWord, descargarBinario, nombreArchivo, MIME_XLSX, MIME_DOCX } from '../data/exportar.js'
 import { construirPDF, MIME_PDF } from '../data/pdf.js'
 import { calcularResumen, ESTADOS, etiquetaEstado } from './resumen.js'
-import { rutaFiltro } from '../app/ruta.js'
 
 function Acceso() {
   const [correo, setCorreo] = useState('')

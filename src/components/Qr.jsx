@@ -3,7 +3,7 @@ import QRCode from 'qrcode'
 import { claveDe } from '../data/repo.js'
 
 /** Dirección que lleva el QR de un filtro: abre la app directo en ese filtro. */
-export function urlDeFiltro(codigo) {
+function urlDeFiltro(codigo) {
   const base = window.location.origin + window.location.pathname // sin parámetros sueltos como ?v=2
   const clave = claveDe(codigo) // en un filtro conectado, el QR lleva su clave para que otro celular también se conecte
   return `${base}#/f/${codigo}${clave ? `?k=${clave}` : ""}`

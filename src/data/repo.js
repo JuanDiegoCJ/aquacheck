@@ -39,7 +39,7 @@ export const suscribir = (f) => {
   oyentes.add(f)
   return () => oyentes.delete(f)
 }
-export const obtenerVersion = () => version
+const obtenerVersion = () => version
 /** Hace que el componente se vuelva a dibujar cuando cambian los datos. */
 export const useDatos = () => useSyncExternalStore(suscribir, obtenerVersion)
 
@@ -91,7 +91,6 @@ export function iniciar() {
 }
 
 // ---- Lectura ----
-export const listarHogares = () => Object.values(leer('hogares', {})).sort((a, b) => a.codigo.localeCompare(b.codigo))
 export const obtenerHogar = (codigo) => leer('hogares', {})[codigo] ?? null
 export const listarMantenimientos = (codigo) =>
   leer('mantenimientos', [])
@@ -142,12 +141,11 @@ export function quitarMantenimiento(id) {
 }
 
 // ---- Fallas ----
-export const listarMantenimientosTodos = () => leer('mantenimientos', [])
 export const listarReportes = (codigo) =>
   leer('reportes', [])
     .filter((r) => !codigo || r.codigo === codigo)
     .sort((a, b) => b.fecha.localeCompare(a.fecha))
-export const obtenerFoto = (id) => leer('fotos', {})[id] ?? null
+const obtenerFoto = (id) => leer('fotos', {})[id] ?? null
 
 export function agregarReporte({ codigo, tipo, foto }) {
   const id = nuevoId()
@@ -192,7 +190,7 @@ const cola = () => leer('cola', [])
 export const esReal = (codigo) => !!claves()[codigo]
 /** Clave del QR de un filtro conectado (solo está en el celular de esa familia); null si es de demostración. */
 export const claveDe = (codigo) => claves()[codigo] ?? null
-export const pendientesDe = (codigo) => cola().filter((o) => o.codigo === codigo).length
+const pendientesDe = (codigo) => cola().filter((o) => o.codigo === codigo).length
 let enCurso = false
 const errores = {} // codigo -> mensaje (solo en memoria)
 
@@ -252,7 +250,7 @@ function aplicarServidor(codigo, d) {
 }
 
 /** Envía lo pendiente (en orden) y luego trae el estado del servidor. Sin internet no hace nada y se reintenta después. */
-export async function sincronizar() {
+async function sincronizar() {
   const codigos = Object.keys(claves())
   if (enCurso || !codigos.length || (typeof navigator !== 'undefined' && navigator.onLine === false)) return
   enCurso = true

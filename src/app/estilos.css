@@ -105,7 +105,7 @@ a {
 }
 
 .nav {
-  display: none;
+  display: flex;
   margin-left: auto;
   gap: 4px;
 }
@@ -388,9 +388,7 @@ input[aria-invalid='true'] {
 
 /* ---------- Tareas ---------- */
 .tareas,
-.historial,
-.vinetas,
-.lista-demo {
+.historial{
   list-style: none;
   margin: 0;
   padding: 0;
@@ -468,25 +466,7 @@ input[aria-invalid='true'] {
 }
 
 /* ---------- Inicio / demo ---------- */
-.lista-demo {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  padding: 6px 12px;
-  border: 1px solid var(--borde);
-  border-radius: 999px;
-  background: #fff;
-  color: var(--texto);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
+
 .punto {
   width: 14px;
   height: 14px;
@@ -502,31 +482,8 @@ input[aria-invalid='true'] {
 .punto-vencido {
   background: var(--rojo);
 }
-.punto-nuevo {
-  background: #fff;
-  border: 2px solid #8aa0b3;
-}
 
 /* ---------- Acerca ---------- */
-.vinetas {
-  display: grid;
-  gap: 8px;
-}
-.vinetas li {
-  padding-left: 22px;
-  position: relative;
-}
-.vinetas li::before {
-  content: '•';
-  position: absolute;
-  left: 6px;
-  color: var(--azul);
-  font-weight: 800;
-}
-.limites {
-  border-color: #d98e04;
-  background: #fffaf0;
-}
 
 /* ---------- Escáner ---------- */
 .escaner {
@@ -646,17 +603,7 @@ input[aria-invalid='true'] {
 }
 
 /* Equipo */
-.equipo-cols {
-  display: grid;
-  gap: 14px;
-}
-.equipo-main,
-.equipo-lado {
-  display: grid;
-  gap: 14px;
-  min-width: 0;
-  align-content: start;
-}
+
 .indicadores {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -902,8 +849,7 @@ input[aria-invalid='true'] {
   color: var(--suave);
   font-weight: 400;
 }
-.barra-apilada,
-.barra-simple {
+.barra-apilada{
   display: flex;
   gap: 2px;
   border-radius: 10px;
@@ -1020,10 +966,7 @@ button.seg:hover {
 .filtro-activo {
   font-size: 0.9rem;
 }
-.grupo-titulo {
-  margin-top: 6px;
-  font-weight: 600;
-}
+
 .par-botones.tres {
   grid-template-columns: minmax(0, 1fr); /* en celular, un botón por fila (el texto no cabe en tres columnas) */
 }
@@ -1175,11 +1118,7 @@ button.seg:hover {
   .app-doble .col {
     gap: 18px;
   }
-  .equipo-cols {
-    grid-template-columns: minmax(0, 1fr) 340px;
-    gap: 24px;
-    align-items: start;
-  }
+  
   .fichas {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1203,10 +1142,7 @@ button.seg:hover {
   .graficos {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
-  .equipo-cols {
-    grid-template-columns: minmax(0, 1fr) 440px;
-    gap: 28px;
-  }
+  
   .indicador strong {
     font-size: 2.5rem;
   }
@@ -1241,10 +1177,7 @@ button.seg:hover {
   .btn-accion:hover {
     border-color: var(--azul);
   }
-  .chip:hover {
-    border-color: var(--azul);
-    background: var(--azul-claro);
-  }
+  
   .btn-mini:hover {
     background: var(--azul-claro);
   }
@@ -1312,8 +1245,6 @@ button.seg:hover {
 }
 
 /* Inicio centrado y tutorial */
-.tutorial summary { cursor: pointer; font-weight: 600; }
-.tutorial ol { margin: 0.75rem 0; padding-left: 1.25rem; display: grid; gap: 0.6rem; }
 
 /* Panel del equipo compacto: pestañas y paginación */
 .pestanas { display: flex; gap: 0.35rem; flex-wrap: wrap; margin: 0.25rem 0 0.75rem; border-bottom: 2px solid var(--borde, #d8e3ee); }
@@ -1353,16 +1284,15 @@ button.seg:hover {
 
 /* Pie de página común a todas las pantallas */
 .pie { max-width: none; width: 100%; margin: 24px 0 0; padding: 0; text-align: left; display: block; background: #e6eff8; border-top: 1px solid #cfdeec; color: #3d556b; font-size: 0.9rem; }
-.pie-in { max-width: 1760px; margin: 0 auto; padding: 20px 16px 8px; display: grid; gap: 14px; }
+
 .pie-logo { display: inline-flex; align-items: center; gap: 8px; color: #0b5fa5; font-weight: 700; font-size: 1.05rem; text-decoration: none; }
 .pie-marca p, .pie-aviso { margin: 4px 0 0; line-height: 1.45; }
 .pie-aviso strong { color: #14263a; }
-.pie-enlaces { display: flex; flex-wrap: wrap; gap: 6px 18px; }
-.pie-enlaces a { color: #0b5fa5; font-weight: 600; }
+
 .pie-copy { max-width: 1760px; margin: 0 auto; padding: 8px 16px 64px; font-size: 0.8rem; color: #5b7289; }
 @media (min-width: 900px) {
-  .pie-in { grid-template-columns: 1.1fr 1.6fr auto; align-items: start; gap: 40px; padding: 24px 32px 8px; }
-  .pie-enlaces { flex-direction: column; align-items: flex-end; }
+  
+  
   .pie-copy { padding: 8px 32px 20px; }
 }
 
@@ -1453,8 +1383,7 @@ body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; 
 .descarga span { font-size: 0.8rem; color: #4a6075; }
 .descarga:hover { border-color: #0b5fa5; box-shadow: 0 4px 14px rgba(11, 95, 165, 0.18); }
 .descarga:active { transform: translateY(1px); }
-.acciones-chicas { display: flex; flex-wrap: wrap; gap: 10px; }
-.separador { border: 0; border-top: 1px solid #e2ebf3; margin: 14px 0; width: 100%; }
+
 @media (max-width: 480px) { .descargas { grid-template-columns: 1fr; } .descarga { grid-template-columns: auto 1fr; justify-items: start; align-items: center; column-gap: 12px; } .descarga span { grid-column: 2; } .descarga .icono { grid-row: span 2; } }
 
 /* Tabla de hogares: filas más cómodas */
@@ -1476,14 +1405,11 @@ body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; 
    Mobile first: menú en celular, pestañas con scroll, objetivos táctiles y centrado en pantallas anchas
    ===================================================================== */
 .barra { position: sticky; }
-.menu-movil { margin-left: auto; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; background: none; border: 0; color: #fff; cursor: pointer; border-radius: 10px; }
-.menu-movil:hover { background: rgba(255, 255, 255, 0.16); }
-.nav.abierto { display: flex; flex-direction: column; position: absolute; left: 0; right: 0; top: 100%; margin: 0; gap: 0; background: #0b5fa5; padding: 6px 16px 12px; border-top: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 12px 24px rgba(10, 25, 45, 0.25); }
-.nav.abierto a { padding: 14px 8px; font-size: 1.05rem; border-radius: 8px; }
+
 @media (min-width: 768px) {
-  .menu-movil { display: none; }
-  .nav, .nav.abierto { display: flex; flex-direction: row; position: static; margin-left: auto; padding: 0; border: 0; background: none; box-shadow: none; gap: 4px; }
-  .nav.abierto a { padding: 8px 12px; font-size: 0.9rem; }
+  
+  .nav{ display: flex; flex-direction: row; position: static; margin-left: auto; padding: 0; border: 0; background: none; box-shadow: none; gap: 4px; }
+  
 }
 
 /* Pestañas: una sola línea con desplazamiento en celular */
@@ -1556,14 +1482,12 @@ input, select, textarea { font-size: 1rem; }
 }
 
 /* Pie simplificado en celular: solo lo esencial */
-.pie-largo { display: none; }
-@media (min-width: 768px) { .pie-largo { display: inline; } }
+
 .pie { padding-top: 14px; }
 @media (max-width: 767px) { .ayuda-flotante { width: 44px; height: 44px; font-size: 1.3rem; } }
 
 /* Agregar hogar y acciones de la ficha */
-.hogares-cab { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
-.hogares-cab h2 { margin: 0; }
+
 .confirmar-nuevo { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 8px; background: #eaf3fb; border-radius: 12px; }
 .acciones-ficha { display: flex; flex-wrap: wrap; gap: 10px; }
 @media (max-width: 480px) { .acciones-ficha .btn { width: 100%; } }
@@ -1611,7 +1535,6 @@ fieldset.grupo legend {
   margin-bottom: 6px;
 }
 
-
 /* Fuentes oficiales: acciones en cuadrícula y filas de enlace compactas */
 .fuente-lista { list-style: none; margin: 0; padding: 0; }
 .fuente-lista li + li { border-top: 1px solid #dbe6f1; }
@@ -1658,8 +1581,7 @@ fieldset.grupo legend {
 .pie-grid, .pie .pie-aviso, .pie .pie-copy { max-width: 1760px; }
 
 /* Barra con dos enlaces (Mi plan y Administrador): siempre visible, sin menú de hamburguesa. */
-.menu-movil { display: none !important; }
-.nav { display: flex; margin-left: auto; }
+
 .nav a { white-space: nowrap; }
 @media (max-width: 420px) { .nav { gap: 0; } .nav a { padding: 8px 7px; font-size: 0.85rem; } .barra-in { gap: 6px; } }
 

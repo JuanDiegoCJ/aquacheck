@@ -10,7 +10,7 @@ function sellos(ahora = new Date()) {
   return ahora.toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z')
 }
 
-export function crearICS(perfil, hoy = hoyISO(), ahora = new Date()) {
+function crearICS(perfil, hoy = hoyISO(), ahora = new Date()) {
   const { tareas } = resumenPersonal(perfil, hoy)
   const lineas = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//AquaCheck//Mi plan de agua//ES', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH']
   for (const t of tareas) {

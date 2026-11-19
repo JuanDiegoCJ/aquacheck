@@ -35,13 +35,13 @@ export const TAREAS = {
 export const ORDEN_TAREAS = ['limpieza_filtro', 'cambio_cartucho', 'limpieza_tanque']
 
 // ---- Fechas (siempre como texto AAAA-MM-DD en hora local, sin zonas horarias) ----
-export function aISO(d) {
+function aISO(d) {
   const m = String(d.getMonth() + 1).padStart(2, '0')
   const dia = String(d.getDate()).padStart(2, '0')
   return `${d.getFullYear()}-${m}-${dia}`
 }
 export const hoyISO = () => aISO(new Date())
-export function desdeISO(s) {
+function desdeISO(s) {
   const [y, m, d] = s.split('-').map(Number)
   return new Date(y, m - 1, d)
 }
@@ -61,7 +61,7 @@ export const formatoFechaCorta = (iso) => formatoCorto.format(desdeISO(iso))
 
 // ---- Estados ----
 /** Estado de una tarea: 'aldia' | 'pronto' | 'vencido'. */
-export function estadoTarea(tipo, hogar, mantenimientos, hoy = hoyISO()) {
+function estadoTarea(tipo, hogar, mantenimientos, hoy = hoyISO()) {
   const t = TAREAS[tipo]
   const fechas = mantenimientos.filter((m) => m.tipo === tipo).map((m) => m.fecha).sort()
   const ultima = fechas.length ? fechas[fechas.length - 1] : null
@@ -73,7 +73,7 @@ export function estadoTarea(tipo, hogar, mantenimientos, hoy = hoyISO()) {
 }
 
 const PESO = { aldia: 0, pronto: 1, vencido: 2 }
-export function estadoGeneral(tareas) {
+function estadoGeneral(tareas) {
   return tareas.reduce((peor, t) => (PESO[t.estado] > PESO[peor] ? t.estado : peor), 'aldia')
 }
 
@@ -111,7 +111,6 @@ export function mensajeAviso(codigo, tareas) {
 }
 
 // ---- Código del filtro (el QR pegado en el equipo) ----
-export const FORMATO_CODIGO = /^AQ-\d{3}$/
 export function extraerCodigo(texto) {
   const m = String(texto ?? '').toUpperCase().match(/AQ-?\s?(\d{3})/)
   return m ? `AQ-${m[1]}` : null
