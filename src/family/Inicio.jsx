@@ -7,6 +7,7 @@ import { Punto } from '../components/Semaforo.jsx'
 import { useDatos, miFiltro, esReal } from '../data/repo.js'
 import { extraerCodigo, resumenHogar } from '../domain/reglas.js'
 import { irA, rutaFiltro } from '../app/ruta.js'
+import { usePerfil } from '../personal/almacen.js'
 
 const PASOS_INICIO = [
   { selector: '[data-guia="escanear"]', titulo: 'Escanear el QR', texto: 'Toca aquí y apunta la cámara al QR pegado en tu filtro. Se abre tu filtro al instante. También puedes usar la cámara normal del celular.' },
@@ -23,6 +24,7 @@ export default function Inicio() {
   const [texto, setTexto] = useState('')
   const [error, setError] = useState('')
   const guardado = miFiltro() && esReal(miFiltro()) ? miFiltro() : null
+  const plan = usePerfil()
 
   // Si el QR (o lo pegado) trae la clave del hogar (?k=…), se conserva para que el filtro se conecte a Supabase.
   const abrir = useCallback((codigo, bruto) => {
@@ -46,8 +48,19 @@ export default function Inicio() {
       <section className="portada">
         <img src="./icon.svg" alt="" width="72" height="72" />
         <h1>AquaCheck</h1>
-        <p>Te avisamos cuándo limpiar tu filtro y guardamos el historial. Sin contraseñas.</p>
+        <p>¿Y si se corta el agua? Prepárate y cuida el agua de tu casa: antes, durante y después. Sin cuenta ni contraseña.</p>
       </section>
+
+      <a className="btn btn-principal btn-grande" href={plan ? '#/mi-plan' : '#/crear'}>
+        {plan ? 'Ir a mi plan de agua' : 'Crear mi plan de agua'}
+      </a>
+      <p className="suave" style={{ textAlign: 'center' }}>
+        {plan ? 'Tu plan está guardado en este celular.' : 'Toma menos de un minuto y no necesitas QR ni filtro.'}
+      </p>
+
+      <h2 className="titulo" style={{ fontSize: '1.05rem' }}>
+        ¿Tu hogar participa en un programa con el equipo?
+      </h2>
 
       {guardado && (
         <a className="btn btn-principal btn-grande" href={rutaFiltro(guardado)}>
@@ -56,7 +69,7 @@ export default function Inicio() {
       )}
 
       <button type="button" data-guia="escanear" className={`btn btn-grande ${guardado ? 'btn-secundario' : 'btn-principal'}`} onClick={() => setEscaneando(true)}>
-        <Icono nombre="camara" /> Escanear el QR de mi filtro
+        <Icono nombre="camara" /> Escanear el QR de mi hogar
       </button>
 
       <form className="tarjeta" onSubmit={enviar} data-guia="codigo">

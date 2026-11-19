@@ -46,6 +46,7 @@ export default function Panel({ hogar }) {
             <div className="tarea-texto">
               <p className="tarea-nombre">{TAREAS[t.tipo].etiqueta}</p>
               <p className="tarea-dias">{textoDias(t.dias)}</p>
+              {TAREAS[t.tipo].referencial && <p className="suave">Plazo referencial: confirma con tu proveedor.</p>}
               <p className="suave">
                 {t.ultima ? `Última vez: ${formatoFecha(t.ultima)}` : `Desde la instalación: ${formatoFecha(hogar.fechaInstalacion)}`}
               </p>

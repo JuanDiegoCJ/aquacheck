@@ -1,15 +1,29 @@
-# AquaCheck (prototipo – Desafío UPAO 2026)
+# AquaCheck
 
-Aplicación web instalable (PWA) para que las familias de Moche lleven el mantenimiento de su filtro doméstico de 3 etapas:
-escanean el QR del filtro, ven un semáforo y registran limpiezas y cambios de cartucho. Funciona sin internet.
+Aplicación web instalable (PWA) para cuidar el agua del hogar **antes, durante y después** de un corte: recordatorios de mantenimiento,
+guía paso a paso para los cortes y fuentes oficiales para informarse. Funciona sin internet, es gratuita y no necesita hardware.
 
-> Proyecto independiente. Alcance y límites según `AQUACHECK_resumen_y_responsabilidades.docx` y la Metodología del Desafío.
+**Aplicación en línea:** https://aquacheck-moche.vercel.app/
+
+Proyecto del equipo **SINERGIA** (Desafío UPAO 2026), pensado para familias de Moche (La Libertad) frente al Fenómeno El Niño y utilizable en cualquier hogar.
 
 ## Límites (siempre visibles en la app)
-- No mide la calidad del agua ni certifica potabilidad.
-- Solo recoge los datos necesarios (código del filtro, modelo, fecha de instalación, celular con consentimiento, historial).
+- No mide la calidad del agua ni certifica que sea potable.
 - No afirma que el agua esté contaminada.
-- El vínculo con El Niño es una hipótesis por validar en Moche (SENAMHI, CENEPRED, SEDALIB, entrevistas).
+- Solo recoge los datos necesarios. En el uso personal no se envía ningún dato personal a un servidor.
+- El vínculo entre El Niño y la calidad del agua es una hipótesis por validar; la app no depende de ella.
+- Es una aplicación estudiantil: no tiene certificaciones (ISO u otras). Los intervalos de mantenimiento son referenciales.
+
+## Qué hace
+**Familia**
+- Escanear el QR del hogar (o abrir el enlace de la ficha), registrar la instalación y ver un semáforo de tareas.
+- Registrar mantenimientos, ver el historial y reportar un problema (foto opcional).
+- Guía «Si hay corte de agua» (antes, durante y después).
+- Ficha imprimible con QR y funcionamiento sin internet (cola de envío cuando vuelve la señal).
+
+**Equipo** (`#/equipo`, con inicio de sesión)
+- Indicadores y gráficos, lista de hogares con búsqueda y filtros, fallas con fotos, informes (Excel, Word, PDF, CSV),
+  fichas con QR, alta de hogares y mensajes de WhatsApp ya escritos (los envía una persona).
 
 ## Cómo ejecutarlo
 ```bash
@@ -18,62 +32,40 @@ npm run dev       # desarrollo
 npm run build     # compila a /dist
 npm run preview   # sirve lo compilado (aquí se prueba el modo sin internet)
 ```
+Para la cámara y el modo sin internet en un celular hace falta HTTPS (la publicación en Vercel ya lo da) o `localhost`.
 
-## Estado: Tandas 1 y 2
-**Familia:** inicio/escanear QR · registro (celular + consentimiento) · panel con semáforo · registrar mantenimiento · historial ·
-reportar un problema (con foto opcional) · modo "corte de agua" (lista de pasos) · ficha imprimible con QR · "qué hace y qué no hace".
+## Arquitectura
+- **Frontend:** React + Vite + vite-plugin-pwa. Rutas con hash (`#/f/AQ-007`, `#/equipo`).
+- **Datos:** capa única en `src/data/repo.js` (copia local en el celular, cola sin internet y sincronización).
+- **Backend:** Supabase (tablas con RLS cerrado, función `hogar` como única puerta de las familias, Auth para el equipo,
+  Storage privado para fotos). Migraciones en `supabase/migrations/`.
+- **Publicación:** Vercel, desde la rama `main`. Cabeceras de seguridad en `vercel.json`.
 
-**Equipo** (`#/equipo`, PIN de demostración `2026`): indicadores, estado de los 20 hogares, botón "Avisar por WhatsApp" (abre el mensaje
-ya escrito), fallas abiertas (marcar resuelta), exportar 3 CSV (sin celulares ni fotos) y fichas de todos los filtros para imprimir.
-
-Incluye modo demostración con 20 filtros ficticios (AQ-001 a AQ-020; AQ-018 a AQ-020 sin registrar).
-
-## Cómo probarlo en un celular
-- **Rápido (con internet):** publicar `dist/` en Netlify/Vercel/Cloudflare Pages (gratis, da HTTPS) y abrir esa dirección en el celular.
-  Con HTTPS ya se puede escanear con la cámara e instalar la app; el modo sin internet funciona desde la segunda visita.
-- **Solo por Wi‑Fi local** (`npm run preview`, abrir `http://IP-de-tu-PC:4173`): carga la app, pero el celular NO registrará el modo sin internet
-  ni dará acceso a la cámara, porque exigen HTTPS (o `localhost`).
-- Probar sin internet: abrir la app una vez, activar el modo avión, volver a abrirla.
-
-## Pruebas realizadas (Chrome en Windows, automatizadas)
-Sin internet (service worker): abrir panel/inicio, registrar mantenimiento y reporte, ficha con QR. QR: decodificación con la misma librería.
-Falta probar en un celular real: escaneo con la cámara y la instalación como app.
-
-## Decisiones y pendientes
-- **Identificación:** el QR lleva el código del filtro (`AQ-007`), no datos de la persona. La tabla código ↔ familia la guarda el equipo fuera de la app.
-- **Intervalos de mantenimiento** (`src/domain/reglas.js`): 30 / 180 / 90 días son valores de EJEMPLO; reemplazar por los del fabricante.
-- **Consentimiento y aviso de privacidad** (`src/domain/consentimiento.js`): BORRADOR en dos capas (frase corta + aviso completo). Responsable: el equipo
-  estudiantil. Contacto: aquacheck26@gmail.com. Plazo: fin del piloto + 30 días (definir la FECHA de fin del piloto y cumplir el borrado/anonimización al vencer). Revisar con UPAO/asesoría
-  antes del piloto real.
-- **Intervalos de mantenimiento:** pendientes de la ficha técnica del proveedor del Módulo B (ver `src/domain/reglas.js`).
-- **WhatsApp:** semiautomático (el equipo abre el mensaje ya escrito con `wa.me`). La API real queda para el piloto; ver `docs/reports/`.
-- **PIN del equipo** (`src/data/repo.js`): es de demostración, NO es seguridad real. En el piloto debe ser un inicio de sesión en el servidor.
-- **Pasos del modo corte de agua** (`src/domain/fallas.js`): contenido de ejemplo; validar con SEDALIB y salud.
-- **QR de las fichas:** guarda la dirección con la que abriste la app; imprímelas desde la dirección FINAL publicada.
-- **Datos:** hoy en `localStorage` del celular. Para el piloto se cambia solo `src/data/repo.js` por un servidor.
-- **Modo sin internet:** el service worker se genera en `npm run build`; probar con `npm run preview` en Chrome/Android.
-
-## Estructura del código
 ```text
 src/
   app/          App.jsx, main.jsx, ruta.js, estilos.css
   domain/       reglas.js, fallas.js, consentimiento.js   (reglas puras, sin React)
-  data/         repo.js, datos_demo.js, csv.js            (lo único que cambia al pasar a un servidor)
+  data/         repo.js, remoto.js, csv.js, exportar.js
   family/       pantallas de la familia
-  team/         pantallas del equipo del proyecto
+  team/         pantallas del equipo
   components/   piezas compartidas
-```n
-## Documentos
-`docs/reports/API WhatsApp plazos y consentimiento.md` y sus notas en `docs/research_notes/`.
+supabase/       migraciones y función `hogar`
+docs/           seguridad y notas de investigación
+```
 
-## Dashboard del equipo
-En el panel del equipo (#/equipo): indicadores, 4 gráficos interactivos hechos a mano en SVG/CSS (hogares por estado, cumplimiento por tarea,
-mantenimientos por semana y fallas por tipo), filtros por estado y buscador. Tocar un gráfico filtra la tabla de hogares.
-Descargas generadas en el navegador (funcionan sin internet, sin celulares ni fotos): **Excel** (.xlsx, 7 hojas), **Word** (.docx), **informe PDF**
-(pantalla #/equipo/informe + "Guardar como PDF") y 3 CSV. Excel y Word se arman con flate (src/data/exportar.js).
-Los cálculos están en src/team/resumen.js y los gráficos en src/components/Graficos.jsx.
+## Flujo de trabajo (ramas)
+- `main`: producción. Solo recibe cambios probados desde `develop`.
+- `develop`: integración. Recibe las ramas de trabajo mediante pull request.
+- Ramas de trabajo desde `develop`: `feature/…`, `fix/…`, `docs/…`, `chore/…`.
+- Commits con prefijo (`feat:`, `fix:`, `docs:`, `chore:`) y un pull request por cambio. Más detalle en [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Publicación en Netlify (plan gratuito: cuidar los créditos)
-Cada publicación a producción cuesta **15 créditos** de los 300 mensuales (el ciclo se reinicia cada mes). Si los créditos llegan a 0, Netlify **pausa todos los
-proyectos** ("Site not available") hasta el siguiente ciclo. Por eso: juntar los cambios y publicar lo mínimo, y NO publicar durante los días del Desafío salvo
-una falla grave. Ver el consumo en Netlify > Usage & billing.
+## Seguridad y privacidad
+- Revisión propia (no es una auditoría independiente) en `docs/seguridad.md`.
+- Nunca se suben al repositorio claves, contraseñas ni los QR con clave de los hogares.
+- Aviso de consentimiento en `src/domain/consentimiento.js`: pendiente de revisión legal antes de un piloto con familias reales.
+- Contacto del proyecto: aquacheck26@gmail.com
+
+## Pendientes conocidos
+- Probar la cámara y el QR impreso en más celulares (Android y iPhone).
+- Revisión legal del aviso de consentimiento y, si hay datos de familias reales, inscripción del banco de datos.
+- Confirmar con el proveedor los intervalos de mantenimiento que no son del fabricante.

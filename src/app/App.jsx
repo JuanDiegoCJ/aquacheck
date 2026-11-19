@@ -16,6 +16,9 @@ import Mantenimiento from '../family/Mantenimiento.jsx'
 import Historial from '../family/Historial.jsx'
 import Acerca from '../family/Acerca.jsx'
 import Pantalla from '../components/Pantalla.jsx'
+import Crear from '../personal/Crear.jsx'
+import MiPlan from '../personal/MiPlan.jsx'
+import Fuentes from '../personal/Fuentes.jsx'
 
 function NoEncontrado({ codigo }) {
   return (
@@ -51,9 +54,17 @@ export default function App() {
     if (hogar?.registrado) recordarFiltro(hogar.codigo)
   }, [hogar])
 
+  // Al cambiar de pantalla se vuelve arriba (si no, se queda en el scroll de la pantalla anterior).
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pantalla, codigo])
+
   if (clave) return null
   if (pantalla === 'inicio') return <Inicio />
   if (pantalla === 'acerca') return <Acerca />
+  if (pantalla === 'fuentes') return <Fuentes />
+  if (pantalla === 'crear') return <Crear />
+  if (pantalla === 'miplan') return <MiPlan />
   if (pantalla === 'equipo') return <Equipo />
   if (pantalla === 'fichas') return equipoAutorizado() ? <Fichas /> : <Equipo />
   if (pantalla === 'fichaequipo') return equipoAutorizado() ? <FichaEquipo codigo={codigo} /> : <Equipo />
