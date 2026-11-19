@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Pantalla from '../components/Pantalla.jsx'
 
 // AquaCheck NO publica avisos de cortes ni los lee de otras páginas: lleva a la persona a la fuente oficial.
@@ -16,10 +17,21 @@ const CLIMA = [
   { nombre: 'INDECI y COEN', para: 'Emergencias, lluvias, huaicos e inundaciones', url: 'https://www.gob.pe/indeci' },
 ]
 
-const DERECHOS = [
-  { nombre: 'SUNASS', para: 'Tus derechos como usuario del agua y cómo reclamar', url: 'https://www.gob.pe/sunass' },
-  { nombre: 'Municipalidad Provincial de Trujillo', para: 'Avisos y trámites de la provincia', url: 'https://www.gob.pe/munitrujillo' },
-  { nombre: 'Municipalidad Distrital de Moche', para: 'Avisos y apoyo en el distrito de Moche', url: 'https://www.gob.pe/munimoche' },
+const DERECHOS = [{ nombre: 'SUNASS', para: 'Tus derechos como usuario del agua y cómo reclamar', url: 'https://www.gob.pe/sunass' }]
+
+// Municipalidades de la provincia de Trujillo (direcciones verificadas el 19/11/2026).
+const DISTRITOS = [
+  { nombre: 'El Porvenir', url: 'https://www.gob.pe/munielporvenir' },
+  { nombre: 'Florencia de Mora', url: 'https://www.muniflorenciademora.gob.pe/' },
+  { nombre: 'Huanchaco', url: 'https://www.gob.pe/munihuanchaco' },
+  { nombre: 'La Esperanza', url: 'https://www.gob.pe/munilaesperanza' },
+  { nombre: 'Laredo', url: 'https://www.gob.pe/munilaredo' },
+  { nombre: 'Moche', url: 'https://www.gob.pe/munimoche' },
+  { nombre: 'Poroto', url: 'https://www.gob.pe/muniporoto' },
+  { nombre: 'Salaverry', url: 'https://www.gob.pe/munisalaverry' },
+  { nombre: 'Simbal', url: 'https://www.gob.pe/munisimbal' },
+  { nombre: 'Trujillo (cercado)', url: 'https://www.gob.pe/munitrujillo' },
+  { nombre: 'Víctor Larco Herrera', url: 'https://www.gob.pe/munivictorlarco' },
 ]
 
 function Lista({ items }) {
@@ -41,6 +53,8 @@ function Lista({ items }) {
 }
 
 export default function Fuentes() {
+  const [distrito, setDistrito] = useState('Moche')
+  const elegido = DISTRITOS.find((d) => d.nombre === distrito) ?? DISTRITOS[0]
   return (
     <Pantalla titulo="Fuentes oficiales y contacto" volver="atras">
       <p className="suave">AquaCheck no es un canal oficial ni publica avisos de cortes. Para evitar información falsa, te lleva a las fuentes oficiales: confirma siempre allí.</p>
@@ -68,9 +82,28 @@ export default function Fuentes() {
       </section>
 
       <section className="tarjeta" aria-labelledby="f-derechos">
-        <h2 id="f-derechos">Tus derechos y tu municipalidad</h2>
+        <h2 id="f-derechos">Tus derechos como usuario</h2>
         <Lista items={DERECHOS} />
-        <p className="suave">Si vives en otro distrito de Trujillo, busca tu municipalidad distrital en gob.pe.</p>
+      </section>
+
+      <section className="tarjeta" aria-labelledby="f-muni">
+        <h2 id="f-muni">Tu municipalidad</h2>
+        <div className="campo">
+          <label htmlFor="distrito">Elige tu distrito</label>
+          <select id="distrito" value={distrito} onChange={(e) => setDistrito(e.target.value)}>
+            {DISTRITOS.map((d) => (
+              <option key={d.nombre} value={d.nombre}>
+                {d.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+        <a className="btn btn-secundario" href={elegido.url} {...externo}>
+          Abrir el sitio de la municipalidad
+        </a>
+        <p className="suave">
+          También puedes ver la <a href="https://www.gob.pe/munitrujillo" {...externo}>Municipalidad Provincial de Trujillo</a>.
+        </p>
       </section>
 
       <p className="aviso">AquaCheck no mide ni certifica la calidad del agua. Ante una duda de salud, consulta a un establecimiento de salud.</p>
