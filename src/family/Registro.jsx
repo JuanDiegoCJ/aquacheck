@@ -14,10 +14,12 @@ export default function Registro({ hogar }) {
   const [acepta, setAcepta] = useState(false)
   const [intento, setIntento] = useState(false)
 
+  // El celular es opcional. Solo si lo escribe: debe ser válido y hace falta aceptar el consentimiento.
   const celularLimpio = celular.replace(/\s|-/g, '')
-  const celularValido = /^9\d{8}$/.test(celularLimpio)
+  const conCelular = celularLimpio !== ''
+  const celularValido = !conCelular || /^9\d{8}$/.test(celularLimpio)
   const fechaValida = fecha && fecha <= hoyISO()
-  const valido = celularValido && fechaValida && acepta
+  const valido = celularValido && fechaValida && (!conCelular || acepta)
 
   function enviar(e) {
     e.preventDefault()
@@ -27,8 +29,8 @@ export default function Registro({ hogar }) {
       codigo: hogar.codigo,
       modelo: MODELO_FILTRO,
       fechaInstalacion: fecha,
-      celular: celularLimpio,
-      consentimiento: { fecha: new Date().toISOString(), version: VERSION_CONSENTIMIENTO, texto: TEXTO_CASILLA },
+      celular: conCelular ? celularLimpio : null,
+      consentimiento: conCelular ? { fecha: new Date().toISOString(), version: VERSION_CONSENTIMIENTO, texto: TEXTO_CASILLA } : null,
     })
     irA(rutaFiltro(hogar.codigo).slice(1))
   }
@@ -61,7 +63,7 @@ export default function Registro({ hogar }) {
         </div>
 
         <div className="campo">
-          <label htmlFor="celular">Tu celular (para los avisos)</label>
+          <label htmlFor="celular">Tu celular (opcional, solo si quieres recibir avisos)</label>
           <input
             id="celular"
             type="tel"
@@ -79,21 +81,25 @@ export default function Registro({ hogar }) {
           )}
         </div>
 
-        <div className="campo consentimiento">
-          <label className="casilla">
-            <input type="checkbox" checked={acepta} onChange={(e) => setAcepta(e.target.checked)} />
-            <span>{TEXTO_CASILLA}</span>
-          </label>
-          {intento && !acepta && (
-            <p className="error" role="alert">
-              Para continuar necesitamos que aceptes.
-            </p>
-          )}
-          <details className="aviso-detalle">
-            <summary>Leer el aviso completo sobre tus datos</summary>
-            <Aviso />
-          </details>
-        </div>
+        {conCelular ? (
+          <div className="campo consentimiento">
+            <label className="casilla">
+              <input type="checkbox" checked={acepta} onChange={(e) => setAcepta(e.target.checked)} />
+              <span>{TEXTO_CASILLA}</span>
+            </label>
+            {intento && !acepta && (
+              <p className="error" role="alert">
+                Para continuar necesitamos que aceptes.
+              </p>
+            )}
+            <details className="aviso-detalle">
+              <summary>Leer el aviso completo sobre tus datos</summary>
+              <Aviso />
+            </details>
+          </div>
+        ) : (
+          <p className="suave">Puedes usar la app sin escribir tu celular: solo no recibirás avisos del equipo.</p>
+        )}
 
         <button type="submit" className="btn btn-principal btn-grande">
           Guardar y ver mi filtro

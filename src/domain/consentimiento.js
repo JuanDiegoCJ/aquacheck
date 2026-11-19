@@ -8,7 +8,7 @@
 // Los textos entre [corchetes] son decisiones del equipo y se muestran resaltados hasta completarse.
 // Conviene que UPAO o un asesor lo revise antes del piloto real. Al cambiar el texto, subir la versión.
 
-export const VERSION_CONSENTIMIENTO = 'borrador-0.6'
+export const VERSION_CONSENTIMIENTO = 'borrador-0.7'
 
 export const TEXTO_CASILLA =
   'Autorizo al equipo de AquaCheck el tratamiento de mi número de celular y del código de mi hogar para enviarme ' +
@@ -23,8 +23,8 @@ export const AVISO_COMPLETO = [
   {
     titulo: 'Datos y finalidad',
     texto:
-      'Código del hogar, modelo del filtro, fecha de instalación, número de celular e historial de mantenimiento. ' +
-      'Se tratan únicamente para enviar recordatorios y llevar el historial del filtro. No se solicita DNI, nombre ni dirección.',
+      'Código del hogar, modelo del filtro, fecha de instalación e historial de mantenimiento. El número de celular es OPCIONAL: ' +
+      'solo se guarda si decides escribirlo para recibir recordatorios. No se solicita DNI, nombre ni dirección.',
   },
   {
     titulo: 'Destinatarios',
