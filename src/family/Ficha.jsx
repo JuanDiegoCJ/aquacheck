@@ -34,7 +34,9 @@ export function FichaHoja({ codigo, url }) {
           {ORDEN_TAREAS.map((t) => (
             <tr key={t}>
               <td>{TAREAS[t].etiqueta}</td>
-              <td>{TAREAS[t].cadaDias} días</td>
+              <td>
+                {TAREAS[t].cadaDias} días{TAREAS[t].referencial ? ' *' : ''}
+              </td>
               <td />
               <td />
               <td />
@@ -45,8 +47,8 @@ export function FichaHoja({ codigo, url }) {
       </table>
 
       <p className="ficha-pie">
-        Si no tienes celular o internet, anota aquí la fecha cada vez que hagas la tarea. Si el filtro gotea, el agua sale
-        turbia o sale poca agua, avisa al equipo del proyecto. AquaCheck no mide la calidad del agua.
+        Si no tienes celular o internet, anota aquí la fecha cada vez que hagas la tarea. Si el agua sale turbia o sale poca,
+        avisa al equipo del proyecto. * Plazo referencial: confirma con tu proveedor. AquaCheck no mide la calidad del agua.
       </p>
     </article>
   )
