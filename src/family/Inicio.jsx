@@ -10,10 +10,11 @@ import { irA, rutaFiltro } from '../app/ruta.js'
 import { usePerfil } from '../personal/almacen.js'
 
 const PASOS_INICIO = [
-  { selector: '[data-guia="escanear"]', titulo: 'Escanear el QR', texto: 'Toca aquí y apunta la cámara al QR pegado en tu filtro. Se abre tu filtro al instante. También puedes usar la cámara normal del celular.' },
+  { selector: '[data-guia="escanear"]', titulo: 'Escanear el QR', texto: 'Toca aquí y apunta la cámara al QR de tu hogar. Se abre tu hogar al instante. También puedes usar la cámara normal del celular.' },
+  { selector: '[data-guia="agregar"]', titulo: 'Agregar mi casa', texto: 'Si no tienes QR, toca aquí: llenas un formulario corto y recibes tu código y tu QR al instante, sin que nadie vaya a tu casa.' },
   { selector: '[data-guia="codigo"]', titulo: 'Si no puedes escanear', texto: 'Escribe tu código (por ejemplo AQ-007) si ya abriste tu QR antes en este celular, o pega el enlace de tu ficha.' },
   { selector: '[data-guia="nav-acerca"]', titulo: '¿Qué hace AquaCheck?', texto: 'Explica qué hace la app, cómo se usan tus datos y cómo se protege tu privacidad.' },
-  { selector: '[data-guia="soy-equipo"]', titulo: 'Equipo del proyecto', texto: 'Solo para el equipo: entra con su correo y contraseña para ver cómo va cada hogar.' },
+  { selector: '[data-guia="soy-equipo"]', titulo: 'Administrador', texto: 'Solo para quien administra el proyecto: entra con su correo y contraseña para ver cómo va cada hogar.' },
   { selector: '[data-guia="nav-inicio"]', titulo: 'Inicio', texto: 'Desde cualquier pantalla, este botón te trae de vuelta aquí.' },
 ]
 
@@ -64,7 +65,7 @@ export default function Inicio() {
 
       {guardado && (
         <a className="btn btn-principal btn-grande" href={rutaFiltro(guardado)}>
-          Ir a mi filtro <strong>{guardado}</strong>
+          Ir a mi hogar <strong>{guardado}</strong>
         </a>
       )}
 
@@ -103,7 +104,7 @@ export default function Inicio() {
 
 
       <a className="enlace-discreto" href="#/equipo" data-guia="soy-equipo">
-        Soy del equipo del proyecto
+        Administrador
       </a>
 
       <BotonAyuda alAbrir={() => setGuia(true)} />

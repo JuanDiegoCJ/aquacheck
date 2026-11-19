@@ -43,7 +43,7 @@ export default function Mantenimiento({ hogar }) {
           </p>
         </div>
         <a className="btn btn-principal btn-grande" href={volver}>
-          Ver mi filtro
+          Ver mi hogar
         </a>
         <button type="button" className="btn btn-secundario" onClick={deshacer}>
           Me equivoqué, deshacer

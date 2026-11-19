@@ -8,7 +8,7 @@ import { TAREAS, resumenHogar, textoDias, formatoFecha, mensajeAviso } from '../
 import { rutaFiltro } from '../app/ruta.js'
 
 const PASOS_PANEL = [
-  { selector: '[data-guia="semaforo"]', titulo: 'Cómo va tu filtro', texto: 'Verde: todo al día. Amarillo: pronto toca una tarea. Rojo: hay una tarea pendiente.' },
+  { selector: '[data-guia="semaforo"]', titulo: 'Cómo va tu hogar', texto: 'Verde: todo al día. Amarillo: pronto toca una tarea. Rojo: hay una tarea pendiente.' },
   { selector: '[data-guia="tareas"]', titulo: 'Tus tareas', texto: 'Aquí ves cada tarea, cuántos días faltan y la última vez que la hiciste.' },
   { selector: '[data-guia="registrar"]', titulo: 'Registrar mantenimiento', texto: 'Cada vez que limpies o cambies algo, toca este botón, elige la tarea y confirma con “Sí, guardar”.' },
   { selector: '[data-guia="historial"]', titulo: 'Ver historial', texto: 'Todo lo que registraste, con sus fechas. Si te equivocas, puedes deshacer.' },
@@ -24,7 +24,7 @@ export default function Panel({ hogar }) {
   const sync = estadoSync(hogar.codigo)
 
   return (
-    <Pantalla titulo={`Mi filtro ${hogar.codigo}`} volver="#/" doble>
+    <Pantalla titulo={`Mi hogar ${hogar.codigo}`} volver="#/" doble>
       <div className="cols">
         <div className="col">
       {sync.error && <p role="alert" className="tarjeta">{sync.error}</p>}

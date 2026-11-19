@@ -22,5 +22,5 @@ export default function Qr({ codigo, tamano = 200, url }) {
     }
   }, [codigo, tamano, url])
   if (!imagen) return <div style={{ width: tamano, height: tamano }} aria-hidden="true" />
-  return <img className="qr" src={imagen} width={tamano} height={tamano} alt={`Código QR del filtro ${codigo}`} />
+  return <img className="qr" src={imagen} width={tamano} height={tamano} alt={`Código QR del hogar ${codigo}`} />
 }

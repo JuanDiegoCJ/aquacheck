@@ -23,10 +23,10 @@ import Fuentes from '../personal/Fuentes.jsx'
 
 function NoEncontrado({ codigo }) {
   return (
-    <Pantalla titulo="Escanea el QR de tu filtro" volver="#/">
+    <Pantalla titulo="Escanea el QR de tu hogar" volver="#/">
       <div className="tarjeta">
         <p>
-          El filtro <strong>{codigo}</strong> aún no está abierto en este celular. Escanea con la cámara el QR pegado en tu filtro. Si no puedes, pide a tu contacto del proyecto el enlace de tu ficha y pégalo en el inicio.
+          El hogar <strong>{codigo}</strong> aún no está abierto en este celular. Escanea con la cámara el QR de tu hogar. Si no puedes, pide a tu contacto del proyecto el enlace de tu ficha y pégalo en el inicio.
         </p>
         <a className="btn btn-principal" href="#/">
           Volver al inicio
@@ -75,9 +75,9 @@ export default function App() {
   if (!hogar) return <NoEncontrado codigo={codigo} />
   if (hogar.cargando) {
     return (
-      <Pantalla titulo={'Filtro ' + hogar.codigo} volver="#/">
+      <Pantalla titulo={'Hogar ' + hogar.codigo} volver="#/">
         <div className="tarjeta" role="status">
-          <p>Conectando con tu filtro… Si no avanza, revisa tu internet.</p>
+          <p>Conectando con tu hogar… Si no avanza, revisa tu internet.</p>
         </div>
       </Pantalla>
     )

@@ -65,17 +65,17 @@ export default function Agregar() {
   }
 
   if (listo) {
-    const mensaje = `Hola, este es tu enlace de AquaCheck para tu hogar ${listo.codigo}. Guárdalo: con él abres tu filtro desde cualquier celular: ${listo.url}`
+    const mensaje = `Hola, este es tu enlace de AquaCheck para tu hogar ${listo.codigo}. Guárdalo: con él abres tu hogar desde cualquier celular: ${listo.url}`
     // Si dio su celular, el chat se abre directo con su número; si no, WhatsApp deja elegir el chat (por ejemplo, el suyo propio).
     const destino = listo.celular && !/^900/.test(listo.celular) ? '51' + listo.celular : ''
     return (
       <Pantalla titulo="¡Tu casa ya está en AquaCheck!" volver="#/" sinPie>
         <div className="tarjeta" role="status">
           <p>
-            Tu código es <strong>{listo.codigo}</strong>. Guarda este enlace o imprime la ficha: con el QR puedes volver a abrir tu filtro desde cualquier celular.
+            Tu código es <strong>{listo.codigo}</strong>. Guarda este enlace o imprime la ficha: con el QR puedes volver a abrir tu hogar desde cualquier celular.
           </p>
           <a className="btn btn-principal btn-grande" href={rutaFiltro(listo.codigo)}>
-            Ir a mi filtro
+            Ir a mi hogar
           </a>
         </div>
 
@@ -117,7 +117,7 @@ export default function Agregar() {
 
       <form className="tarjeta formulario" onSubmit={enviar} noValidate>
         <div className="campo">
-          <label htmlFor="fecha">¿Cuándo se instaló el filtro?</label>
+          <label htmlFor="fecha">¿Desde qué fecha llevas el mantenimiento? (por ejemplo, cuando instalaste tu equipo de agua)</label>
           <input id="fecha" type="date" max={hoyISO()} value={fecha} onChange={(e) => setFecha(e.target.value)} aria-invalid={intento && !fechaValida} />
           {intento && !fechaValida && (
             <p className="error" role="alert">

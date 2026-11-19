@@ -29,7 +29,7 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
             <a href="#/mi-plan">Mi plan</a>
             <a href="#/fuentes">Fuentes oficiales</a>
             <a href="#/acerca" data-guia="nav-acerca">¿Qué hace?</a>
-            <a href="#/equipo" data-guia="nav-equipo">Equipo del proyecto</a>
+            <a href="#/equipo" data-guia="nav-equipo">Administrador</a>
           </nav>
         </div>
       </header>
