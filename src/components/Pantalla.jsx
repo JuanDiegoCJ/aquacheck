@@ -1,4 +1,6 @@
 import { Icono } from './Iconos.jsx'
+import { useRuta } from '../app/ruta.js'
+import { useDatos, equipoAutorizado, salirEquipo } from '../data/repo.js'
 // Marco común de todas las pantallas: barra superior (con navegación en pantallas anchas),
 // contenido centrado y pie con los límites de la app.
 //   - por defecto: una columna estrecha (formularios, historial…)
@@ -12,6 +14,8 @@ const volverAtras = (e) => {
 }
 
 export default function Pantalla({ titulo, volver, children, sinPie = false, ancho = false, doble = false, acciones = null }) {
+  useDatos()
+  const enPanel = useRuta().startsWith('/equipo') && equipoAutorizado() // dentro del panel del equipo, la barra ofrece salir
   const clase = ancho ? 'app-ancho' : doble ? 'app-doble' : ''
   return (
     <div className={`app ${clase}`}>
@@ -27,7 +31,13 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
           </a>
           <nav id="nav-principal" className="nav" aria-label="Principal">
             <a href="#/mi-plan" data-guia="nav-miplan">Mi plan</a>
-            <a href="#/equipo" data-guia="nav-equipo">Administrador</a>
+            {enPanel ? (
+              <button type="button" className="nav-salir" onClick={salirEquipo}>
+                <Icono nombre="salir" tam={16} /> Salir del panel
+              </button>
+            ) : (
+              <a href="#/equipo" data-guia="nav-equipo">Administrador</a>
+            )}
           </nav>
         </div>
       </header>

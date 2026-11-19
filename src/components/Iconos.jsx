@@ -1,6 +1,6 @@
 import {
   ArrowLeft, ArrowRight, Brush, Camera, Check, CircleCheck, CircleHelp, ClipboardList, CloudFog, Container, Droplet, DropletOff,
-  Copy, Eye, X, FileDown, FileSpreadsheet, FileText, MessageCircle, Plus, Printer, RefreshCw, ShowerHead, Table, TriangleAlert,
+  Copy, Eye, X, FileDown, FileSpreadsheet, FileText, MessageCircle, Plus, Printer, RefreshCw, LogOut, ShowerHead, Table, TriangleAlert,
 } from 'lucide-react'
 
 // Nombre -> icono SVG (lucide-react). Los datos del dominio usan estos nombres en lugar de emojis.
@@ -17,6 +17,7 @@ const ICONOS = {
   ver: Eye,
   excel: FileSpreadsheet,
   csv: Table,
+  salir: LogOut,
   word: FileText,
   pdf: FileDown,
   registrar: CircleCheck,

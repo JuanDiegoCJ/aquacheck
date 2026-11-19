@@ -1662,3 +1662,11 @@ fieldset.grupo legend {
 .nav { display: flex; margin-left: auto; }
 .nav a { white-space: nowrap; }
 @media (max-width: 420px) { .nav { gap: 0; } .nav a { padding: 8px 7px; font-size: 0.85rem; } .barra-in { gap: 6px; } }
+
+/* Cinco tarjetas de descarga (Excel, Word, PDF, CSV, Imprimir); «Imprimir» es un enlace con el mismo aspecto */
+@media (min-width: 481px) { .descargas { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+a.descarga { text-decoration: none; }
+/* «Salir del panel» en la barra: mismo estilo que los enlaces de la barra */
+.nav-salir { display: inline-flex; align-items: center; gap: 6px; color: #fff; background: none; border: 0; font: inherit; font-weight: 600; font-size: 0.9rem; padding: 8px 12px; border-radius: 10px; cursor: pointer; min-height: 44px; white-space: nowrap; }
+.nav-salir:hover, .nav-salir:focus-visible { background: rgba(255, 255, 255, 0.16); }
+@media (max-width: 420px) { .nav-salir { padding: 8px 7px; font-size: 0.85rem; } }

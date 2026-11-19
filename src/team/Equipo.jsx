@@ -428,15 +428,11 @@ function Panel() {
                 <strong>CSV</strong>
                 <span>Datos en una tabla</span>
               </button>
-            </div>
-            <hr className="separador" />
-            <div className="acciones-chicas">
-              <a className="btn btn-secundario btn-chico" href="#/equipo/fichas">
-                <Icono nombre="imprimir" /> Fichas de todos los hogares
+              <a className="descarga" href="#/equipo/fichas">
+                <Icono nombre="imprimir" tam={30} />
+                <strong>Imprimir</strong>
+                <span>Fichas con QR</span>
               </a>
-              <button type="button" className="btn btn-secundario btn-chico" onClick={salirEquipo}>
-                Salir del panel
-              </button>
             </div>
           </section>
           )}
