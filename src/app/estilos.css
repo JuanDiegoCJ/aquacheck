@@ -1652,8 +1652,10 @@ fieldset.grupo legend {
 .pie .pie-copy { max-width: 1100px; margin: 4px auto 0; font-size: 0.8rem; color: #5b7289; }
 @media (min-width: 768px) {
   .pie { padding: 28px 32px 22px; }
-  .pie-grid { grid-template-columns: 1.6fr 1fr 1fr; gap: 40px; }
+  .pie-grid { grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
 }
+/* Mismo ancho que la barra superior: el pie ocupa todo el largo de la página */
+.pie-grid, .pie .pie-aviso, .pie .pie-copy { max-width: 1760px; }
 
 /* Barra con dos enlaces (Mi plan y Administrador): siempre visible, sin menú de hamburguesa. */
 .menu-movil { display: none !important; }
