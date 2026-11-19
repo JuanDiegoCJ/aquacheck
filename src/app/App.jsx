@@ -26,7 +26,7 @@ function NoEncontrado({ codigo }) {
     <Pantalla titulo="Escanea el QR de tu hogar" volver="#/">
       <div className="tarjeta">
         <p>
-          El hogar <strong>{codigo}</strong> aún no está abierto en este celular. Escanea con la cámara el QR de tu hogar. Si no puedes, pide a tu contacto del proyecto el enlace de tu ficha y pégalo en el inicio.
+          El hogar <strong>{codigo}</strong> aún no está abierto en este celular. Escanea con la cámara el QR de tu hogar. Si no puedes, pide a tu contacto del proyecto el enlace de tu hogar y pégalo en el inicio.
         </p>
         <a className="btn btn-principal" href="#/">
           Volver al inicio
