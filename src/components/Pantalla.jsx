@@ -71,8 +71,10 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
             <a href="mailto:aquacheck26@gmail.com">aquacheck26@gmail.com</a>
           </div>
         </div>
-        <p className="pie-aviso">AquaCheck no mide ni certifica la calidad del agua.</p>
-        <p className="pie-copy">© 2026 AquaCheck · Equipo estudiantil SINERGIA · Desafío UPAO</p>
+        <div className="pie-base">
+          <p className="pie-aviso">AquaCheck no mide ni certifica la calidad del agua.</p>
+          <p className="pie-copy">© 2026 AquaCheck · Equipo estudiantil SINERGIA · Desafío UPAO</p>
+        </div>
       </footer>
     </div>
   )

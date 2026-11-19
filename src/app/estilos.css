@@ -1670,3 +1670,20 @@ a.descarga { text-decoration: none; }
 .nav-salir { display: inline-flex; align-items: center; gap: 6px; color: #fff; background: none; border: 0; font: inherit; font-weight: 600; font-size: 0.9rem; padding: 8px 12px; border-radius: 10px; cursor: pointer; min-height: 44px; white-space: nowrap; }
 .nav-salir:hover, .nav-salir:focus-visible { background: rgba(255, 255, 255, 0.16); }
 @media (max-width: 420px) { .nav-salir { padding: 8px 7px; font-size: 0.85rem; } }
+
+/* Franja inferior del pie: aviso a la izquierda y derechos a la derecha (uno encima del otro en celular) */
+.pie-base { max-width: 1760px; margin: 14px auto 0; padding-top: 14px; border-top: 1px solid #cfdeec; display: grid; gap: 4px; }
+.pie .pie-base .pie-aviso { margin: 0; padding: 0; border: 0; max-width: none; }
+.pie .pie-base .pie-copy { margin: 0; max-width: none; text-align: left; }
+@media (min-width: 768px) {
+  .pie-base { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; }
+  .pie .pie-base .pie-copy { text-align: right; }
+}
+
+/* Línea final del pie: aviso a la izquierda y derechos a la derecha (uno encima del otro en celular) */
+.pie .pie-base { max-width: 1760px; margin: 14px auto 0; padding-top: 14px; border-top: 1px solid #cfdeec; display: flex; flex-direction: column; gap: 4px; }
+.pie .pie-base .pie-aviso, .pie .pie-base .pie-copy { margin: 0; padding: 0; border: 0; max-width: none; }
+@media (min-width: 768px) {
+  .pie .pie-base { flex-direction: row; justify-content: space-between; align-items: baseline; gap: 24px; }
+  .pie .pie-base .pie-copy { text-align: right; }
+}
