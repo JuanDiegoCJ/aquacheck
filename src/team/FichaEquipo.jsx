@@ -3,7 +3,7 @@ import Pantalla from '../components/Pantalla.jsx'
 import { Icono } from '../components/Iconos.jsx'
 import { FichaHoja } from '../family/Ficha.jsx'
 import { urlConClave } from '../components/Qr.jsx'
-import { useDatos, claveQrPanel } from '../data/repo.js'
+import { useDatos, claveQrPanel, obtenerContacto } from '../data/repo.js'
 
 async function copiarTexto(texto) {
   try {
@@ -28,6 +28,13 @@ async function copiarTexto(texto) {
 export default function FichaEquipo({ codigo }) {
   useDatos()
   const [copiado, setCopiado] = useState(null) // true | false | null
+  const [celularEscrito, setCelularEscrito] = useState(null) // null = usar el celular guardado
+  // Celular ya registrado por la familia (no se usan los de prueba 900…: serían de otra persona).
+  const guardado = obtenerContacto(codigo)?.celular
+  const celularGuardado = guardado && !/^900/.test(guardado) ? guardado : null
+  const escrito = (celularEscrito ?? celularGuardado ?? '').replace(/\s|-/g, '')
+  const celularOk = /^9\d{8}$/.test(escrito) && !/^900/.test(escrito)
+  const destino = celularOk ? '51' + escrito : '' // vacío = WhatsApp deja elegir el chat
   const clave = claveQrPanel(codigo)
   const url = clave ? urlConClave(codigo, clave) : null
   const mensaje = url ? `Hola, este es tu enlace de AquaCheck para el filtro ${codigo}. Ábrelo desde tu celular para registrarte: ${url}` : ''
@@ -50,9 +57,27 @@ export default function FichaEquipo({ codigo }) {
             >
               <Icono nombre={copiado ? 'ok' : 'copiar'} /> {copiado ? 'Enlace copiado' : 'Copiar enlace'}
             </button>
-            <a className="btn btn-secundario btn-chico" href={'https://wa.me/?text=' + encodeURIComponent(mensaje)} target="_blank" rel="noopener noreferrer">
-              <Icono nombre="whatsapp" /> Enviar por WhatsApp
+            <a className="btn btn-secundario btn-chico" href={`https://wa.me/${destino}?text=${encodeURIComponent(mensaje)}`} target="_blank" rel="noopener noreferrer">
+              <Icono nombre="whatsapp" /> {destino ? 'Enviar por WhatsApp al celular de la familia' : 'Enviar por WhatsApp'}
             </a>
+          </div>
+          <div className="campo sin-imprimir">
+            <label htmlFor="cel-envio">
+              {celularGuardado
+                ? 'Celular de la familia (puedes cambiarlo)'
+                : 'Celular de la familia (opcional; si lo dejas vacío, eliges el chat en WhatsApp)'}
+            </label>
+            <input
+              id="cel-envio"
+              type="tel"
+              inputMode="numeric"
+              placeholder="9XX XXX XXX"
+              value={celularEscrito ?? celularGuardado ?? ''}
+              onChange={(e) => setCelularEscrito(e.target.value)}
+              aria-invalid={escrito !== '' && !celularOk}
+            />
+            {escrito !== '' && !celularOk && <p className="error">Escribe 9 números, empezando con 9.</p>}
+            <p className="suave">Este número solo se usa para abrir el chat: no se guarda.</p>
           </div>
           {copiado === false && (
             <p className="error sin-imprimir" role="alert">
