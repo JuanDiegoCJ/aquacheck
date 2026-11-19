@@ -1,6 +1,9 @@
 // Reglas de mantenimiento y manejo de fechas.
-// IMPORTANTE: los intervalos son VALORES DE EJEMPLO. Deben reemplazarse por los
-// que indique el fabricante del filtro (Módulo B) y el criterio de Industrial.
+// Intervalos de los hogares acompañados por el equipo:
+//  - cambio_cartucho: 180 días (ficha del fabricante del equipo de referencia: sedimentos y carbones cada 6 meses).
+//  - limpieza_tanque: 180 días (SUNASS recomienda limpiar y desinfectar tanques y cisternas al menos dos veces al año).
+//  - limpieza_filtro: 30 días, REFERENCIAL: no viene del fabricante; confirmar con el proveedor.
+// Faltan la lámpara UV, la membrana y el mantenimiento anual: agregarlas exige ampliar TIPOS_MANT en la función `hogar` de Supabase.
 
 export const DIAS_PRONTO = 7 // desde cuántos días antes se avisa "pronto"
 
@@ -11,6 +14,7 @@ export const TAREAS = {
     boton: 'Limpié el filtro',
     icono: 'limpieza_filtro',
     cadaDias: 30,
+    referencial: true,
   },
   cambio_cartucho: {
     id: 'cambio_cartucho',
@@ -24,7 +28,7 @@ export const TAREAS = {
     etiqueta: 'Limpieza del tanque',
     boton: 'Limpié el tanque',
     icono: 'limpieza_tanque',
-    cadaDias: 90,
+    cadaDias: 180,
   },
 }
 
