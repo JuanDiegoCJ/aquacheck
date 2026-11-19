@@ -110,14 +110,15 @@ export function guardarRegistro({ codigo, modelo, fechaInstalacion, celular, con
   const hogares = { ...leer('hogares', {}) }
   hogares[codigo] = { codigo, registrado: true, modelo, fechaInstalacion, ...(real ? { real: true } : {}) }
   escribir('hogares', hogares)
+  // El celular es opcional: sin celular no hay consentimiento y no se envía ni se guarda ningún contacto.
+  const conCelular = Boolean(celular)
   if (real) {
     // En modo real el celular NO se guarda en el celular de la familia: viaja al servidor (queda en la cola solo hasta enviarse).
     encolar(codigo, 'registrar', {
       fecha_instalacion: fechaInstalacion,
-      celular,
-      consentimiento: { version: consentimiento.version, texto: consentimiento.texto },
+      ...(conCelular ? { celular, consentimiento: { version: consentimiento.version, texto: consentimiento.texto } } : {}),
     })
-  } else {
+  } else if (conCelular) {
     escribir('contactos', { ...leer('contactos', {}), [codigo]: { celular, consentimiento } })
   }
 }

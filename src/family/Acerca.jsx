@@ -46,8 +46,8 @@ export default function Acerca() {
               tus datos a ningún servidor y no usamos rastreadores. Puedes borrarlo cuando quieras desde «Mi plan».
             </p>
             <p>
-              <strong>Si tu hogar participa con el equipo (QR):</strong> se guardan el código del hogar, la fecha de instalación, el historial y tu
-              celular (solo para los avisos, guardado aparte del historial). Aviso completo:
+              <strong>Si tu hogar participa con el equipo (QR):</strong> se guardan el código del hogar, la fecha de instalación y el historial. El
+              celular es opcional: solo se guarda si lo escribes para recibir avisos, y va aparte del historial. Aviso completo:
             </p>
             <Aviso />
             <p className="suave">El aviso de consentimiento está pendiente de revisión legal antes de trabajar con familias reales.</p>
