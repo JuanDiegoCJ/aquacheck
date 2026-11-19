@@ -458,6 +458,27 @@ export async function crearHogar() {
   throw new Error('No se pudo crear el hogar. Inténtalo de nuevo.')
 }
 
+/**
+ * Una familia nueva crea su propio hogar (sin QR previo). El servidor le da código y clave; esta función conecta
+ * este celular con ese hogar y devuelve { codigo, secreto }. Lanza un Error con un mensaje listo para mostrar.
+ */
+export async function crearMiHogar({ fechaInstalacion, celular, consentimiento }) {
+  const datos = { fecha_instalacion: fechaInstalacion }
+  if (celular) Object.assign(datos, { celular, consentimiento: { version: consentimiento.version, texto: consentimiento.texto } })
+  let res
+  try {
+    res = await llamarHogar('crear', '', '', datos)
+  } catch (e) {
+    if (e instanceof ErrorRemoto && e.estado === 429) throw new Error('Hay muchas altas en este momento. Inténtalo de nuevo en un rato.')
+    if (e instanceof ErrorRemoto && e.estado === 409) throw new Error('El programa ya no tiene lugares disponibles. Escribe al equipo del proyecto.')
+    if (e instanceof ErrorRemoto) throw new Error('No se pudo agregar tu casa. Inténtalo de nuevo.')
+    throw new Error('No se pudo conectar. Revisa tu internet e inténtalo de nuevo.')
+  }
+  if (!res?.codigo || !res?.secreto) throw new Error('No se pudo agregar tu casa. Inténtalo de nuevo.')
+  adoptarClave(res.codigo, res.secreto)
+  return { codigo: res.codigo, secreto: res.secreto }
+}
+
 /** Devuelve null si todo salió bien, o el mensaje de error para mostrar. */
 export async function entrarEquipoReal(correo, clave) {
   try {

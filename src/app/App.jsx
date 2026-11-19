@@ -11,6 +11,7 @@ import VerHogar from '../team/VerHogar.jsx'
 import FichaEquipo from '../team/FichaEquipo.jsx'
 import Inicio from '../family/Inicio.jsx'
 import Registro from '../family/Registro.jsx'
+import Agregar from '../family/Agregar.jsx'
 import Panel from '../family/Panel.jsx'
 import Mantenimiento from '../family/Mantenimiento.jsx'
 import Historial from '../family/Historial.jsx'
@@ -64,6 +65,7 @@ export default function App() {
   if (pantalla === 'acerca') return <Acerca />
   if (pantalla === 'fuentes') return <Fuentes />
   if (pantalla === 'crear') return <Crear />
+  if (pantalla === 'agregar') return <Agregar />
   if (pantalla === 'miplan') return <MiPlan />
   if (pantalla === 'equipo') return <Equipo />
   if (pantalla === 'fichas') return equipoAutorizado() ? <Fichas /> : <Equipo />

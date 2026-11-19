@@ -72,6 +72,10 @@ export default function Inicio() {
         <Icono nombre="camara" /> Escanear el QR de mi hogar
       </button>
 
+      <a className="btn btn-secundario btn-grande" href="#/agregar" data-guia="agregar">
+        Agregar mi casa (no tengo QR)
+      </a>
+
       <form className="tarjeta" onSubmit={enviar} data-guia="codigo">
         <label htmlFor="codigo">¿No puedes escanear? Escribe tu código (si ya abriste tu QR antes) o pega el enlace de tu ficha</label>
         <div className="fila">
