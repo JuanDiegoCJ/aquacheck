@@ -117,8 +117,8 @@ export default function Agregar() {
 
       <form className="tarjeta formulario" onSubmit={enviar} noValidate>
         <div className="campo">
-          <label htmlFor="fecha">¿Desde qué fecha llevas el mantenimiento? (por ejemplo, cuando instalaste tu equipo de agua)</label>
-          <input id="fecha" type="date" max={hoyISO()} value={fecha} onChange={(e) => setFecha(e.target.value)} aria-invalid={intento && !fechaValida} />
+          <label htmlFor="fecha">¿Desde qué fecha empiezas a llevar el mantenimiento?</label>
+          <input id="fecha" type="date" max={hoyISO()} value={fecha} onChange={(e) => setFecha(e.target.value > hoyISO() ? hoyISO() : e.target.value)} aria-invalid={intento && !fechaValida} />
           {intento && !fechaValida && (
             <p className="error" role="alert">
               Elige una fecha que no sea futura.

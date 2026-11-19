@@ -1610,3 +1610,10 @@ fieldset.grupo legend {
   padding: 0;
   margin-bottom: 6px;
 }
+
+/* Barra con un solo enlace (Administrador): siempre visible, sin menú de hamburguesa. Los demás enlaces van en el pie. */
+.menu-movil { display: none !important; }
+.nav { display: flex; margin-left: auto; }
+.pie-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; margin: 0 0 10px; }
+.pie-links a { color: #0b5fa5; font-weight: 600; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+.pie-links a:hover { text-decoration: underline; }
