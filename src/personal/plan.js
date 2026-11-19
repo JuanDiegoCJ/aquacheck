@@ -125,6 +125,6 @@ export function textoParaCompartir(perfil, hoy = hoyISO()) {
     `Somos ${perfil.personas} ${perfil.personas === 1 ? 'persona' : 'personas'}. Tenemos agua guardada para unos ${diasDeReserva(perfil)} días (solo beber y cocinar).`,
   ]
   if (proximas.length) lineas.push('Pendiente:', ...proximas)
-  lineas.push('Prepara el tuyo: https://aquacheck-moche.vercel.app/')
+  lineas.push('Prepara el tuyo: https://aquacheck-26.vercel.app/')
   return lineas.join('\n')
 }

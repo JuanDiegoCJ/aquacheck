@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://aquacheck-moche.vercel.app/sitemap.xml
+Sitemap: https://aquacheck-26.vercel.app/sitemap.xml

@@ -9,7 +9,8 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
 // Solo estos orígenes pueden llamar a la función desde un navegador (defensa adicional: igual hace falta la clave del QR).
-const ORIGENES = ['https://aquacheck-moche.vercel.app', 'http://localhost:4173', 'http://localhost:5173']
+// El dominio actual va primero; el anterior sigue permitido para que los QR ya impresos y los enlaces ya enviados sigan funcionando.
+const ORIGENES = ['https://aquacheck-26.vercel.app', 'https://aquacheck-moche.vercel.app', 'http://localhost:4173', 'http://localhost:5173']
 const corsPara = (req: Request) => {
   const origen = req.headers.get('Origin') ?? ''
   return {

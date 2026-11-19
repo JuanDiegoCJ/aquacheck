@@ -3,7 +3,7 @@
 Aplicación web instalable (PWA) para cuidar el agua del hogar **antes, durante y después** de un corte: recordatorios de mantenimiento,
 guía paso a paso para los cortes y fuentes oficiales para informarse. Funciona sin internet, es gratuita y no necesita hardware.
 
-**Aplicación en línea:** https://aquacheck-moche.vercel.app/
+**Aplicación en línea:** https://aquacheck-26.vercel.app/
 
 Proyecto del equipo **SINERGIA** (Desafío UPAO 2026), pensado para familias de Moche (La Libertad) frente al Fenómeno El Niño y utilizable en cualquier hogar.
 
