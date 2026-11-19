@@ -26,6 +26,7 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
           </button>
           <nav id="nav-principal" className={`nav ${menu ? 'abierto' : ''}`} aria-label="Principal" onClick={() => setMenu(false)}>
             <a href="#/" data-guia="nav-inicio">Inicio</a>
+            <a href="#/mi-plan">Mi plan</a>
             <a href="#/acerca" data-guia="nav-acerca">¿Qué hace?</a>
             <a href="#/equipo" data-guia="nav-equipo">Equipo del proyecto</a>
           </nav>
@@ -44,7 +45,7 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
         {children}
       </main>
       <footer className="pie">
-        <p className="pie-aviso">AquaCheck te ayuda a recordar el mantenimiento de tu filtro.</p>
+        <p className="pie-aviso">AquaCheck te ayuda a cuidar el agua de tu hogar. No mide ni certifica su calidad.</p>
         <p className="pie-copy">© 2026 AquaCheck · Equipo estudiantil del Desafío UPAO</p>
       </footer>
     </div>
