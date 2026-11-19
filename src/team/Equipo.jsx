@@ -130,47 +130,30 @@ function Panel() {
 
   // ---- Exportaciones (cada una en su propio botón: Chrome en celular bloquea varias descargas de un toque) ----
   const hoy = r.hoy
-  function exportarHogares() {
+  // Un solo CSV general: una fila por hogar, mantenimiento o falla (se filtra por la columna «tipo» al abrirlo en Excel).
+  function exportarCSV() {
+    const filas = [
+      ...r.filas.map((f) => ({
+        tipo: 'hogar',
+        codigo: f.h.codigo,
+        detalle: `${f.h.registrado ? 'registrado' : 'sin registrar'} · fallas abiertas: ${f.fallas}`,
+        fecha: f.h.fechaInstalacion ?? '',
+        estado: f.general,
+      })),
+      ...r.mantenimientos.map((m) => ({ tipo: 'mantenimiento', codigo: m.codigo, detalle: TAREAS[m.tipo].etiqueta, fecha: m.fecha, estado: '' })),
+      ...r.reportes.map((x) => ({
+        tipo: 'falla',
+        codigo: x.codigo,
+        detalle: TIPOS_FALLA[x.tipo].etiqueta + (x.conFoto ? ' (con foto)' : ''),
+        fecha: x.fecha.slice(0, 10),
+        estado: x.estado,
+      })),
+    ].sort((a, b) => a.codigo.localeCompare(b.codigo) || a.tipo.localeCompare(b.tipo) || a.fecha.localeCompare(b.fecha))
     descargarCSV(
-      nombreArchivo('aquacheck_hogares', 'csv', hoy),
+      nombreArchivo('aquacheck_datos', 'csv', hoy),
       aCSV(
-        [
-          { titulo: 'codigo', valor: (f) => f.h.codigo },
-          { titulo: 'registrado', valor: (f) => (f.h.registrado ? 'si' : 'no') },
-          { titulo: 'fecha_instalacion', valor: (f) => f.h.fechaInstalacion },
-          { titulo: 'estado', valor: (f) => f.general },
-          ...['limpieza_filtro', 'cambio_cartucho', 'limpieza_tanque'].map((t, i) => ({ titulo: `dias_para_${t}`, valor: (f) => f.tareas[i]?.dias })),
-          { titulo: 'fallas_abiertas', valor: (f) => f.fallas },
-        ],
-        r.filas,
-      ),
-    )
-  }
-  function exportarMantenimientos() {
-    descargarCSV(
-      nombreArchivo('aquacheck_mantenimientos', 'csv', hoy),
-      aCSV(
-        [
-          { titulo: 'codigo', valor: (m) => m.codigo },
-          { titulo: 'tarea', valor: (m) => TAREAS[m.tipo].etiqueta },
-          { titulo: 'fecha', valor: (m) => m.fecha },
-        ],
-        [...r.mantenimientos].sort((a, b) => a.fecha.localeCompare(b.fecha)),
-      ),
-    )
-  }
-  function exportarFallas() {
-    descargarCSV(
-      nombreArchivo('aquacheck_fallas', 'csv', hoy),
-      aCSV(
-        [
-          { titulo: 'codigo', valor: (x) => x.codigo },
-          { titulo: 'tipo', valor: (x) => TIPOS_FALLA[x.tipo].etiqueta },
-          { titulo: 'fecha', valor: (x) => x.fecha.slice(0, 10) },
-          { titulo: 'estado', valor: (x) => x.estado },
-          { titulo: 'con_foto', valor: (x) => (x.conFoto ? 'si' : 'no') },
-        ],
-        r.reportes,
+        ['tipo', 'codigo', 'detalle', 'fecha', 'estado'].map((c) => ({ titulo: c, valor: (x) => x[c] })),
+        filas,
       ),
     )
   }
@@ -440,26 +423,16 @@ function Panel() {
                 <strong>PDF</strong>
                 <span>Con gráficos</span>
               </button>
-            </div>
-            <a className="enlace-discreto" href="#/equipo/informe">
-              Ver el informe en pantalla
-            </a>
-            <p className="suave grupo-titulo">Archivos CSV (se abren en Excel)</p>
-            <div className="acciones-chicas">
-              <button type="button" className="btn btn-secundario btn-chico" onClick={exportarHogares}>
-                Hogares
-              </button>
-              <button type="button" className="btn btn-secundario btn-chico" onClick={exportarMantenimientos}>
-                Mantenimientos
-              </button>
-              <button type="button" className="btn btn-secundario btn-chico" onClick={exportarFallas}>
-                Fallas
+              <button type="button" className="descarga" onClick={exportarCSV}>
+                <Icono nombre="csv" tam={30} />
+                <strong>CSV</strong>
+                <span>Datos en una tabla</span>
               </button>
             </div>
             <hr className="separador" />
             <div className="acciones-chicas">
               <a className="btn btn-secundario btn-chico" href="#/equipo/fichas">
-                <Icono nombre="imprimir" /> Fichas de todos los filtros
+                <Icono nombre="imprimir" /> Fichas de todos los hogares
               </a>
               <button type="button" className="btn btn-secundario btn-chico" onClick={salirEquipo}>
                 Salir del panel

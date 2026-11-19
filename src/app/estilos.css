@@ -1639,3 +1639,8 @@ fieldset.grupo legend {
 .acerca-priv { border-left: 3px solid #bcd6ee; padding-left: 12px; margin: 10px 0; }
 .acerca-priv h3 { margin: 0 0 2px; font-size: 1rem; color: #0b5fa5; }
 .acerca-priv p { margin: 0; line-height: 1.45; }
+
+/* Descargas del panel: cuatro tarjetas (Excel, Word, PDF, CSV) con sombra y color al pasar el cursor */
+@media (min-width: 481px) { .descargas { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.descarga:hover, .descarga:focus-visible { background: #f3f8fd; border-color: #0b5fa5; box-shadow: 0 8px 22px rgba(11, 95, 165, 0.28); transform: translateY(-2px); }
+.descarga:active { transform: translateY(0); box-shadow: 0 3px 10px rgba(11, 95, 165, 0.22); }
