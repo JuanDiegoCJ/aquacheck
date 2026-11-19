@@ -19,6 +19,7 @@ export function resolverRuta(ruta) {
   if (p.length === 0) return { pantalla: 'inicio' }
   if (p[0] === 'acerca') return { pantalla: 'acerca' }
   if (p[0] === 'crear') return { pantalla: 'crear' }
+  if (p[0] === 'fuentes') return { pantalla: 'fuentes' }
   if (p[0] === 'mi-plan') return { pantalla: 'miplan' }
   if (p[0] === 'equipo' && p[1] === 'ficha' && p[2]) return { pantalla: 'fichaequipo', codigo: decodeURIComponent(p[2]).toUpperCase() }
   if (p[0] === 'equipo' && p[1] === 'hogar' && p[2]) return { pantalla: 'hogarequipo', codigo: decodeURIComponent(p[2]).toUpperCase() }

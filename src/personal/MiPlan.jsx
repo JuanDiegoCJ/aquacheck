@@ -130,7 +130,9 @@ export default function MiPlan() {
                 <p>
                   Corte marcado el {formatoFecha(perfil.corte.desde)} (día {diasDeCorte(perfil, hoy) + 1}). Fuente: {perfil.corte.fuente}.
                 </p>
-                <p className="suave">Confirma siempre la información en el canal oficial de tu empresa de agua.</p>
+                <p className="suave">
+                  Confirma siempre la información en el canal oficial de tu empresa de agua. <a href="#/fuentes">Ver fuentes oficiales y contacto</a>.
+                </p>
                 <button type="button" className="btn btn-principal" onClick={terminarCorte}>
                   Ya volvió el agua
                 </button>
@@ -154,7 +156,9 @@ export default function MiPlan() {
               </>
             ) : (
               <>
-                <p className="suave">Márcalo para ver cuántos días te alcanza el agua y qué hacer ahora.</p>
+                <p className="suave">
+                  Márcalo para ver cuántos días te alcanza el agua y qué hacer ahora. Para confirmar un aviso: <a href="#/fuentes">fuentes oficiales y contacto</a>.
+                </p>
                 <button type="button" className="btn btn-secundario" onClick={() => setPidiendoCorte(true)}>
                   <Icono nombre="corte" /> Me avisaron de un corte
                 </button>

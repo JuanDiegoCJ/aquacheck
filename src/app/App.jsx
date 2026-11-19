@@ -18,6 +18,7 @@ import Acerca from '../family/Acerca.jsx'
 import Pantalla from '../components/Pantalla.jsx'
 import Crear from '../personal/Crear.jsx'
 import MiPlan from '../personal/MiPlan.jsx'
+import Fuentes from '../personal/Fuentes.jsx'
 
 function NoEncontrado({ codigo }) {
   return (
@@ -61,6 +62,7 @@ export default function App() {
   if (clave) return null
   if (pantalla === 'inicio') return <Inicio />
   if (pantalla === 'acerca') return <Acerca />
+  if (pantalla === 'fuentes') return <Fuentes />
   if (pantalla === 'crear') return <Crear />
   if (pantalla === 'miplan') return <MiPlan />
   if (pantalla === 'equipo') return <Equipo />

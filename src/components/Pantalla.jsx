@@ -27,6 +27,7 @@ export default function Pantalla({ titulo, volver, children, sinPie = false, anc
           <nav id="nav-principal" className={`nav ${menu ? 'abierto' : ''}`} aria-label="Principal" onClick={() => setMenu(false)}>
             <a href="#/" data-guia="nav-inicio">Inicio</a>
             <a href="#/mi-plan">Mi plan</a>
+            <a href="#/fuentes">Fuentes oficiales</a>
             <a href="#/acerca" data-guia="nav-acerca">¿Qué hace?</a>
             <a href="#/equipo" data-guia="nav-equipo">Equipo del proyecto</a>
           </nav>
