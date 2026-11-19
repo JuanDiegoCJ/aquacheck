@@ -1626,3 +1626,16 @@ fieldset.grupo legend {
 .fuente-fila .suave { display: block; margin: 2px 0 0; }
 .fuente-fila > span:last-child { color: #0b5fa5; font-size: 1.4rem; }
 .fuente-fila:hover strong { text-decoration: underline; }
+
+/* ¿Qué hace AquaCheck?: introducción, listas con iconos y bloques de privacidad */
+.acerca-intro { display: flex; align-items: flex-start; gap: 14px; background: linear-gradient(135deg, #eaf4fc, #f6fbff); border-color: #bcd6ee; }
+.acerca-intro > .icono { flex: none; color: #0b5fa5; margin-top: 2px; }
+.acerca-intro p { margin: 0; line-height: 1.5; }
+.acerca-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.acerca-lista li { display: flex; align-items: flex-start; gap: 10px; line-height: 1.4; }
+.acerca-ico { flex: none; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-top: 1px; }
+.acerca-ico.si { background: #dff3e6; color: #1a7f4b; }
+.acerca-ico.no { background: #fbe4e4; color: #b03a3a; }
+.acerca-priv { border-left: 3px solid #bcd6ee; padding-left: 12px; margin: 10px 0; }
+.acerca-priv h3 { margin: 0 0 2px; font-size: 1rem; color: #0b5fa5; }
+.acerca-priv p { margin: 0; line-height: 1.45; }
