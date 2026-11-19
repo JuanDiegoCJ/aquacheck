@@ -103,6 +103,7 @@ function Panel() {
   }
   const [vista, setVista] = useState('resumen') // resumen | hogares | fallas | informes
   const [pagina, setPagina] = useState(0)
+  const [paginaFallas, setPaginaFallas] = useState(0)
   const cambiarFiltro = (f) => {
     setFiltro(f)
     setPagina(0)
@@ -123,6 +124,10 @@ function Panel() {
     return f.general === filtro.estado
   })
   const POR_PAGINA = 10
+  const FALLAS_POR_PAGINA = 5
+  const paginasFallas = Math.max(1, Math.ceil(r.reportes.length / FALLAS_POR_PAGINA))
+  const pgF = Math.min(paginaFallas, paginasFallas - 1)
+  const fallasVisibles = r.reportes.slice(pgF * FALLAS_POR_PAGINA, (pgF + 1) * FALLAS_POR_PAGINA)
   const paginas = Math.max(1, Math.ceil(visibles.length / POR_PAGINA))
   const pg = Math.min(pagina, paginas - 1)
   const pagVisibles = visibles.slice(pg * POR_PAGINA, (pg + 1) * POR_PAGINA)
@@ -373,7 +378,7 @@ function Panel() {
               <p className="suave">Aún no hay reportes.</p>
             ) : (
               <ul className="fallas">
-                {r.reportes.map((x) => {
+                {fallasVisibles.map((x) => {
                   const foto = x.conFoto ? fotoPanel(x.id) : null
                   return (
                     <li key={x.id} className={x.estado === 'abierta' ? 'falla-abierta' : 'falla-resuelta'}>
@@ -398,6 +403,19 @@ function Panel() {
                   )
                 })}
               </ul>
+            )}
+            {paginasFallas > 1 && (
+              <div className="paginacion" role="navigation" aria-label="Páginas de fallas">
+                <button type="button" className="btn-mini btn-flecha" disabled={pgF === 0} onClick={() => setPaginaFallas(pgF - 1)} aria-label="Página anterior">
+                  <Icono nombre="izquierda" tam={20} />
+                </button>
+                <span aria-live="polite">
+                  {pgF + 1} de {paginasFallas}
+                </span>
+                <button type="button" className="btn-mini btn-flecha" disabled={pgF >= paginasFallas - 1} onClick={() => setPaginaFallas(pgF + 1)} aria-label="Página siguiente">
+                  <Icono nombre="derecha" tam={20} />
+                </button>
+              </div>
             )}
           </section>
           )}
