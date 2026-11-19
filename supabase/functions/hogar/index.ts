@@ -117,7 +117,7 @@ Deno.serve(async (req) => {
       }
       if (k.error || c.error) {
         await db.from('hogares').delete().eq('codigo', nuevo) // no queda un hogar a medias
-        return json({ error: 'servidor', paso: k.error ? 'clave' : 'contacto', detalle: (k.error ?? c.error as { message?: string })?.message }, 500)
+        return json({ error: 'servidor', paso: k.error ? 'clave' : 'contacto' }, 500)
       }
       return json({ codigo: nuevo, secreto: claveNueva })
     }
