@@ -12,6 +12,7 @@ import FichaEquipo from '../team/FichaEquipo.jsx'
 import Inicio from '../family/Inicio.jsx'
 import Registro from '../family/Registro.jsx'
 import Agregar from '../family/Agregar.jsx'
+import Programa from '../family/Programa.jsx'
 import Panel from '../family/Panel.jsx'
 import Mantenimiento from '../family/Mantenimiento.jsx'
 import Historial from '../family/Historial.jsx'
@@ -29,6 +30,7 @@ const TITULOS = {
   fuentes: 'Fuentes oficiales y contacto' + SUFIJO,
   acerca: '¿Qué hace AquaCheck?',
   agregar: 'Agregar mi casa' + SUFIJO,
+  programa: 'Programa con QR' + SUFIJO,
   equipo: 'Administrador' + SUFIJO,
   fichas: 'Administrador' + SUFIJO,
   fichaequipo: 'Administrador' + SUFIJO,
@@ -86,6 +88,7 @@ export default function App() {
   if (pantalla === 'fuentes') return <Fuentes />
   if (pantalla === 'crear') return <Crear />
   if (pantalla === 'agregar') return <Agregar />
+  if (pantalla === 'programa') return <Programa />
   if (pantalla === 'miplan') return <MiPlan />
   if (pantalla === 'equipo') return <Equipo />
   if (pantalla === 'fichas') return equipoAutorizado() ? <Fichas /> : <Equipo />
