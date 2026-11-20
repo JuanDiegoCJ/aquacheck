@@ -1623,3 +1623,14 @@ a.descarga { text-decoration: none; }
 @media (min-width: 481px) { .descargas { grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); } }
 /* Códigos de la tabla de hogares: zona táctil de 44 px en celular y tableta */
 @media (max-width: 767px) { .tabla td a:not(.btn-mini) { display: inline-flex; align-items: center; min-height: 44px; } }
+
+/* Tarjeta compacta del inicio que lleva al programa con QR */
+.tarjeta-programa h2 { margin: 0 0 4px; font-size: 1.05rem; }
+.tarjeta-programa .suave { margin: 0 0 12px; }
+
+/* Celulares muy angostos (320 px): el encabezado cabe sin desbordar */
+@media (max-width: 340px) {
+  .barra-in { padding: 0 10px; gap: 4px; }
+  .marca { font-size: 1rem; gap: 6px; }
+  .nav a, .nav-salir { padding: 8px 5px; font-size: 0.8rem; }
+}
