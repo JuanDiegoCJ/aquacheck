@@ -19,6 +19,6 @@
 6. Cuando `develop` esté probado (incluida la prueba en celular real), pull request de `develop` a `main`.
 
 ## Reglas
-- No subir claves, contraseñas, archivos `.env` ni QR con clave de hogares (están en la carpeta privada fuera del repositorio).
+- No subir claves, contraseñas, archivos `.env` ni QR con clave de hogares (están en la carpeta `_privado/`, que Git ignora; nunca usar `git add -f` con ella).
 - No afirmar lo que no está hecho: no certificado, no auditado, intervalos referenciales.
 - Los datos ficticios no se presentan como datos de familias reales.

@@ -2,7 +2,7 @@
 // Las claves NO están en el repo: se leen de un CSV privado (columnas codigo, clave).
 //
 // Uso:  npm run build && node tools/generar_fichas.mjs <claves.csv> <salida.html> [url_base]
-// Importante: <salida.html> contiene las claves; guárdalo fuera del repositorio.
+// Importante: <salida.html> contiene las claves; guárdalo en _privado/ (ignorada por Git).
 import fs from 'node:fs'
 import path from 'node:path'
 import QRCode from 'qrcode'

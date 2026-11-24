@@ -26,13 +26,13 @@ Aleatoria de 128 bits o más, en la parte `#` de la dirección (no viaja al serv
 `https://aquacheck-26.vercel.app/#/f/AQ-007?k=<clave>`. Si se pierde un QR, se rota la clave del hogar.
 
 ## Fichas definitivas
-`npm run build` y luego `node tools/generar_fichas.mjs <claves.csv> <salida.html>` crea las 20 fichas con el QR de cada hogar (código + clave). El CSV y la salida contienen claves: guardarlos FUERA del repositorio. Se imprimen desde el navegador (o a PDF).
+`npm run build` y luego `node tools/generar_fichas.mjs <claves.csv> <salida.html>` crea las 20 fichas con el QR de cada hogar (código + clave). El CSV y la salida contienen claves: guardarlos en `_privado/` (carpeta ignorada por Git; nunca usar `git add -f`). Se imprimen desde el navegador (o a PDF).
 
 ## Hogares nuevos
 El equipo puede crear hogares desde el panel (Hogares > Agregar hogar): el navegador genera la clave (192 bits), guarda su hash en `hogares` y la clave en `claves_qr` (migraciones 0004 y 0005) y abre la ficha con el QR, con botones Imprimir, Copiar enlace y Enviar por WhatsApp. No hay botón para borrar hogares: si se crea uno por error, se elimina con SQL (`delete from hogares where codigo = 'AQ-0XX'`, que borra en cascada su clave y sus datos).
 
 ## Datos de prueba (solo ensayos)
-- `seed/datos_de_prueba.sql` carga datos FICTICIOS (celulares 900 000 0NN) para ver el panel con información. `seed/borrar_datos_de_prueba.sql` los quita y deja los 20 hogares sin registrar.
+- `seed/datos_de_prueba_variados.sql` carga datos FICTICIOS y variados (celulares 900 000 0NN) para ver el panel con información. `seed/borrar_datos_de_prueba.sql` los quita y deja los 20 hogares sin registrar.
 - **Antes del piloto real hay que ejecutar el de borrado** y comprobar que contactos, mantenimientos y reportes tienen 0 filas. No repartir los QR mientras haya datos de prueba cargados.
 
 ## Fin del piloto y borrado de datos
@@ -48,4 +48,4 @@ El equipo puede crear hogares desde el panel (Hogares > Agregar hogar): el naveg
 - Este diseño es propio, apoyado en la guía oficial de RLS y Edge Functions; conviene una revisión de seguridad antes del piloto real.
 
 ## Estado (17/11/2026)
-Proyecto `aquacheck` creado en São Paulo, esquemas 0001 y 0002 aplicados, 20 hogares creados (claves fuera del repo) y función `hogar` desplegada con la verificación de JWT desactivada. Probado desde fuera: clave real 200; clave falsa, ajena o filtro inexistente 401 con el mismo mensaje; el celular nunca se devuelve; límite de intentos (429). App conectada (cola sin internet) y fichas definitivas generadas. Pendiente: panel del equipo con Auth, fotos, desactivar el registro público de Auth.
+Proyecto `aquacheck` creado en São Paulo, esquemas 0001 y 0002 aplicados, 20 hogares creados (claves en `_privado/`, ignorada por Git) y función `hogar` desplegada con la verificación de JWT desactivada. Probado desde fuera: clave real 200; clave falsa, ajena o filtro inexistente 401 con el mismo mensaje; el celular nunca se devuelve; límite de intentos (429). App conectada (cola sin internet) y fichas definitivas generadas. Pendiente: panel del equipo con Auth, fotos, desactivar el registro público de Auth.
